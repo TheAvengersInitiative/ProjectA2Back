@@ -1,4 +1,0 @@
-com/a2/backend/BackendApplication.java
- com.a2.backend.BackendApplication
-com/a2/backend/config/TestConfig.java
- com.a2.backend.config.TestConfig

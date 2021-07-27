@@ -1,2 +1,0 @@
-com/a2/backend/BackendApplicationTests.java
- com.a2.backend.BackendApplicationTests
