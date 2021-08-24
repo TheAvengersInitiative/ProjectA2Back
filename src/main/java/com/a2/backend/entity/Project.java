@@ -27,9 +27,11 @@ public class Project implements Serializable {
 
     private String description;
 
-    // private String[] links;
+    @Transient
+    private String[] links;
 
-    // private String[] tags;
+    @Transient
+    private String[] tags;
 
     private String owner;
 
