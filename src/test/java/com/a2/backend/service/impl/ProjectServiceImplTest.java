@@ -39,7 +39,7 @@ class ProjectServiceImplTest {
 
 
     @Test
-    void createProjectTest(){
+    void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject(){
 
        assertTrue(projectRepository.findAll().isEmpty());
 
@@ -56,7 +56,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
-    void ProjectWithThatTitleExistsExceptionTest() {
+    void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
       projectService.createProject(projectToCreate);
 
       String title2 = "Project title";
@@ -72,6 +72,17 @@ class ProjectServiceImplTest {
        assertThrows(ProjectWithThatTitleExistsException.class, () -> {
           projectService.createProject(projectToCreateWithRepeatedTitle);
        });
+    }
+
+    @Test
+    void Test003_ProjectServiceWhenReceiveCreateProjectDTOWithNullTitleShouldThrowNullPointerException() {
+
+        assertThrows(NullPointerException.class, () -> {
+            ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
+                    .description(description)
+                    .owner(owner)
+                    .build();
+        });
     }
 
 }

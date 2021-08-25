@@ -17,15 +17,14 @@ public class DefaultExceptionHandler {
     Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
     @ExceptionHandler(ProjectWithThatTitleExistsException.class)
-    protected ResponseEntity<Object> handleProjectWithThatTitleExists(ProjectWithThatTitleExistsException exception) {
+    protected ResponseEntity<?> handleProjectWithThatTitleExists(ProjectWithThatTitleExistsException exception) {
         logger.info(exception.getMessage());
-        return ResponseEntity.badRequest().build();
-    }
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);    }
 
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException exception) {
+    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException exception) {
         logger.info(exception.getMessage());
         return ResponseEntity.badRequest().build();
     }

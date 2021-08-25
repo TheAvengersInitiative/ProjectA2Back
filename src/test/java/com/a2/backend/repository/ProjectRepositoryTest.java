@@ -40,7 +40,8 @@ class ProjectRepositoryTest {
             .build();
 
     @Test
-    void addProjectToRepositoryTest(){
+    void Test001_ProjectRepositoryShouldSaveProjects(){
+
 
         assertTrue(projectRepository.findAll().isEmpty());
 
@@ -67,7 +68,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    void getProjectByExistingTitleTest(){
+    void Test002_ProjectRepositoryWhenGivenTitleShouldReturnProjectWithThatTitle(){
 
         projectRepository.save(project);
 
@@ -76,7 +77,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    void getProjectByNonExistingTitleTest(){
+    void Test003_ProjectRepositoryWhenGivenNonExistingTitleShouldReturnEmptyList(){
 
         projectRepository.save(project);
 
