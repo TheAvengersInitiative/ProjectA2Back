@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,4 +86,22 @@ class ProjectServiceImplTest {
         });
     }
 
+    @Test
+    void Test004_ProjectListWithNoSavedProjectsShouldBeEmpty() {
+        assertTrue(projectService.getAllProjects().isEmpty());
+    }
+
+    @Test
+    void Test005_ProjectListWithSavedProjectsShouldContainProjects() {
+        assertTrue(projectService.getAllProjects().isEmpty());
+
+        Project savedProject = projectService.createProject(projectToCreate);
+
+        List<Project> allProjects = projectService.getAllProjects();
+
+        assertEquals(1, allProjects.size());
+
+        Project singleProject = allProjects.get(0);
+        assertEquals(savedProject, singleProject);
+    }
 }
