@@ -74,8 +74,12 @@ class ProjectRepositoryTest {
         assertTrue(projectRepository.findByTitle("Another title").isEmpty());
     }
 
+
+
     @Test
+
     void Test004_ProjectRepositoryWhenDeletedOnlyExistingProjectShouldReturnEmptyList() {
+
         projectRepository.save(project);
         List<Project> projects = projectRepository.findAll();
         val savedProject = projects.get(0);

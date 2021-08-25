@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Project;
 
+
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-
 
 
 
@@ -71,6 +71,7 @@ class ProjectServiceImplTest {
 
         assertFalse(projects.isEmpty());
         assertEquals(1, projects.size());
+
 
 
         val project = projects.get(0);
@@ -125,6 +126,7 @@ class ProjectServiceImplTest {
                 });
 
 
+
     }
 
 
@@ -151,6 +153,7 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getTags()), singleProject.getTags());
         assertEquals(Arrays.asList(projectToCreate.getLinks()), singleProject.getLinks());
     }
+
 
 
 
@@ -240,6 +243,7 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(Arrays.asList(projectToCreate.getTags()), projectToBeDisplayed.getTags());
         assertEquals(Arrays.asList(projectToCreate.getLinks()), projectToBeDisplayed.getLinks());
+
 
 
 

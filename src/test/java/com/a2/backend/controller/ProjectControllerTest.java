@@ -2,8 +2,10 @@ package com.a2.backend.controller;
 
 
 
+
 import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.Project;
+
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import lombok.val;
@@ -55,8 +57,8 @@ class ProjectControllerTest {
     }
 
     @Test
-    void
-            Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
+    void Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
+
 
 
 
@@ -136,6 +138,7 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     }
+
 
 
 
@@ -385,6 +388,7 @@ class ProjectControllerTest {
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
     }
+
 
 
 
