@@ -8,6 +8,8 @@ import com.a2.backend.service.ProjectService;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
@@ -31,5 +33,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         throw new ProjectWithThatTitleExistsException(String.format("There is an existing project named %s", projectCreateDTO.getTitle()));
+    }
+
+    @Override
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
     }
 }
