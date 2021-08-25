@@ -1,7 +1,9 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
+
 import com.a2.backend.exception.ProjectNotFoundException;
+
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -12,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import lombok.val;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -49,7 +52,6 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-
     public Project updateProject(ProjectUpdateDTO projectUpdateDTO, String projectToBeUpdatedID) {
         val projectToModifyOptional = projectRepository.findById(projectToBeUpdatedID);
         if (projectToModifyOptional.isEmpty()) {
@@ -67,13 +69,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-
-
     public void deleteProject(String uuid) {
         if (projectRepository.existsById(uuid)) {
             projectRepository.deleteById(uuid);
             return;
         }
+
 
         throw new ProjectWithThatIdDoesntExistException(
                 String.format("No project found for id: %s", uuid));
@@ -87,6 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
                         () ->
                                 new ProjectWithThatIdDoesntExistException(
                                         String.format("No project found for id: %s", projectID)));
+
     }
 
 }

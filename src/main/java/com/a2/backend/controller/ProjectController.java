@@ -28,19 +28,14 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
-
     @GetMapping
     public ResponseEntity<List<Project>> getAllProjects() {
         val projects = projectService.getAllProjects();
         return ResponseEntity.status(HttpStatus.OK).body(projects);
-
     }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProject(@PathVariable String id) {
-
         boolean exists = false;
         List<Project> projects = projectService.getAllProjects();
 
@@ -66,7 +61,6 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
 
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectDetails(@PathVariable String id) {
