@@ -56,6 +56,7 @@ public class ProjectController {
     @PutMapping("/{id}")
     public ResponseEntity<Project> updateProject(
             @RequestBody ProjectUpdateDTO projectUpdateDTO, @PathVariable String id) {
+
         val updatedProject = projectService.updateProject(projectUpdateDTO, id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }
