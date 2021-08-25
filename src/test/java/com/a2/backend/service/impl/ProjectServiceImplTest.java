@@ -67,24 +67,9 @@ class ProjectServiceImplTest {
         assertEquals(project, projectCreated);
     }
 
-    void createProjectTest(){
-
-        assertTrue(projectRepository.findAll().isEmpty());
-
-        Project projectCreated = projectService.createProject(projectToCreate);
-
-        val projects = projectRepository.findAll();
-
-        assertFalse(projects.isEmpty());
-        assertEquals(1, projects.size());
-
-        val project = projects.get(0);
-        assertEquals(project, projectCreated);
 
 
 
-
-    }
 
 
 
