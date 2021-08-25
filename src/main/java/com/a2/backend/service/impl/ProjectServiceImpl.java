@@ -19,6 +19,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Project createProject(ProjectCreateDTO projectCreateDTO) {
+        // TODO: verify owner is user that created the project
         val existingProjectWithTitle= projectRepository.findByTitle(projectCreateDTO.getTitle());
         if(existingProjectWithTitle.isEmpty()){
             Project project = Project.builder()
@@ -29,6 +30,6 @@ public class ProjectServiceImpl implements ProjectService {
             return projectRepository.save(project);
         }
 
-        throw new ProjectWithThatTitleExistsException(String.format("There is an existing project named", projectCreateDTO.getTitle()));
+        throw new ProjectWithThatTitleExistsException(String.format("There is an existing project named %s", projectCreateDTO.getTitle()));
     }
 }

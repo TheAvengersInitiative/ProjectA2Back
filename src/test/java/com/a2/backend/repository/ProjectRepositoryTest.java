@@ -40,7 +40,8 @@ class ProjectRepositoryTest {
             .build();
 
     @Test
-    void addProjectToRepositoryTest(){
+    void Test001_ProjectRepositoryShouldSaveProjects(){
+
 
         assertTrue(projectRepository.findAll().isEmpty());
 
@@ -67,7 +68,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    void getProjectByExistingTitleTest(){
+    void Test002_ProjectRepositoryWhenGivenTitleShouldReturnProjectWithThatTitle(){
 
         projectRepository.save(project);
 
@@ -76,38 +77,13 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    void getProjectByNonExistingTitleTest(){
+    void Test003_ProjectRepositoryWhenGivenNonExistingTitleShouldReturnEmptyList(){
 
         projectRepository.save(project);
 
         assertTrue(projectRepository.findByTitle("Another title").isEmpty());
 
     }
-
-
-
-    /**
-    @Test
-    void ProjectWithThatTitleExistsExceptionTest() {
-
-        String title = "Project title";
-        String  description = "Testing project repository";
-        String owner = "Owner´s name";
-
-        Project project = Project.builder()
-                .title(title)
-                .description(description)
-                .owner(owner)
-                .build();
-
-        projectRepository.save(project);
-
-        assertThrows(ProjectWithThatTitleExistsException.class, () -> {
-            projectRepository.findByTitle("Not existing title");
-        });
-    }**/
-
-
 
 
 }
