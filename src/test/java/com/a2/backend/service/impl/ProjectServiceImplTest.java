@@ -182,7 +182,7 @@ class ProjectServiceImplTest {
         assertEquals("new description" , modifiedProject.getDescription());
     }
 
-    
+
 
     @Test
     void Test007_GivenASingleExistingProjectWhenDeletedTwiceThenExceptionShouldBeThrown() {
