@@ -1,8 +1,10 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
+
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
+
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
@@ -16,7 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 
+
 import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,6 +67,25 @@ class ProjectServiceImplTest {
         assertEquals(project, projectCreated);
     }
 
+    void createProjectTest(){
+
+        assertTrue(projectRepository.findAll().isEmpty());
+
+        Project projectCreated = projectService.createProject(projectToCreate);
+
+        val projects = projectRepository.findAll();
+
+        assertFalse(projects.isEmpty());
+        assertEquals(1, projects.size());
+
+        val project = projects.get(0);
+        assertEquals(project, projectCreated);
+
+
+
+
+    }
+
 
 
     @Test
@@ -93,10 +116,13 @@ class ProjectServiceImplTest {
                     .description(description)
                     .owner(owner)
                     .build();
-        });
+
+    });
     }
 
+
     @Test
+
     void Test004_ProjectListWithNoSavedProjectsShouldBeEmpty() {
         assertTrue(projectService.getAllProjects().isEmpty());
     }
@@ -114,6 +140,7 @@ class ProjectServiceImplTest {
         Project singleProject = allProjects.get(0);
         assertEquals(savedProject, singleProject);
     }
+
 
     /**
      * Given non existent id
@@ -183,9 +210,11 @@ class ProjectServiceImplTest {
         projectService.deleteProject(project.getId());
 
         //Then
+
         assertThrows(ProjectWithThatIdDoesntExistException.class, () -> {
             projectService.deleteProject(project.getId());
         });
     }
+
 
 }
