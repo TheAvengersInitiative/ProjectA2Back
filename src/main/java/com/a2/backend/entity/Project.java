@@ -35,8 +35,4 @@ public class Project implements Serializable {
 
     private String owner;
 
-    //@ElementCollection
-    //private List<String> aaa;
-
-
 }

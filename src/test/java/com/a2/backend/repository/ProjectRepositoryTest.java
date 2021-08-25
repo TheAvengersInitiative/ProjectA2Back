@@ -85,29 +85,4 @@ class ProjectRepositoryTest {
     }
 
 
-
-    /**
-    @Test
-    void ProjectWithThatTitleExistsExceptionTest() {
-
-        String title = "Project title";
-        String  description = "Testing project repository";
-        String owner = "Owner´s name";
-
-        Project project = Project.builder()
-                .title(title)
-                .description(description)
-                .owner(owner)
-                .build();
-
-        projectRepository.save(project);
-
-        assertThrows(ProjectWithThatTitleExistsException.class, () -> {
-            projectRepository.findByTitle("Not existing title");
-        });
-    }**/
-
-
-
-
 }
