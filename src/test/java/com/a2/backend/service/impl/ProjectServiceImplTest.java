@@ -78,8 +78,6 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getLinks()), project.getLinks());
     }
 
-
-
     @Test
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
         projectService.createProject(projectToCreate);
