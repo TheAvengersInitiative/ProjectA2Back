@@ -1,5 +1,6 @@
 package com.a2.backend.exceptionhandler;
 
+import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,9 @@ public class DefaultExceptionHandler {
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);    }
 
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException exception) {
+
+    @ExceptionHandler(ProjectWithThatIdDoesntExistException.class)
+    protected ResponseEntity<Object> handleProjectWithThatIdDoesntExist(ProjectWithThatIdDoesntExistException exception) {
         logger.info(exception.getMessage());
         return ResponseEntity.badRequest().build();
-    }
-
-}
+    }}
