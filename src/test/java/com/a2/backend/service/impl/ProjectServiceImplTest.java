@@ -62,6 +62,7 @@ class ProjectServiceImplTest {
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
 
 
+
         assertTrue(projectRepository.findAll().isEmpty());
 
         Project projectCreated = projectService.createProject(projectToCreate);
@@ -79,6 +80,7 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getTags()), project.getTags());
         assertEquals(Arrays.asList(projectToCreate.getLinks()), project.getLinks());
     }
+
 
     @Test
 
