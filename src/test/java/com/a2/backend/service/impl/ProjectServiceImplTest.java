@@ -63,6 +63,7 @@ class ProjectServiceImplTest {
 
 
 
+
         assertTrue(projectRepository.findAll().isEmpty());
 
         Project projectCreated = projectService.createProject(projectToCreate);
