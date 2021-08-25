@@ -1,6 +1,9 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
+
+import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
+
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.repository.ProjectRepository;
@@ -13,7 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 
+
 import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,23 +45,41 @@ class ProjectServiceImplTest {
 
 
     @Test
-    void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject(){
 
-       assertTrue(projectRepository.findAll().isEmpty());
+    void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
 
-       Project projectCreated = projectService.createProject(projectToCreate);
+        assertTrue(projectRepository.findAll().isEmpty());
 
-       val projects = projectRepository.findAll();
+        Project projectCreated = projectService.createProject(projectToCreate);
 
-       assertFalse(projects.isEmpty());
-       assertEquals(1, projects.size());
+        val projects = projectRepository.findAll();
 
-       val project = projects.get(0);
-       assertEquals(project, projectCreated);
+        assertFalse(projects.isEmpty());
+        assertEquals(1, projects.size());
+
+        val project = projects.get(0);
+        assertEquals(project, projectCreated);
+    }
+
+    void createProjectTest(){
+
+        assertTrue(projectRepository.findAll().isEmpty());
+
+        Project projectCreated = projectService.createProject(projectToCreate);
+
+        val projects = projectRepository.findAll();
+
+        assertFalse(projects.isEmpty());
+        assertEquals(1, projects.size());
+
+        val project = projects.get(0);
+        assertEquals(project, projectCreated);
+
 
     }
 
     @Test
+
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
       projectService.createProject(projectToCreate);
 
@@ -83,10 +106,13 @@ class ProjectServiceImplTest {
                     .description(description)
                     .owner(owner)
                     .build();
-        });
+
+    });
     }
 
+
     @Test
+
     void Test004_ProjectListWithNoSavedProjectsShouldBeEmpty() {
         assertTrue(projectService.getAllProjects().isEmpty());
     }
@@ -104,4 +130,15 @@ class ProjectServiceImplTest {
         Project singleProject = allProjects.get(0);
         assertEquals(savedProject, singleProject);
     }
+
+
+    void ProjectWithThatIdDoesntExistExceptionTest() {
+        Project project= projectService.createProject(projectToCreate);
+        projectService.deleteProject(project.getId());
+        assertThrows(ProjectWithThatIdDoesntExistException.class, () -> {
+            projectService.deleteProject(project.getId());
+        });
+    }
+
 }
+
