@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Project;
 
+
 import com.a2.backend.exception.ProjectNotFoundException;
+
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
@@ -60,6 +62,7 @@ class ProjectServiceImplTest {
 
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
+
 
         assertTrue(projectRepository.findAll().isEmpty());
 
@@ -145,6 +148,7 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getLinks()), singleProject.getLinks());
     }
 
+
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
         // Given
@@ -218,6 +222,7 @@ class ProjectServiceImplTest {
                 });
     }
 
+
     @Test
     void Test010_GivenValidProjectIDWhenAskedForProjectThenReturnProject() {
         Project project = projectService.createProject(projectToCreate);
@@ -229,6 +234,9 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getTags()), projectToBeDisplayed.getTags());
         assertEquals(Arrays.asList(projectToCreate.getLinks()), projectToBeDisplayed.getLinks());
 
+
     }
 
 }
+
+
