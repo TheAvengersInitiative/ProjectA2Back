@@ -3,8 +3,10 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Project;
+
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
+
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
@@ -18,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+
+
+
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -73,6 +78,8 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getLinks()), project.getLinks());
     }
 
+
+
     @Test
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
         projectService.createProject(projectToCreate);
@@ -112,9 +119,12 @@ class ProjectServiceImplTest {
                                     .owner(owner)
                                     .build();
                 });
+
     }
 
+
     @Test
+
     void Test004_ProjectListWithNoSavedProjectsShouldBeEmpty() {
         assertTrue(projectService.getAllProjects().isEmpty());
     }
@@ -214,9 +224,7 @@ class ProjectServiceImplTest {
     @Test
     void Test010_GivenValidProjectIDWhenAskedForProjectThenReturnProject() {
         Project project = projectService.createProject(projectToCreate);
-
         val projectToBeDisplayed = projectService.getProjectDetails(project.getId());
-
         assertEquals(project.getId(), projectToBeDisplayed.getId());
         assertEquals(projectToCreate.getOwner(), projectToBeDisplayed.getOwner());
         assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
@@ -224,4 +232,5 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getTags()), projectToBeDisplayed.getTags());
         assertEquals(Arrays.asList(projectToCreate.getLinks()), projectToBeDisplayed.getLinks());
     }
+
 }

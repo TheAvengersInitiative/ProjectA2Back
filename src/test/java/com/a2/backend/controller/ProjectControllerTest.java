@@ -1,7 +1,7 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 
+import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
@@ -26,8 +26,8 @@ class ProjectControllerTest {
     private final String baseUrl = "/project";
 
     @Test
-    void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated() {
 
+    void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated() {
         String title = "Project title";
         String description = "Testing exception for existing title";
         String[] links = {"link1", "link2"};
@@ -53,6 +53,7 @@ class ProjectControllerTest {
     void
             Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
 
+
         String title = "a";
         String description = "Testing exception for existing title";
         String[] links = {"link1", "link2"};
@@ -75,8 +76,8 @@ class ProjectControllerTest {
     }
 
     @Test
-    void
-            Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest() {
+
+    void Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest() {
 
         String title = "Project title";
         String description = "Short";
@@ -98,6 +99,7 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
+
 
     @Test
     void
@@ -128,6 +130,7 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     }
+
 
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() {
@@ -328,6 +331,7 @@ class ProjectControllerTest {
         // assertTrue(projectUpdateDTO.getTitle().equals( updatedResponse.getTitle()));
     }
 
+
     /** Given valid ID Should return */
     @Test
     void Test010_ProjectControllerWhenReceivesValidIdShouldReturnHttpOkTest() {
@@ -366,4 +370,5 @@ class ProjectControllerTest {
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
     }
+
 }
