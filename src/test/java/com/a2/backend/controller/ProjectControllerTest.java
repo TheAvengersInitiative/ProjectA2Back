@@ -1,7 +1,9 @@
 package com.a2.backend.controller;
 
+
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
+
 import com.a2.backend.model.ProjectCreateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -27,7 +29,11 @@ class ProjectControllerTest {
     private final String baseUrl = "/project";
 
     @Test
+
     void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated() {
+
+
+
         String title = "Project title";
         String  description = "Testing exception for existing title";
         String owner = "Owner´s name";
@@ -45,7 +51,10 @@ class ProjectControllerTest {
     }
 
     @Test
+
     void Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
+
+
         String title = "a";
         String  description = "Testing exception for existing title";
         String owner = "Owner´s name";
@@ -63,7 +72,9 @@ class ProjectControllerTest {
     }
 
     @Test
+
     void Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest() {
+
         String title = "Project title";
         String  description = "Short";
         String owner = "Owner´s name";
@@ -79,6 +90,7 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
+
 
     @Test
     void Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
@@ -105,3 +117,4 @@ class ProjectControllerTest {
     }
 
 }
+

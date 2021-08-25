@@ -85,6 +85,16 @@ class ProjectRepositoryTest {
 
     }
 
+    @Test
+    void deleteProjectById(){
+        projectRepository.save(project);
+        List<Project> projects = projectRepository.findAll();
+        val savedProject = projects.get(0);
+        projectRepository.deleteById(savedProject.getId());
+        List<Project> projects1 = projectRepository.findAll();
+        assertEquals(0, projects1.size());
+    }
+
 
 
 }
