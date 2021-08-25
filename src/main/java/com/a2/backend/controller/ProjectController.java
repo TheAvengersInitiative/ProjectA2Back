@@ -28,9 +28,18 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
+
     @GetMapping
     public ResponseEntity<List<Project>> getAllProjects() {
         val projects = projectService.getAllProjects();
         return ResponseEntity.status(HttpStatus.OK).body(projects);
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Project> deleteProject(@PathVariable String id) {
+        projectService.deleteProject(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+
     }
 }
