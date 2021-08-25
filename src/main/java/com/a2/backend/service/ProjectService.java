@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface ProjectService {
 
+
     Project createProject(ProjectCreateDTO projectCreateDTO);
+
 
     List<Project> getAllProjects();
 
@@ -15,4 +17,5 @@ public interface ProjectService {
     void deleteProject(String uuid);
 
     Project getProjectDetails(String id);
+
 }

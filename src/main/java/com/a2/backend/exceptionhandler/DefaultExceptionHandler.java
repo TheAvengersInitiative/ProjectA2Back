@@ -1,9 +1,5 @@
 package com.a2.backend.exceptionhandler;
-
-
-
 import com.a2.backend.exception.ProjectNotFoundException;
-
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import org.slf4j.Logger;
@@ -42,5 +38,6 @@ public class DefaultExceptionHandler {
 
 
 }
+
 
 
