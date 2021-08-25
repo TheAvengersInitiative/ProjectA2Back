@@ -83,7 +83,7 @@ class ProjectControllerTest {
     @Test
     void Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
         String title = "a";
-        String  description = "Short";
+        String description = "Short";
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
@@ -96,6 +96,12 @@ class ProjectControllerTest {
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+    }
+
+    @Test
+    void Test005_GettingAllProjectsShouldReturnHttpOkTest() {
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     }
 
 }
