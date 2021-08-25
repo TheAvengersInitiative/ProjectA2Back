@@ -59,6 +59,7 @@ public class ProjectController {
 
         val updatedProject = projectService.updateProject(projectUpdateDTO, id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
+
     }
 
     @GetMapping("/{id}")
