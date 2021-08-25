@@ -1,6 +1,7 @@
 package com.a2.backend.controller;
 
 
+
 import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -28,6 +29,9 @@ class ProjectControllerTest {
     @Test
 
     void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated() {
+
+
+
         String title = "Project title";
         String description = "Testing exception for existing title";
         String[] links = {"link1", "link2"};
@@ -52,6 +56,7 @@ class ProjectControllerTest {
     @Test
     void
             Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
+
 
 
         String title = "a";
@@ -130,6 +135,7 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     }
+
 
 
     @Test
@@ -375,6 +381,7 @@ class ProjectControllerTest {
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
     }
+
 
 
 }

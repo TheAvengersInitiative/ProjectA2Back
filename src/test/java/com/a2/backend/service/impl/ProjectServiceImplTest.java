@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Project;
 
-
 import com.a2.backend.exception.ProjectNotFoundException;
-
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
@@ -73,6 +71,7 @@ class ProjectServiceImplTest {
         assertFalse(projects.isEmpty());
         assertEquals(1, projects.size());
 
+
         val project = projects.get(0);
 
         assertEquals(projectToCreate.getTitle(), project.getTitle());
@@ -82,6 +81,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
         projectService.createProject(projectToCreate);
 
@@ -106,6 +106,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+
     void
             Test003_ProjectServiceWhenReceiveCreateProjectDTOWithNullTitleShouldThrowNullPointerException() {
 
@@ -120,6 +121,7 @@ class ProjectServiceImplTest {
                                     .owner(owner)
                                     .build();
                 });
+
 
     }
 
@@ -238,8 +240,8 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getLinks()), projectToBeDisplayed.getLinks());
 
 
+
     }
 
 }
-
 
