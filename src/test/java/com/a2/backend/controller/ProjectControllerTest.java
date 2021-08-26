@@ -3,6 +3,7 @@ package com.a2.backend.controller;
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectUpdateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,5 +137,55 @@ class ProjectControllerTest {
         assertTrue(deleteResponse.equals(projects[0].getId()));
     }
 
+    /**
+     * Given
+     */
+    @Test
+   void Test_001_updateProjectController(){
+        String title = "Project title";
+        String  description = "Testing exception for existing title";
+        String owner = "Owner´s name";
+
+        String titleforUpdate = "New Project Title";
+        String descriptionforUpdate = "New Project description";
+        String ownerforUpdate = "New Project Owner";
+
+        ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
+                .title(title)
+                .description(description)
+                .owner(owner)
+                .build();
+
+        ProjectUpdateDTO projectUpdateDTO = ProjectUpdateDTO.builder()
+                .title(titleforUpdate)
+                .description(descriptionforUpdate)
+                .owner(ownerforUpdate)
+                .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        HttpEntity<ProjectUpdateDTO> requestUpdate = new HttpEntity<>(projectUpdateDTO);
+
+        val postResponse=  restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        assertEquals(HttpStatus.CREATED , postResponse.getStatusCode());
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, request, Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+
+        Project [] projects=getResponse.getBody();
+
+        assertTrue(projects.length==1);
+
+        val updatedResponse =  restTemplate.exchange(String.format("%s/%s" , baseUrl , projects[0].getId()), HttpMethod.PUT , requestUpdate , Project.class);
+        assertEquals(HttpStatus.OK , updatedResponse.getStatusCode());
+
+        Project project = updatedResponse.getBody();
+        assertEquals(projectUpdateDTO.getTitle() , project.getTitle());
+        assertEquals(projectUpdateDTO.getDescription() , project.getDescription());
+        assertEquals(projectUpdateDTO.getOwner() , project.getOwner());
+
+//        Project updatedResponse = restTemplate.exchange(String.format("%s/%s",baseUrl,projects[0].getId()), HttpMethod.PUT, requestUpdate, Project.class).getBody();
+//
+//        assertTrue(projectUpdateDTO.getTitle().equals( updatedResponse.getTitle()));
+    }
 
 }
