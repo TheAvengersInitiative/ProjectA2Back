@@ -155,23 +155,25 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getLinks()), singleProject.getLinks());
     }
 
-
-
-
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
-        // Given
+
+        //Given
         assertTrue(projectService.getAllProjects().isEmpty());
-        Project project = projectService.createProject(projectToCreate);
+        Project project= projectService.createProject(projectToCreate);
         List<Project> allProjects = projectService.getAllProjects();
         assertEquals(1, allProjects.size());
 
-        // When
+        //When
         projectService.deleteProject(project.getId());
 
-        // Then
+        //Then
         assertTrue(projectService.getAllProjects().isEmpty());
     }
+
+
+
+
 
     /** Given non existent id when projectService.updateProject then throw NotFoundException */
     @Test

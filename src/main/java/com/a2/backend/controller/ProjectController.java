@@ -36,6 +36,7 @@ public class ProjectController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProject(@PathVariable String id) {
+
         boolean exists = false;
         List<Project> projects = projectService.getAllProjects();
 
@@ -61,6 +62,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
 
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectDetails(@PathVariable String id) {

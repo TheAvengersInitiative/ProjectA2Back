@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
 
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -145,6 +146,7 @@ class ProjectControllerTest {
 
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() {
+
         String title = "Project title";
 
         String description = "Testing exception for existing title";
@@ -152,6 +154,7 @@ class ProjectControllerTest {
         String[] tags = {"tag1", "tag2"};
 
         String owner = "Owner´s name";
+
 
 
         ProjectCreateDTO projectToCreate =
@@ -388,6 +391,7 @@ class ProjectControllerTest {
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
     }
+
 
 
 
