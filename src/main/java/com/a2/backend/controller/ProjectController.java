@@ -36,7 +36,7 @@ public class ProjectController {
     }
 
     @PutMapping
-    public ResponseEntity<Project> updateProject(@RequestBody ProjectUpdateDTO projectUpdateDTO , String projectToBeUpdatedID){
+    public ResponseEntity<Project> updateProject(@RequestBody ProjectUpdateDTO projectUpdateDTO , @PathVariable String projectToBeUpdatedID){
         val updatedProject = projectService.updateProject(projectUpdateDTO,projectToBeUpdatedID);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }

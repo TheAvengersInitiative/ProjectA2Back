@@ -32,7 +32,7 @@ class ProjectServiceImplTest {
 
 
     String title = "Project title";
-    String  description = "Testing exception for existing title";
+    String description = "Testing exception for existing title";
     String owner = "Owner´s name";
 
     ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
@@ -45,40 +45,41 @@ class ProjectServiceImplTest {
             .owner("new owner")
             .description("new description")
             .build();
+
     @Test
-    void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject(){
+    void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
 
-       assertTrue(projectRepository.findAll().isEmpty());
+        assertTrue(projectRepository.findAll().isEmpty());
 
-       Project projectCreated = projectService.createProject(projectToCreate);
+        Project projectCreated = projectService.createProject(projectToCreate);
 
-       val projects = projectRepository.findAll();
+        val projects = projectRepository.findAll();
 
-       assertFalse(projects.isEmpty());
-       assertEquals(1, projects.size());
+        assertFalse(projects.isEmpty());
+        assertEquals(1, projects.size());
 
-       val project = projects.get(0);
-       assertEquals(project, projectCreated);
+        val project = projects.get(0);
+        assertEquals(project, projectCreated);
 
     }
 
     @Test
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
-      projectService.createProject(projectToCreate);
+        projectService.createProject(projectToCreate);
 
-      String title2 = "Project title";
-      String  description2 = "Testing exception for existing title";
-      String owner2 = "Owner´s name";
+        String title2 = "Project title";
+        String description2 = "Testing exception for existing title";
+        String owner2 = "Owner´s name";
 
-      ProjectCreateDTO projectToCreateWithRepeatedTitle = ProjectCreateDTO.builder()
-                                                  .title(title2)
-                                                  .description(description2)
-                                                  .owner(owner2)
-                                                  .build();
+        ProjectCreateDTO projectToCreateWithRepeatedTitle = ProjectCreateDTO.builder()
+                .title(title2)
+                .description(description2)
+                .owner(owner2)
+                .build();
 
-       assertThrows(ProjectWithThatTitleExistsException.class, () -> {
-          projectService.createProject(projectToCreateWithRepeatedTitle);
-       });
+        assertThrows(ProjectWithThatTitleExistsException.class, () -> {
+            projectService.createProject(projectToCreateWithRepeatedTitle);
+        });
     }
 
     @Test
@@ -117,12 +118,12 @@ class ProjectServiceImplTest {
      * then throw NotFoundException
      */
     @Test
-    void Test_001_ProjectServiceWhenRecievesNonExistentProjectIDShouldThrowProjectNotFoundException(){
+    void Test_001_ProjectServiceWhenRecievesNonExistentProjectIDShouldThrowProjectNotFoundException() {
         String nonexistentID = "id_001";
         assertTrue(projectRepository.findById(nonexistentID).isEmpty());
 
         assertThrows(ProjectNotFoundException.class, () -> {
-            projectService.updateProject(projectUpdateDTO , nonexistentID);
+            projectService.updateProject(projectUpdateDTO, nonexistentID);
         });
     }
 
@@ -132,7 +133,23 @@ class ProjectServiceImplTest {
      * then update project with that id
      */
     @Test
-    void Test_002_UpdateProject(){
+    void Test_002_UpdateProject() {
+        val projectToModify = projectService.createProject(projectToCreate);
 
+        assertEquals("Project title", projectToModify.getTitle());
+        assertEquals("Testing exception for existing title", projectToModify.getDescription());
+        assertEquals("Owner´s name", projectToModify.getOwner());
+
+        projectService.updateProject(projectUpdateDTO, projectToModify.getId());
+
+//        val my_Updated_Projects = projectService.getAllProjects();
+//        assertFalse(my_Updated_Projects.isEmpty());
+//        assertEquals(1, my_Updated_Projects.size());
+//
+//        val myUpdatedProject = my_Updated_Projects.get(0);
+//        assertEquals(myUpdatedProject.getTitle() , projectToModify.getTitle());
+        assertEquals("new title" , projectToModify.getTitle());
+        assertEquals("new description" , projectToModify.getDescription());
+        assertEquals("new owner" , projectToModify.getOwner());
     }
 }

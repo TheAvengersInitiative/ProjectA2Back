@@ -43,12 +43,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project updateProject(ProjectUpdateDTO projectUpdateDTO , String projectToBeUpdatedID) {
-        val projectToBeUpdatedOptional = projectRepository.findById(projectToBeUpdatedID);
-        if (projectToBeUpdatedOptional.isEmpty()) {
+    public Project updateProject(ProjectUpdateDTO projectUpdateDTO, String projectToBeUpdatedID) {
+        val projectToModifyOptional = projectRepository.findById(projectToBeUpdatedID);
+        if (projectToModifyOptional.isEmpty()) {
             throw new ProjectNotFoundException(String.format("The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
-        val updatedProject = projectToBeUpdatedOptional.get();
+        val updatedProject = projectToModifyOptional.get();
         updatedProject.setOwner(projectUpdateDTO.getOwner());
         updatedProject.setTitle(projectUpdateDTO.getTitle());
         updatedProject.setLinks(projectUpdateDTO.getLinks());
