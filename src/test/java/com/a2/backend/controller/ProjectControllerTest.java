@@ -180,6 +180,7 @@ class ProjectControllerTest {
         assertTrue(projects.length==1);
 
 
+
         val deleteResponse =
                 restTemplate.exchange(
                         String.format("%s/%s", baseUrl, projects[0].getId()),
@@ -208,6 +209,7 @@ class ProjectControllerTest {
                         .owner(owner)
                         .build();
 
+
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
@@ -215,6 +217,7 @@ class ProjectControllerTest {
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+
 
         Project[] projects = getResponse.getBody();
 
@@ -236,6 +239,7 @@ class ProjectControllerTest {
         Project[] projects1 = getResponse1.getBody();
 
         assertTrue(projects1.length == 0);
+
     }
 
     @Test
@@ -391,6 +395,7 @@ class ProjectControllerTest {
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
     }
+
 
 
 

@@ -37,6 +37,7 @@ public class ProjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProject(@PathVariable String id) {
 
+
         boolean exists = false;
         List<Project> projects = projectService.getAllProjects();
 
