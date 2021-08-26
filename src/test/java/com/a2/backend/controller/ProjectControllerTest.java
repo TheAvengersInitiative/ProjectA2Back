@@ -1,10 +1,9 @@
 package com.a2.backend.controller;
 
-
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
-
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectUpdateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +30,9 @@ class ProjectControllerTest {
     private final String baseUrl = "/project";
 
     @Test
-
     void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated() {
-
-
-
         String title = "Project title";
-        String  description = "Testing exception for existing title";
+        String description = "Testing exception for existing title";
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
@@ -53,12 +48,9 @@ class ProjectControllerTest {
     }
 
     @Test
-
     void Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
-
-
         String title = "a";
-        String  description = "Testing exception for existing title";
+        String description = "Testing exception for existing title";
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
@@ -74,11 +66,9 @@ class ProjectControllerTest {
     }
 
     @Test
-
     void Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest() {
-
         String title = "Project title";
-        String  description = "Short";
+        String description = "Short";
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
@@ -92,7 +82,6 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
-
 
     @Test
     void Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
@@ -122,7 +111,7 @@ class ProjectControllerTest {
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
 
         String title = "Project title";
-        String  description = "Testing exception for existing title";
+        String description = "Testing exception for existing title";
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
@@ -139,15 +128,61 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
-        Project [] projects=getResponse.getBody();
+        Project[] projects = getResponse.getBody();
 
-        assertTrue(projects.length==1);
+        assertTrue(projects.length == 1);
 
-        String deleteResponse = restTemplate.exchange(String.format("%s/%s",baseUrl,projects[0].getId()), HttpMethod.DELETE, null, String.class).getBody();
+        String deleteResponse = restTemplate.exchange(String.format("%s/%s", baseUrl, projects[0].getId()), HttpMethod.DELETE, null, String.class).getBody();
 
         assertTrue(deleteResponse.equals(projects[0].getId()));
     }
 
 
-}
+    @Test
+    void Test_001_updateProjectController() {
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        String owner = "Owner´s name";
 
+        String titleforUpdate = "New Project Title";
+        String descriptionforUpdate = "New Project description";
+
+
+        ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
+                .title(title)
+                .description(description)
+                .owner(owner)
+                .build();
+
+        ProjectUpdateDTO projectUpdateDTO = ProjectUpdateDTO.builder()
+                .title(titleforUpdate)
+                .description(descriptionforUpdate)
+                .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        HttpEntity<ProjectUpdateDTO> requestUpdate = new HttpEntity<>(projectUpdateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, request, Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+
+        Project[] projects = getResponse.getBody();
+
+        assertTrue(projects.length == 1);
+
+        val updatedResponse = restTemplate.exchange(String.format("%s/%s", baseUrl, projects[0].getId()), HttpMethod.PUT, requestUpdate, Project.class);
+        assertEquals(HttpStatus.OK, updatedResponse.getStatusCode());
+
+        Project project = updatedResponse.getBody();
+
+        assertEquals(projectUpdateDTO.getTitle(), project.getTitle());
+        assertEquals(projectUpdateDTO.getDescription(), project.getDescription());
+
+//        Project updatedResponse = restTemplate.exchange(String.format("%s/%s",baseUrl,projects[0].getId()), HttpMethod.PUT, requestUpdate, Project.class).getBody();
+//
+//        assertTrue(projectUpdateDTO.getTitle().equals( updatedResponse.getTitle()));
+    }
+
+}
