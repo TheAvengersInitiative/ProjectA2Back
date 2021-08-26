@@ -2,6 +2,7 @@ package com.a2.backend.controller;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.service.ProjectService;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -32,5 +33,11 @@ public class ProjectController {
     public ResponseEntity<List<Project>> getAllProjects() {
         val projects = projectService.getAllProjects();
         return ResponseEntity.status(HttpStatus.OK).body(projects);
+    }
+
+    @PutMapping
+    public ResponseEntity<Project> updateProject(@RequestBody ProjectUpdateDTO projectUpdateDTO , String projectToBeUpdatedID){
+        val updatedProject = projectService.updateProject(projectUpdateDTO,projectToBeUpdatedID);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }
 }

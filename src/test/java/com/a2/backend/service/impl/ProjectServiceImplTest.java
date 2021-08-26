@@ -1,8 +1,10 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
+import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import lombok.val;
@@ -28,6 +30,7 @@ class ProjectServiceImplTest {
     @Autowired
     private ProjectRepository projectRepository;
 
+
     String title = "Project title";
     String  description = "Testing exception for existing title";
     String owner = "Owner´s name";
@@ -37,8 +40,11 @@ class ProjectServiceImplTest {
             .description(description)
             .owner(owner)
             .build();
-
-
+    ProjectUpdateDTO projectUpdateDTO = ProjectUpdateDTO.builder()
+            .title("new title")
+            .owner("new owner")
+            .description("new description")
+            .build();
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject(){
 
@@ -103,5 +109,30 @@ class ProjectServiceImplTest {
 
         Project singleProject = allProjects.get(0);
         assertEquals(savedProject, singleProject);
+    }
+
+    /**
+     * Given non existent id
+     * when projectService.updateProject
+     * then throw NotFoundException
+     */
+    @Test
+    void Test_001_ProjectServiceWhenRecievesNonExistentProjectIDShouldThrowProjectNotFoundException(){
+        String nonexistentID = "id_001";
+        assertTrue(projectRepository.findById(nonexistentID).isEmpty());
+
+        assertThrows(ProjectNotFoundException.class, () -> {
+            projectService.updateProject(projectUpdateDTO , nonexistentID);
+        });
+    }
+
+    /**
+     * Given right project id & updateProjectDTO
+     * when projectService.updateProject()
+     * then update project with that id
+     */
+    @Test
+    void Test_002_UpdateProject(){
+
     }
 }

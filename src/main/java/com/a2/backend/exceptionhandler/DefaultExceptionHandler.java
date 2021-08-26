@@ -1,5 +1,6 @@
 package com.a2.backend.exceptionhandler;
 
+import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,12 @@ public class DefaultExceptionHandler {
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException exception) {
         logger.info(exception.getMessage());
         return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(ProjectNotFoundException.class)
+    public ResponseEntity<?> handleProjectNotFoundException(ProjectNotFoundException exception){
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage() , HttpStatus.BAD_REQUEST);
     }
 
 }
