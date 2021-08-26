@@ -132,7 +132,6 @@ class ProjectControllerTest {
     }
 
 
-
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() {
 
@@ -275,7 +274,6 @@ class ProjectControllerTest {
 
     //@Test
     void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest() {
-
         String title = "Project title";
         String description = "Testing exception for existing title";
         String[] links = {"link1", "link2"};

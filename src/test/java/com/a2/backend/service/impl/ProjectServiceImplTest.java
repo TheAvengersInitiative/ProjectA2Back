@@ -149,6 +149,7 @@ class ProjectServiceImplTest {
     }
 
 
+
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
         // Given
@@ -214,12 +215,14 @@ class ProjectServiceImplTest {
         // When
         projectService.deleteProject(project.getId());
 
+
         // Then
         assertThrows(
                 ProjectWithThatIdDoesntExistException.class,
                 () -> {
                     projectService.deleteProject(project.getId());
                 });
+
     }
 
 
