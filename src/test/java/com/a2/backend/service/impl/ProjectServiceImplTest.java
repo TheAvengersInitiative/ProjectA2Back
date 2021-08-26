@@ -147,7 +147,6 @@ class ProjectServiceImplTest {
 
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
-
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
         Project project = projectService.createProject(projectToCreate);
@@ -229,6 +228,7 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(Arrays.asList(projectToCreate.getTags()), projectToBeDisplayed.getTags());
         assertEquals(Arrays.asList(projectToCreate.getLinks()), projectToBeDisplayed.getLinks());
+
     }
 
 }

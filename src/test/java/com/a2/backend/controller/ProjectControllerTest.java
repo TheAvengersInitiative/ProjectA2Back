@@ -136,9 +136,11 @@ class ProjectControllerTest {
     void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() {
 
         String title = "Project title";
+
         String description = "Testing exception for existing title";
         String[] links = {"link1", "link2"};
         String[] tags = {"tag1", "tag2"};
+
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -158,9 +160,9 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
-        Project[] projects = getResponse.getBody();
+        Project [] projects=getResponse.getBody();
 
-        assertTrue(projects.length == 1);
+        assertTrue(projects.length==1);
 
         val deleteResponse =
                 restTemplate.exchange(
@@ -199,6 +201,7 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
         Project[] projects = getResponse.getBody();
+
 
         assertTrue(projects.length == 1);
 
@@ -268,8 +271,10 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, deleteResponse1.getStatusCode());
     }
 
+
     //@Test
     void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest() {
+
         String title = "Project title";
         String description = "Testing exception for existing title";
         String[] links = {"link1", "link2"};
