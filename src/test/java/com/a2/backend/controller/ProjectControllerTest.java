@@ -120,7 +120,6 @@ class ProjectControllerTest {
     }
 
 
-
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
 
@@ -151,7 +150,7 @@ class ProjectControllerTest {
         assertTrue(deleteResponse.equals(projects[0].getId()));
     }
 
-
+    
 
 
 
