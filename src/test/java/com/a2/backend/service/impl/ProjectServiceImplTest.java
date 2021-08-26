@@ -140,7 +140,7 @@ class ProjectServiceImplTest {
         assertEquals("Testing exception for existing title", projectToModify.getDescription());
         assertEquals("Owner´s name", projectToModify.getOwner());
 
-        projectService.updateProject(projectUpdateDTO, projectToModify.getId());
+       val modifiedProject=  projectService.updateProject(projectUpdateDTO, projectToModify.getId());
 
 //        val my_Updated_Projects = projectService.getAllProjects();
 //        assertFalse(my_Updated_Projects.isEmpty());
@@ -148,8 +148,8 @@ class ProjectServiceImplTest {
 //
 //        val myUpdatedProject = my_Updated_Projects.get(0);
 //        assertEquals(myUpdatedProject.getTitle() , projectToModify.getTitle());
-        assertEquals("new title" , projectToModify.getTitle());
-        assertEquals("new description" , projectToModify.getDescription());
-        assertEquals("new owner" , projectToModify.getOwner());
+        assertEquals("new title" , modifiedProject.getTitle());
+        assertEquals("new description" , modifiedProject.getDescription());
+        assertEquals("new owner" , modifiedProject.getOwner());
     }
 }
