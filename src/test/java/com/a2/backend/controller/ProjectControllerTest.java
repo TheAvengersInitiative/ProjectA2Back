@@ -269,6 +269,7 @@ class ProjectControllerTest {
                         null,
                         String.class);
         assertEquals(HttpStatus.BAD_REQUEST, deleteResponse1.getStatusCode());
+
     }
 
 
@@ -374,6 +375,7 @@ class ProjectControllerTest {
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
     }
+
 
 }
 
