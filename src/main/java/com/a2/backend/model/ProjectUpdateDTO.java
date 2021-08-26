@@ -22,5 +22,4 @@ public class ProjectUpdateDTO {
     @Transient
     private String[] tags;
 
-    private String owner;
 }

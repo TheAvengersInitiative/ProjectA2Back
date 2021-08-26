@@ -146,7 +146,7 @@ class ProjectControllerTest {
 
         String titleforUpdate = "New Project Title";
         String descriptionforUpdate = "New Project description";
-        String ownerforUpdate = "New Project Owner";
+
 
         ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
                 .title(title)
@@ -157,7 +157,6 @@ class ProjectControllerTest {
         ProjectUpdateDTO projectUpdateDTO = ProjectUpdateDTO.builder()
                 .title(titleforUpdate)
                 .description(descriptionforUpdate)
-                .owner(ownerforUpdate)
                 .build();
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
@@ -180,7 +179,6 @@ class ProjectControllerTest {
 
         assertEquals(projectUpdateDTO.getTitle(), project.getTitle());
         assertEquals(projectUpdateDTO.getDescription(), project.getDescription());
-        assertEquals(projectUpdateDTO.getOwner(), project.getOwner());
 
 //        Project updatedResponse = restTemplate.exchange(String.format("%s/%s",baseUrl,projects[0].getId()), HttpMethod.PUT, requestUpdate, Project.class).getBody();
 //

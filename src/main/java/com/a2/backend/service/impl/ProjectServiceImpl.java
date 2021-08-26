@@ -50,7 +50,6 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectNotFoundException(String.format("The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
         val updatedProject = projectToModifyOptional.get();
-        updatedProject.setOwner(projectUpdateDTO.getOwner());
         updatedProject.setTitle(projectUpdateDTO.getTitle());
         updatedProject.setLinks(projectUpdateDTO.getLinks());
         updatedProject.setTags(projectUpdateDTO.getTags());
