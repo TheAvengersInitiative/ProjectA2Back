@@ -124,7 +124,7 @@ class ProjectControllerTest {
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
 
         String title = "Project title";
-        String description = "Testing exception for existing title";
+        String  description = "Testing exception for existing title";
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
@@ -141,14 +141,17 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
-        Project[] projects = getResponse.getBody();
+        Project [] projects=getResponse.getBody();
 
-        assertTrue(projects.length == 1);
+        assertTrue(projects.length==1);
 
-        String deleteResponse = restTemplate.exchange(String.format("%s/%s", baseUrl, projects[0].getId()), HttpMethod.DELETE, null, String.class).getBody();
+        String deleteResponse = restTemplate.exchange(String.format("%s/%s",baseUrl,projects[0].getId()), HttpMethod.DELETE, null, String.class).getBody();
 
         assertTrue(deleteResponse.equals(projects[0].getId()));
     }
+
+
+
 
 
     @Test

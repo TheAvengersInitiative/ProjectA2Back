@@ -126,6 +126,22 @@ class ProjectServiceImplTest {
         assertEquals(savedProject, singleProject);
     }
 
+    @Test
+    void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
+
+        //Given
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project project= projectService.createProject(projectToCreate);
+        List<Project> allProjects = projectService.getAllProjects();
+        assertEquals(1, allProjects.size());
+
+        //When
+        projectService.deleteProject(project.getId());
+
+        //Then
+        assertTrue(projectService.getAllProjects().isEmpty());
+    }
+
 
     /**
      * Given non existent id
@@ -166,21 +182,7 @@ class ProjectServiceImplTest {
         assertEquals("new description" , modifiedProject.getDescription());
     }
 
-    @Test
-    void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
-
-        //Given
-        assertTrue(projectService.getAllProjects().isEmpty());
-        Project project= projectService.createProject(projectToCreate);
-        List<Project> allProjects = projectService.getAllProjects();
-        assertEquals(1, allProjects.size());
-
-        //When
-        projectService.deleteProject(project.getId());
-
-        //Then
-        assertTrue(projectService.getAllProjects().isEmpty());
-    }
+    
 
     @Test
     void Test007_GivenASingleExistingProjectWhenDeletedTwiceThenExceptionShouldBeThrown() {
@@ -195,6 +197,7 @@ class ProjectServiceImplTest {
         projectService.deleteProject(project.getId());
 
         //Then
+
 
         assertThrows(ProjectWithThatIdDoesntExistException.class, () -> {
             projectService.deleteProject(project.getId());
