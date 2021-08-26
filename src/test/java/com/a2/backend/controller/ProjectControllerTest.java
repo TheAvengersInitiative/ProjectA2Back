@@ -16,6 +16,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -115,6 +117,37 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     }
+
+    @Test
+    void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
+
+        String title = "Project title";
+        String  description = "Testing exception for existing title";
+        String owner = "Owner´s name";
+
+        ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
+                .title(title)
+                .description(description)
+                .owner(owner)
+                .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+
+        Project [] projects=getResponse.getBody();
+
+        assertTrue(projects.length==1);
+
+        String deleteResponse = restTemplate.exchange(String.format("%s/%s",baseUrl,projects[0].getId()), HttpMethod.DELETE, null, String.class).getBody();
+
+        assertTrue(deleteResponse.equals(projects[0].getId()));
+    }
+
 
 }
 
