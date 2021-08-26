@@ -2,6 +2,7 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectNotFoundException;
+import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
@@ -47,6 +48,7 @@ class ProjectServiceImplTest {
             .build();
 
     @Test
+
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
 
         assertTrue(projectRepository.findAll().isEmpty());
@@ -60,26 +62,28 @@ class ProjectServiceImplTest {
 
         val project = projects.get(0);
         assertEquals(project, projectCreated);
-
     }
 
+
+
     @Test
+
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
-        projectService.createProject(projectToCreate);
+      projectService.createProject(projectToCreate);
 
-        String title2 = "Project title";
-        String description2 = "Testing exception for existing title";
-        String owner2 = "Owner´s name";
+      String title2 = "Project title";
+      String  description2 = "Testing exception for existing title";
+      String owner2 = "Owner´s name";
 
-        ProjectCreateDTO projectToCreateWithRepeatedTitle = ProjectCreateDTO.builder()
-                .title(title2)
-                .description(description2)
-                .owner(owner2)
-                .build();
+      ProjectCreateDTO projectToCreateWithRepeatedTitle = ProjectCreateDTO.builder()
+                                                  .title(title2)
+                                                  .description(description2)
+                                                  .owner(owner2)
+                                                  .build();
 
-        assertThrows(ProjectWithThatTitleExistsException.class, () -> {
-            projectService.createProject(projectToCreateWithRepeatedTitle);
-        });
+       assertThrows(ProjectWithThatTitleExistsException.class, () -> {
+          projectService.createProject(projectToCreateWithRepeatedTitle);
+       });
     }
 
     @Test
@@ -152,4 +156,39 @@ class ProjectServiceImplTest {
         assertEquals("new description" , modifiedProject.getDescription());
         assertEquals("new owner" , modifiedProject.getOwner());
     }
+
+    @Test
+    void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
+
+        //Given
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project project= projectService.createProject(projectToCreate);
+        List<Project> allProjects = projectService.getAllProjects();
+        assertEquals(1, allProjects.size());
+
+        //When
+        projectService.deleteProject(project.getId());
+
+        //Then
+        assertTrue(projectService.getAllProjects().isEmpty());
+    }
+
+    @Test
+    void Test007_GivenASingleExistingProjectWhenDeletedTwiceThenExceptionShouldBeThrown() {
+
+        //Given
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project project= projectService.createProject(projectToCreate);
+        List<Project> allProjects = projectService.getAllProjects();
+        assertEquals(1, allProjects.size());
+
+        //When
+        projectService.deleteProject(project.getId());
+
+        //Then
+        assertThrows(ProjectWithThatIdDoesntExistException.class, () -> {
+            projectService.deleteProject(project.getId());
+        });
+    }
+
 }

@@ -29,10 +29,19 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
+
     @GetMapping
     public ResponseEntity<List<Project>> getAllProjects() {
         val projects = projectService.getAllProjects();
         return ResponseEntity.status(HttpStatus.OK).body(projects);
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProject(@PathVariable String id) {
+        projectService.deleteProject(id);
+        return ResponseEntity.status(HttpStatus.OK).body(id);
+
     }
 
     @PutMapping

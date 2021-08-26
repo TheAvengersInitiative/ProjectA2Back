@@ -2,6 +2,7 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectNotFoundException;
+import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
@@ -56,6 +57,16 @@ public class ProjectServiceImpl implements ProjectService {
         updatedProject.setDescription(projectUpdateDTO.getDescription());
 
         return projectRepository.save(updatedProject);
+    }
+
+
+    @Override
+    public void deleteProject(String uuid) {
+        if (projectRepository.existsById(uuid)) {
+            projectRepository.deleteById(uuid);
+            return;
+        }
+        throw new ProjectWithThatIdDoesntExistException(String.format("No project found for id: %s", uuid));
     }
 
 }
