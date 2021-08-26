@@ -1,11 +1,11 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
-
+import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
-
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import lombok.val;
@@ -16,9 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 
-
 import java.util.List;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,8 +31,9 @@ class ProjectServiceImplTest {
     @Autowired
     private ProjectRepository projectRepository;
 
+
     String title = "Project title";
-    String  description = "Testing exception for existing title";
+    String description = "Testing exception for existing title";
     String owner = "Owner´s name";
 
     ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
@@ -42,7 +41,10 @@ class ProjectServiceImplTest {
             .description(description)
             .owner(owner)
             .build();
-
+    ProjectUpdateDTO projectUpdateDTO = ProjectUpdateDTO.builder()
+            .title("new title")
+            .description("new description")
+            .build();
 
     @Test
 
@@ -91,13 +93,10 @@ class ProjectServiceImplTest {
                     .description(description)
                     .owner(owner)
                     .build();
-
-    });
+        });
     }
 
-
     @Test
-
     void Test004_ProjectListWithNoSavedProjectsShouldBeEmpty() {
         assertTrue(projectService.getAllProjects().isEmpty());
     }
@@ -114,6 +113,45 @@ class ProjectServiceImplTest {
 
         Project singleProject = allProjects.get(0);
         assertEquals(savedProject, singleProject);
+    }
+
+    /**
+     * Given non existent id
+     * when projectService.updateProject
+     * then throw NotFoundException
+     */
+    @Test
+    void Test_001_ProjectServiceWhenRecievesNonExistentProjectIDShouldThrowProjectNotFoundException() {
+        String nonexistentID = "id_001";
+        assertTrue(projectRepository.findById(nonexistentID).isEmpty());
+
+        assertThrows(ProjectNotFoundException.class, () -> {
+            projectService.updateProject(projectUpdateDTO, nonexistentID);
+        });
+    }
+
+    /**
+     * Given right project id & updateProjectDTO
+     * when projectService.updateProject()
+     * then update project with that id
+     */
+    @Test
+    void Test_002_UpdateProject() {
+        val projectToModify = projectService.createProject(projectToCreate);
+
+        assertEquals("Project title", projectToModify.getTitle());
+        assertEquals("Testing exception for existing title", projectToModify.getDescription());
+
+       val modifiedProject=  projectService.updateProject(projectUpdateDTO, projectToModify.getId());
+
+//        val my_Updated_Projects = projectService.getAllProjects();
+//        assertFalse(my_Updated_Projects.isEmpty());
+//        assertEquals(1, my_Updated_Projects.size());
+//
+//        val myUpdatedProject = my_Updated_Projects.get(0);
+//        assertEquals(myUpdatedProject.getTitle() , projectToModify.getTitle());
+        assertEquals("new title" , modifiedProject.getTitle());
+        assertEquals("new description" , modifiedProject.getDescription());
     }
 
     @Test
@@ -151,4 +189,3 @@ class ProjectServiceImplTest {
     }
 
 }
-
