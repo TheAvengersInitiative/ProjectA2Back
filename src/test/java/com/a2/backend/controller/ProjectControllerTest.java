@@ -119,7 +119,6 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     }
 
-
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() {
 

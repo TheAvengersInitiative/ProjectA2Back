@@ -3,7 +3,9 @@ package com.a2.backend.service.impl;
 import com.a2.backend.entity.Project;
 
 
+
 import com.a2.backend.exception.ProjectNotFoundException;
+
 
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 
@@ -57,6 +59,7 @@ class ProjectServiceImplTest {
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
 
 
+
         assertTrue(projectRepository.findAll().isEmpty());
 
         Project projectCreated = projectService.createProject(projectToCreate);
@@ -65,6 +68,7 @@ class ProjectServiceImplTest {
 
         assertFalse(projects.isEmpty());
         assertEquals(1, projects.size());
+
 
         val project = projects.get(0);
         assertEquals(project, projectCreated);
@@ -127,7 +131,6 @@ class ProjectServiceImplTest {
     }
 
 
-
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
 
@@ -143,6 +146,7 @@ class ProjectServiceImplTest {
         //Then
         assertTrue(projectService.getAllProjects().isEmpty());
     }
+
 
 
     /**
@@ -186,6 +190,7 @@ class ProjectServiceImplTest {
 
 
 
+
     @Test
     void Test007_GivenASingleExistingProjectWhenDeletedTwiceThenExceptionShouldBeThrown() {
 
@@ -205,6 +210,8 @@ class ProjectServiceImplTest {
     }
 
 
+
 }
+
 
 

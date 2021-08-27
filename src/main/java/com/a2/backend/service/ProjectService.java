@@ -6,6 +6,7 @@ import com.a2.backend.model.ProjectUpdateDTO;
 
 
 
+
 import java.util.List;
 
 
@@ -18,7 +19,9 @@ public interface ProjectService{
 
 
 
+
     Project updateProject(ProjectUpdateDTO updateProject , String projectToBeUpdatedID);
+
 
 
 

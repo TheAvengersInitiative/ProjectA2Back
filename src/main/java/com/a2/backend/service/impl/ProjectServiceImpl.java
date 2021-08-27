@@ -1,11 +1,6 @@
 package com.a2.backend.service.impl;
-
 import com.a2.backend.entity.Project;
-
-
 import com.a2.backend.exception.ProjectNotFoundException;
-
-
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
