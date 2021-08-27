@@ -213,12 +213,9 @@ class ProjectServiceImplTest {
 
     @Test
     void Test_003_GivenValidProjectIDWhenAskedForProjectThenReturnProject(){
-        assertTrue(projectService.getAllProjects().isEmpty());
         Project project= projectService.createProject(projectToCreate);
-        List<Project> allProjects = projectService.getAllProjects();
-        assertEquals(1, allProjects.size());
 
-        val projectToBeDisplayed = projectService.getProjectDetails(allProjects.get(0).getId());
+        val projectToBeDisplayed = projectService.getProjectDetails(project.getId());
 
         assertEquals(project.getId() , projectToBeDisplayed.getId());
         assertEquals(project.getOwner() , projectToBeDisplayed.getOwner());

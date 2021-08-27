@@ -292,14 +292,7 @@ class ProjectControllerTest {
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-
-        Project[] projects = getResponse.getBody();
-
-        assertTrue(projects.length == 1);
-
-        val getProjectDetailsResponse = restTemplate.exchange(String.format("%s/%s", baseUrl, projects[0].getId()),
+        val getProjectDetailsResponse = restTemplate.exchange(String.format("%s/%s", baseUrl, postResponse.getBody().getId()),
                                     HttpMethod.GET , null , Project.class);
         assertEquals(HttpStatus.OK, getProjectDetailsResponse.getStatusCode());
 
