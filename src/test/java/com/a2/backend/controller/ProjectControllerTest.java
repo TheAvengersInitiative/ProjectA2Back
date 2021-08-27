@@ -218,7 +218,7 @@ class ProjectControllerTest {
 
     }
 
-    
+
 
 
 
@@ -269,6 +269,38 @@ class ProjectControllerTest {
 //        assertTrue(projectUpdateDTO.getTitle().equals( updatedResponse.getTitle()));
     }
 
+    /**
+     * Given valid ID
+     * Should return
+     */
+    @Test
+    void Test_002_GetProjectDetailsController(){
 
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        String owner = "Owner´s name";
+
+        ProjectCreateDTO projectToCreate = ProjectCreateDTO.builder()
+                .title(title)
+                .description(description)
+                .owner(owner)
+                .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        val getProjectDetailsResponse = restTemplate.exchange(String.format("%s/%s", baseUrl, postResponse.getBody().getId()),
+                                    HttpMethod.GET , null , Project.class);
+        assertEquals(HttpStatus.OK, getProjectDetailsResponse.getStatusCode());
+
+        Project project = getProjectDetailsResponse.getBody();
+
+        assertEquals(projectToCreate.getOwner() , project.getOwner());
+        assertEquals(projectToCreate.getTitle() , project.getTitle());
+        assertEquals(projectToCreate.getDescription() , project.getDescription());
+    }
 }
 
