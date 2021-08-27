@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -39,14 +40,30 @@ public class ProjectController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProject(@PathVariable String id) {
-        projectService.deleteProject(id);
-        return ResponseEntity.status(HttpStatus.OK).body(id);
+        boolean exists=false;
+        List<Project> projects=projectService.getAllProjects();
+
+        for(Project project: projects) {
+            if (project.getId().equals(id)) {
+                exists = true;
+                break;
+            }
+        }
+        if (exists) {
+            projectService.deleteProject(id);
+            return ResponseEntity.status(HttpStatus.OK).body(id);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id);
+        }
+
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@RequestBody ProjectUpdateDTO projectUpdateDTO , @PathVariable String id){
-        val updatedProject = projectService.updateProject(projectUpdateDTO,id);
+    public ResponseEntity<Project> updateProject(@RequestBody ProjectUpdateDTO projectUpdateDTO , @PathVariable String id) {
+        val updatedProject = projectService.updateProject(projectUpdateDTO, id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
+
+
     }
 }

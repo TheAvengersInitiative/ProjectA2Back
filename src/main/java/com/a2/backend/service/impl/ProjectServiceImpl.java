@@ -1,5 +1,4 @@
 package com.a2.backend.service.impl;
-
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
@@ -11,7 +10,9 @@ import com.a2.backend.service.ProjectService;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
+
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -44,6 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+
     public Project updateProject(ProjectUpdateDTO projectUpdateDTO, String projectToBeUpdatedID) {
         val projectToModifyOptional = projectRepository.findById(projectToBeUpdatedID);
         if (projectToModifyOptional.isEmpty()) {
@@ -60,6 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     @Override
+
     public void deleteProject(String uuid) {
         if (projectRepository.existsById(uuid)) {
             projectRepository.deleteById(uuid);
