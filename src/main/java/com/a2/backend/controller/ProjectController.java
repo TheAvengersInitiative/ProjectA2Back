@@ -66,4 +66,10 @@ public class ProjectController {
 
 
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Project> getProjectDetails(@PathVariable String id ){
+        val projectDetails = projectService.getProjectDetails(id);
+        return ResponseEntity.status(HttpStatus.OK).body(projectDetails);
+    }
 }

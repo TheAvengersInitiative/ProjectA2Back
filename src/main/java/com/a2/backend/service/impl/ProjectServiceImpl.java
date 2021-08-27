@@ -71,4 +71,8 @@ public class ProjectServiceImpl implements ProjectService {
         throw new ProjectWithThatIdDoesntExistException(String.format("No project found for id: %s", uuid));
     }
 
+    @Override
+    public Project getProjectDetails(String projectID) {
+        return projectRepository.findById(projectID) .orElseThrow(() -> new ProjectWithThatIdDoesntExistException(String.format("No project found for id: %s", projectID)));
+    }
 }
