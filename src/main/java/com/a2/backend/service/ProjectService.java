@@ -27,5 +27,5 @@ public interface ProjectService{
 
     void deleteProject(String uuid);
 
-
+    Project getProjectDetails(String id);
 }
