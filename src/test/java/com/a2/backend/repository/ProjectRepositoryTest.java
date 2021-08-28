@@ -75,7 +75,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    void deleteProjectById() {
+    void Test004_ProjectRepositoryWhenDeletedOnlyExistingProjectShouldReturnEmptyList() {
         projectRepository.save(project);
         List<Project> projects = projectRepository.findAll();
         val savedProject = projects.get(0);

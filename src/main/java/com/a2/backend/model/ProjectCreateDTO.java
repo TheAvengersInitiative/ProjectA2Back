@@ -1,6 +1,5 @@
 package com.a2.backend.model;
 
-import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 import lombok.*;
 
@@ -19,9 +18,9 @@ public class ProjectCreateDTO {
     @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters")
     private String description;
 
-    @Transient private String[] links;
+    private String[] links;
 
-    @Transient private String[] tags;
+    private String[] tags;
 
     @NonNull private String owner;
 }

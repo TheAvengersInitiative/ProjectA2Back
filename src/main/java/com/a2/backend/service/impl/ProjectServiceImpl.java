@@ -8,6 +8,7 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
+import java.util.Arrays;
 import java.util.List;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ public class ProjectServiceImpl implements ProjectService {
                     Project.builder()
                             .title(projectCreateDTO.getTitle())
                             .description(projectCreateDTO.getDescription())
+                            .links(Arrays.asList(projectCreateDTO.getLinks().clone()))
+                            .tags(Arrays.asList(projectCreateDTO.getTags().clone()))
                             .owner(projectCreateDTO.getOwner())
                             .build();
             return projectRepository.save(project);
@@ -55,8 +58,8 @@ public class ProjectServiceImpl implements ProjectService {
         }
         val updatedProject = projectToModifyOptional.get();
         updatedProject.setTitle(projectUpdateDTO.getTitle());
-        updatedProject.setLinks(projectUpdateDTO.getLinks());
-        updatedProject.setTags(projectUpdateDTO.getTags());
+        updatedProject.setLinks(Arrays.asList(projectUpdateDTO.getLinks().clone()));
+        updatedProject.setTags(Arrays.asList(projectUpdateDTO.getTags().clone()));
         updatedProject.setDescription(projectUpdateDTO.getDescription());
 
         return projectRepository.save(updatedProject);

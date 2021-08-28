@@ -1,9 +1,12 @@
 package com.a2.backend.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Getter
@@ -24,9 +27,13 @@ public class Project implements Serializable {
 
     private String description;
 
-    @Transient private String[] links;
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<String> links;
 
-    @Transient private String[] tags;
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<String> tags;
 
     private String owner;
 }
