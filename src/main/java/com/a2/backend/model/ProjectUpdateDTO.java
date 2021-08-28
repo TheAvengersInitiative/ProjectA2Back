@@ -1,6 +1,5 @@
 package com.a2.backend.model;
 
-import javax.persistence.Transient;
 import lombok.*;
 
 @Getter
@@ -15,7 +14,7 @@ public class ProjectUpdateDTO {
 
     private String description;
 
-    @Transient private String[] links;
+    private String[] links;
 
-    @Transient private String[] tags;
+    private String[] tags;
 }

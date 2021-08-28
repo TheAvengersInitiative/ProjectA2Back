@@ -10,6 +10,7 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
+import java.util.Arrays;
 import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -29,12 +30,28 @@ class ProjectServiceImplTest {
 
     String title = "Project title";
     String description = "Testing exception for existing title";
+    String[] links = {"link1", "link2"};
+    String[] tags = {"tag1", "tag2"};
     String owner = "Owner´s name";
 
+    String[] linksUpdate = {"link1", "link4"};
+    String[] tagsUpdate = {"tag4", "tag2"};
+
     ProjectCreateDTO projectToCreate =
-            ProjectCreateDTO.builder().title(title).description(description).owner(owner).build();
+            ProjectCreateDTO.builder()
+                    .title(title)
+                    .description(description)
+                    .links(links)
+                    .tags(tags)
+                    .owner(owner)
+                    .build();
     ProjectUpdateDTO projectUpdateDTO =
-            ProjectUpdateDTO.builder().title("new title").description("new description").build();
+            ProjectUpdateDTO.builder()
+                    .title("new title")
+                    .links(linksUpdate)
+                    .tags(tagsUpdate)
+                    .description("new description")
+                    .build();
 
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
@@ -49,7 +66,11 @@ class ProjectServiceImplTest {
         assertEquals(1, projects.size());
 
         val project = projects.get(0);
-        assertEquals(project, projectCreated);
+
+        assertEquals(projectToCreate.getTitle(), project.getTitle());
+        assertEquals(projectToCreate.getDescription(), project.getDescription());
+        assertEquals(Arrays.asList(projectToCreate.getTags()), project.getTags());
+        assertEquals(Arrays.asList(projectToCreate.getLinks()), project.getLinks());
     }
 
     @Test
@@ -64,6 +85,8 @@ class ProjectServiceImplTest {
                 ProjectCreateDTO.builder()
                         .title(title2)
                         .description(description2)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner2)
                         .build();
 
@@ -84,6 +107,8 @@ class ProjectServiceImplTest {
                     ProjectCreateDTO projectToCreate =
                             ProjectCreateDTO.builder()
                                     .description(description)
+                                    .links(links)
+                                    .tags(tags)
                                     .owner(owner)
                                     .build();
                 });
@@ -105,7 +130,11 @@ class ProjectServiceImplTest {
         assertEquals(1, allProjects.size());
 
         Project singleProject = allProjects.get(0);
-        assertEquals(savedProject, singleProject);
+
+        assertEquals(projectToCreate.getTitle(), singleProject.getTitle());
+        assertEquals(projectToCreate.getDescription(), singleProject.getDescription());
+        assertEquals(Arrays.asList(projectToCreate.getTags()), singleProject.getTags());
+        assertEquals(Arrays.asList(projectToCreate.getLinks()), singleProject.getLinks());
     }
 
     @Test
@@ -127,7 +156,7 @@ class ProjectServiceImplTest {
     /** Given non existent id when projectService.updateProject then throw NotFoundException */
     @Test
     void
-            Test_001_ProjectServiceWhenRecievesNonExistentProjectIDShouldThrowProjectNotFoundException() {
+            Test007_ProjectServiceWhenRecievesNonExistentProjectIDShouldThrowProjectNotFoundException() {
         String nonexistentID = "id_001";
         assertTrue(projectRepository.findById(nonexistentID).isEmpty());
 
@@ -143,7 +172,7 @@ class ProjectServiceImplTest {
      * project with that id
      */
     @Test
-    void Test_002_UpdateProject() {
+    void Test008_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProject() {
         val projectToModify = projectService.createProject(projectToCreate);
 
         assertEquals("Project title", projectToModify.getTitle());
@@ -163,7 +192,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
-    void Test007_GivenASingleExistingProjectWhenDeletedTwiceThenExceptionShouldBeThrown() {
+    void Test009_GivenASingleExistingProjectWhenDeletedTwiceThenExceptionShouldBeThrown() {
 
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
@@ -183,16 +212,16 @@ class ProjectServiceImplTest {
     }
 
     @Test
-    void Test_003_GivenValidProjectIDWhenAskedForProjectThenReturnProject() {
+    void Test010_GivenValidProjectIDWhenAskedForProjectThenReturnProject() {
         Project project = projectService.createProject(projectToCreate);
 
         val projectToBeDisplayed = projectService.getProjectDetails(project.getId());
 
         assertEquals(project.getId(), projectToBeDisplayed.getId());
-        assertEquals(project.getOwner(), projectToBeDisplayed.getOwner());
-        assertEquals(project.getTitle(), projectToBeDisplayed.getTitle());
-        assertEquals(project.getDescription(), projectToBeDisplayed.getDescription());
-        assertEquals(project.getLinks(), projectToBeDisplayed.getLinks());
-        assertEquals(project.getTags(), projectToBeDisplayed.getTags());
+        assertEquals(projectToCreate.getOwner(), projectToBeDisplayed.getOwner());
+        assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
+        assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
+        assertEquals(Arrays.asList(projectToCreate.getTags()), projectToBeDisplayed.getTags());
+        assertEquals(Arrays.asList(projectToCreate.getLinks()), projectToBeDisplayed.getLinks());
     }
 }
