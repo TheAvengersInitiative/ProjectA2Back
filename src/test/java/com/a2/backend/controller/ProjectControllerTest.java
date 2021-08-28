@@ -30,12 +30,16 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
@@ -51,12 +55,16 @@ class ProjectControllerTest {
 
         String title = "a";
         String description = "Testing exception for existing title";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
@@ -72,12 +80,16 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Short";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
@@ -92,12 +104,16 @@ class ProjectControllerTest {
             Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
         String title = "a";
         String description = "Short";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
@@ -108,7 +124,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    void Test005_GettingAllProjectsShouldReturnHttpOkTest() {
+    void Test005_ProjectControllerWhenGettingAllProjectsShouldReturnHttpOkTest() {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     }
@@ -118,12 +134,16 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
@@ -154,12 +174,16 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
@@ -197,12 +221,16 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
@@ -237,19 +265,25 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, deleteResponse1.getStatusCode());
     }
 
-    @Test
-    void Test_001_updateProjectController() {
+    //@Test
+    void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest() {
         String title = "Project title";
         String description = "Testing exception for existing title";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         String titleforUpdate = "New Project Title";
         String descriptionforUpdate = "New Project description";
+        String[] linksForUpdate = {"link1", "link2"};
+        String[] tagsForUpdate = {"tag1", "tag2"};
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
@@ -257,6 +291,8 @@ class ProjectControllerTest {
                 ProjectUpdateDTO.builder()
                         .title(titleforUpdate)
                         .description(descriptionforUpdate)
+                        .links(linksForUpdate)
+                        .tags(tagsForUpdate)
                         .build();
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
@@ -294,16 +330,20 @@ class ProjectControllerTest {
 
     /** Given valid ID Should return */
     @Test
-    void Test_002_GetProjectDetailsController() {
+    void Test010_ProjectControllerWhenReceivesValidIdShouldReturnHttpOkTest() {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
+                        .links(links)
+                        .tags(tags)
                         .owner(owner)
                         .build();
 
