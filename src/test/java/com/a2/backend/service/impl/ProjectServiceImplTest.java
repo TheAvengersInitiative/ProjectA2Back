@@ -3,11 +3,7 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Project;
-
-
 import com.a2.backend.exception.ProjectNotFoundException;
-import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
-
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
@@ -21,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-
-
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -61,9 +55,6 @@ class ProjectServiceImplTest {
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
 
-
-
-
         assertTrue(projectRepository.findAll().isEmpty());
 
         Project projectCreated = projectService.createProject(projectToCreate);
@@ -73,8 +64,6 @@ class ProjectServiceImplTest {
         assertFalse(projects.isEmpty());
         assertEquals(1, projects.size());
 
-
-
         val project = projects.get(0);
 
         assertEquals(projectToCreate.getTitle(), project.getTitle());
@@ -83,9 +72,7 @@ class ProjectServiceImplTest {
         assertEquals(Arrays.asList(projectToCreate.getLinks()), project.getLinks());
     }
 
-
     @Test
-
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
         projectService.createProject(projectToCreate);
 
@@ -110,7 +97,6 @@ class ProjectServiceImplTest {
     }
 
     @Test
-
     void
             Test003_ProjectServiceWhenReceiveCreateProjectDTOWithNullTitleShouldThrowNullPointerException() {
 
@@ -125,14 +111,9 @@ class ProjectServiceImplTest {
                                     .owner(owner)
                                     .build();
                 });
-
-
-
     }
 
-
     @Test
-
     void Test004_ProjectListWithNoSavedProjectsShouldBeEmpty() {
         assertTrue(projectService.getAllProjects().isEmpty());
     }
@@ -158,22 +139,18 @@ class ProjectServiceImplTest {
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
 
-        //Given
+        // Given
         assertTrue(projectService.getAllProjects().isEmpty());
-        Project project= projectService.createProject(projectToCreate);
+        Project project = projectService.createProject(projectToCreate);
         List<Project> allProjects = projectService.getAllProjects();
         assertEquals(1, allProjects.size());
 
-        //When
+        // When
         projectService.deleteProject(project.getId());
 
-        //Then
+        // Then
         assertTrue(projectService.getAllProjects().isEmpty());
     }
-
-
-
-
 
     /** Given non existent id when projectService.updateProject then throw NotFoundException */
     @Test
@@ -225,16 +202,13 @@ class ProjectServiceImplTest {
         // When
         projectService.deleteProject(project.getId());
 
-
         // Then
         assertThrows(
-                ProjectWithThatIdDoesntExistException.class,
+                ProjectNotFoundException.class,
                 () -> {
                     projectService.deleteProject(project.getId());
                 });
-
     }
-
 
     @Test
     void Test010_GivenValidProjectIDWhenAskedForProjectThenReturnProject() {
@@ -251,7 +225,6 @@ class ProjectServiceImplTest {
 
 
 
+
     }
-
 }
-

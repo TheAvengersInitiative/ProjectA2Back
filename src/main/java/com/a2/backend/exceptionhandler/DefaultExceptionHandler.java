@@ -1,8 +1,6 @@
 package com.a2.backend.exceptionhandler;
 
 import com.a2.backend.exception.ProjectNotFoundException;
-
-import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +21,11 @@ public class DefaultExceptionHandler {
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-
-    @ExceptionHandler(ProjectWithThatIdDoesntExistException.class)
+    @ExceptionHandler(ProjectNotFoundException.class)
     protected ResponseEntity<Object> handleProjectWithThatIdDoesntExist(
-            ProjectWithThatIdDoesntExistException exception) {
+            ProjectNotFoundException exception) {
         logger.info(exception.getMessage());
         return ResponseEntity.badRequest().build();
-
-
     }
 
     @ExceptionHandler(ProjectNotFoundException.class)
@@ -38,10 +33,4 @@ public class DefaultExceptionHandler {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
-
-
 }
-
-
-
-

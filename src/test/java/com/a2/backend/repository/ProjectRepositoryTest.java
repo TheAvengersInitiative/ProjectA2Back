@@ -74,11 +74,10 @@ class ProjectRepositoryTest {
         assertTrue(projectRepository.findByTitle("Another title").isEmpty());
     }
 
-
-
     @Test
 
     void Test004_ProjectRepositoryWhenDeletedOnlyExistingProjectShouldReturnEmptyList() {
+
 
         projectRepository.save(project);
         List<Project> projects = projectRepository.findAll();
@@ -87,13 +86,4 @@ class ProjectRepositoryTest {
         List<Project> projects1 = projectRepository.findAll();
         assertEquals(0, projects1.size());
     }
-
-
 }
-
-
-
-
-
-
-

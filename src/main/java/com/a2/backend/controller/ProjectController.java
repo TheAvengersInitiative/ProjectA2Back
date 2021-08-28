@@ -36,23 +36,8 @@ public class ProjectController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProject(@PathVariable String id) {
-
-
-        boolean exists = false;
-        List<Project> projects = projectService.getAllProjects();
-
-        for (Project project : projects) {
-            if (project.getId().equals(id)) {
-                exists = true;
-                break;
-            }
-        }
-        if (exists) {
-            projectService.deleteProject(id);
-            return ResponseEntity.status(HttpStatus.OK).body(id);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id);
-        }
+        projectService.deleteProject(id);
+        return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
     @PutMapping("/{id}")
@@ -61,9 +46,7 @@ public class ProjectController {
 
         val updatedProject = projectService.updateProject(projectUpdateDTO, id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
-
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectDetails(@PathVariable String id) {
