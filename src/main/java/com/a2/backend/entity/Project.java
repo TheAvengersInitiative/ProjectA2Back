@@ -1,12 +1,9 @@
 package com.a2.backend.entity;
 
+import java.io.Serializable;
+import javax.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Getter
@@ -27,14 +24,9 @@ public class Project implements Serializable {
 
     private String description;
 
-    @Transient
-    private String[] links;
+    @Transient private String[] links;
 
-    @Transient
-    private String[] tags;
+    @Transient private String[] tags;
 
     private String owner;
-
-
-
 }
