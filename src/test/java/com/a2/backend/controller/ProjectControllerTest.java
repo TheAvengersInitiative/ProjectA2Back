@@ -134,7 +134,6 @@ class ProjectControllerTest {
 
         String title = "Project title";
 
-
         String description = "Testing exception for existing title";
         String[] links = {"link1", "link2"};
         String[] tags = {"tag1", "tag2"};
@@ -268,8 +267,7 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, deleteResponse1.getStatusCode());
     }
 
-
-    //@Test
+    // @Test
     void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest() {
 
         String title = "Project title";

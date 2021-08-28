@@ -75,9 +75,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-
     void Test004_ProjectRepositoryWhenDeletedOnlyExistingProjectShouldReturnEmptyList() {
-
 
         projectRepository.save(project);
         List<Project> projects = projectRepository.findAll();

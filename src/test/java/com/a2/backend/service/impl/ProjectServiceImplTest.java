@@ -220,11 +220,5 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(Arrays.asList(projectToCreate.getTags()), projectToBeDisplayed.getTags());
         assertEquals(Arrays.asList(projectToCreate.getLinks()), projectToBeDisplayed.getLinks());
-
-
-
-
-
-
     }
 }
