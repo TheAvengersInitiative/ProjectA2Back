@@ -11,6 +11,8 @@ import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -156,7 +158,7 @@ class ProjectServiceImplTest {
     @Test
     void
             Test007_ProjectServiceWhenRecievesNonExistentProjectIDShouldThrowProjectNotFoundException() {
-        String nonexistentID = "id_001";
+        UUID nonexistentID = UUID.randomUUID();
         assertTrue(projectRepository.findById(nonexistentID).isEmpty());
 
         assertThrows(

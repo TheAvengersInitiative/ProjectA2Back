@@ -4,6 +4,7 @@ import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import java.util.List;
+import java.util.UUID;
 
 public interface ProjectService {
 
@@ -11,9 +12,9 @@ public interface ProjectService {
 
     List<Project> getAllProjects();
 
-    Project updateProject(ProjectUpdateDTO updateProject, String projectToBeUpdatedID);
+    Project updateProject(ProjectUpdateDTO updateProject, UUID projectToBeUpdatedID);
 
-    void deleteProject(String uuid);
+    void deleteProject(UUID uuid);
 
-    Project getProjectDetails(String id);
+    Project getProjectDetails(UUID id);
 }

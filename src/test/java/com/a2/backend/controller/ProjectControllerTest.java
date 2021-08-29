@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
+
+import java.util.UUID;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,9 +127,10 @@ class ProjectControllerTest {
     }
 
     @Test
-    void Test005_ProjectControllerWhenGettingAllProjectsShouldReturnHttpOkTest() {
+    void Test005_GivenNoExistingProjectsWhenGettingAllProjectsThenEmptyResponseIsReturned() {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        assertEquals(0, getResponse.getBody().length);
     }
 
     @Test
@@ -157,16 +161,16 @@ class ProjectControllerTest {
 
         Project[] projects = getResponse.getBody();
 
-        assertTrue(projects.length == 1);
+        assertEquals(1, projects.length);
 
         val deleteResponse =
                 restTemplate.exchange(
                         String.format("%s/%s", baseUrl, projects[0].getId()),
                         HttpMethod.DELETE,
                         null,
-                        String.class);
+                        UUID.class);
         assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
-        assertTrue(projects[0].getId().equals(deleteResponse.getBody()));
+        assertEquals(projects[0].getId(), deleteResponse.getBody());
     }
 
     @Test
@@ -197,23 +201,23 @@ class ProjectControllerTest {
 
         Project[] projects = getResponse.getBody();
 
-        assertTrue(projects.length == 1);
+        assertEquals(1, projects.length);
 
-        String deleteResponse =
+        val deleteResponse =
                 restTemplate
                         .exchange(
                                 String.format("%s/%s", baseUrl, projects[0].getId()),
                                 HttpMethod.DELETE,
                                 null,
-                                String.class)
+                                UUID.class)
                         .getBody();
-        assertTrue(deleteResponse.equals(projects[0].getId()));
+        assertEquals(deleteResponse, projects[0].getId());
 
         val getResponse1 = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse1.getStatusCode());
         Project[] projects1 = getResponse1.getBody();
 
-        assertTrue(projects1.length == 0);
+        assertEquals(0, projects1.length);
     }
 
     @Test
@@ -244,17 +248,17 @@ class ProjectControllerTest {
 
         Project[] projects = getResponse.getBody();
 
-        assertTrue(projects.length == 1);
+        assertEquals(1, projects.length);
 
-        String deleteResponse =
+        val deleteResponse =
                 restTemplate
                         .exchange(
                                 String.format("%s/%s", baseUrl, projects[0].getId()),
                                 HttpMethod.DELETE,
                                 null,
-                                String.class)
+                                UUID.class)
                         .getBody();
-        assertTrue(deleteResponse.equals(projects[0].getId()));
+        assertEquals(deleteResponse, projects[0].getId());
 
         val deleteResponse1 =
                 restTemplate.exchange(
@@ -306,7 +310,7 @@ class ProjectControllerTest {
 
         Project[] projects = getResponse.getBody();
 
-        assertTrue(projects.length == 1);
+        assertEquals(1, projects.length);
 
         val updatedResponse =
                 restTemplate.exchange(
@@ -365,5 +369,35 @@ class ProjectControllerTest {
         assertEquals(projectToCreate.getOwner(), project.getOwner());
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
+    }
+
+    @Test
+    void Test011_GivenAnExistingProjectWhenGettingAllProjectsThenItIsReturned() {
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        String[] links = {"link1", "link2"};
+        String[] tags = {"tag1", "tag2"};
+        String owner = "Owner´s name";
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        Project[] projects = getResponse.getBody();
+        assertEquals(1, projects.length);
+        assertEquals(title, projects[0].getTitle());
+        assertEquals(owner, projects[0].getOwner());
     }
 }
