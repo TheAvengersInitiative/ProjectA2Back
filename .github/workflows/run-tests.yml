@@ -22,4 +22,4 @@ jobs:
       - name: Setup Gradle Wrapper
         run: gradle wrapper --gradle-version 7.1.1
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew build
