@@ -9,6 +9,8 @@ import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +50,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project updateProject(ProjectUpdateDTO projectUpdateDTO, String projectToBeUpdatedID) {
+    public Project updateProject(ProjectUpdateDTO projectUpdateDTO, UUID projectToBeUpdatedID) {
         val projectToModifyOptional = projectRepository.findById(projectToBeUpdatedID);
         if (projectToModifyOptional.isEmpty()) {
             throw new ProjectNotFoundException(
@@ -65,7 +67,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void deleteProject(String uuid) {
+    public void deleteProject(UUID uuid) {
         if (projectRepository.existsById(uuid)) {
             projectRepository.deleteById(uuid);
             return;
@@ -74,7 +76,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project getProjectDetails(String projectID) {
+    public Project getProjectDetails(UUID projectID) {
         return projectRepository
                 .findById(projectID)
                 .orElseThrow(
