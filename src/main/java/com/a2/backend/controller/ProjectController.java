@@ -36,21 +36,8 @@ public class ProjectController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProject(@PathVariable String id) {
-        boolean exists = false;
-        List<Project> projects = projectService.getAllProjects();
-
-        for (Project project : projects) {
-            if (project.getId().equals(id)) {
-                exists = true;
-                break;
-            }
-        }
-        if (exists) {
-            projectService.deleteProject(id);
-            return ResponseEntity.status(HttpStatus.OK).body(id);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id);
-        }
+        projectService.deleteProject(id);
+        return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
     @PutMapping("/{id}")

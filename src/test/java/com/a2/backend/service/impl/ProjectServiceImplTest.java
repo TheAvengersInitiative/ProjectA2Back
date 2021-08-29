@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectNotFoundException;
-import com.a2.backend.exception.ProjectWithThatIdDoesntExistException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
@@ -205,7 +204,7 @@ class ProjectServiceImplTest {
 
         // Then
         assertThrows(
-                ProjectWithThatIdDoesntExistException.class,
+                ProjectNotFoundException.class,
                 () -> {
                     projectService.deleteProject(project.getId());
                 });
