@@ -5,6 +5,7 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.service.ProjectService;
 import java.util.List;
+import java.util.UUID;
 import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -35,20 +36,20 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProject(@PathVariable String id) {
+    public ResponseEntity<UUID> deleteProject(@PathVariable UUID id) {
         projectService.deleteProject(id);
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Project> updateProject(
-            @RequestBody ProjectUpdateDTO projectUpdateDTO, @PathVariable String id) {
+            @Valid @RequestBody ProjectUpdateDTO projectUpdateDTO, @PathVariable UUID id) {
         val updatedProject = projectService.updateProject(projectUpdateDTO, id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectDetails(@PathVariable String id) {
+    public ResponseEntity<Project> getProjectDetails(@PathVariable UUID id) {
         val projectDetails = projectService.getProjectDetails(id);
         return ResponseEntity.status(HttpStatus.OK).body(projectDetails);
     }
