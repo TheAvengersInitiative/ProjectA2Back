@@ -10,7 +10,6 @@ import com.a2.backend.service.ProjectService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -59,8 +58,8 @@ public class ProjectServiceImpl implements ProjectService {
         }
         val updatedProject = projectToModifyOptional.get();
         updatedProject.setTitle(projectUpdateDTO.getTitle());
-        updatedProject.setLinks(Arrays.asList(projectUpdateDTO.getLinks().clone()));
-        updatedProject.setTags(Arrays.asList(projectUpdateDTO.getTags().clone()));
+        updatedProject.setLinks(projectUpdateDTO.getLinks());
+        updatedProject.setTags(projectUpdateDTO.getTags());
         updatedProject.setDescription(projectUpdateDTO.getDescription());
 
         return projectRepository.save(updatedProject);

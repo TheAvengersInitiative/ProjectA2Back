@@ -6,6 +6,8 @@ import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import lombok.val;
@@ -279,8 +281,12 @@ class ProjectControllerTest {
 
         String titleforUpdate = "New Project Title";
         String descriptionforUpdate = "New Project description";
-        String[] linksForUpdate = {"link1", "link2"};
-        String[] tagsForUpdate = {"tag1", "tag2"};
+        List<String> linksForUpdate = new ArrayList<>();
+        linksForUpdate.add("link1");
+        linksForUpdate.add("link2");
+        List<String> tagsForUpdate = new ArrayList<>();
+        tagsForUpdate.add("tag1");
+        tagsForUpdate.add("tag2");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
