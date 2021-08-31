@@ -9,7 +9,6 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,11 +25,9 @@ import org.springframework.test.annotation.DirtiesContext;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectServiceImplTest {
 
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private ProjectService projectService;
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    @Autowired private ProjectRepository projectRepository;
 
     String title = "Project title";
     String description = "Testing exception for existing title";

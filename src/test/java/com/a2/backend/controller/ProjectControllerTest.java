@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,7 +269,7 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, deleteResponse1.getStatusCode());
     }
 
-    // @Test
+    @Test
     void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest() {
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -311,16 +309,9 @@ class ProjectControllerTest {
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, request, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-
-        Project[] projects = getResponse.getBody();
-
-        assertEquals(1, projects.length);
-
         val updatedResponse =
                 restTemplate.exchange(
-                        String.format("%s/%s", baseUrl, projects[0].getId()),
+                        String.format("%s/%s", baseUrl, postResponse.getBody().getId()),
                         HttpMethod.PUT,
                         requestUpdate,
                         Project.class);
@@ -330,12 +321,6 @@ class ProjectControllerTest {
 
         assertEquals(projectUpdateDTO.getTitle(), project.getTitle());
         assertEquals(projectUpdateDTO.getDescription(), project.getDescription());
-
-        // Project updatedResponse =
-        // restTemplate.exchange(String.format("%s/%s",baseUrl,projects[0].getId()),
-        // HttpMethod.PUT, requestUpdate, Project.class).getBody();
-        //
-        // assertTrue(projectUpdateDTO.getTitle().equals( updatedResponse.getTitle()));
     }
 
     /** Given valid ID Should return */
