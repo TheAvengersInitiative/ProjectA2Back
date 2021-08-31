@@ -9,10 +9,11 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,11 @@ import org.springframework.test.annotation.DirtiesContext;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectServiceImplTest {
 
-    @Autowired private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
-    @Autowired private ProjectRepository projectRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     String title = "Project title";
     String description = "Testing exception for existing title";
@@ -35,8 +38,10 @@ class ProjectServiceImplTest {
     String[] tags = {"tag1", "tag2"};
     String owner = "Owner´s name";
 
-    String[] linksUpdate = {"link1", "link4"};
-    String[] tagsUpdate = {"tag4", "tag2"};
+    String[] uLinks = {"link1", "link4"};
+    String[] uTags = {"tag4", "tag2"};
+    List<String> linksUpdate = new ArrayList<>(Arrays.asList(uLinks));
+    List<String> tagsUpdate = new ArrayList<>(Arrays.asList(uTags));
 
     ProjectCreateDTO projectToCreate =
             ProjectCreateDTO.builder()
