@@ -1,5 +1,6 @@
 package com.a2.backend.config;
 
+import com.a2.backend.annotation.Generated;
 import javax.sql.DataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile("test")
+@Generated
 public class TestConfig {
 
     @Bean
