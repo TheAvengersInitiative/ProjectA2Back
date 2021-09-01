@@ -2,6 +2,8 @@ package com.a2.backend.exceptionhandler;
 
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
+import com.a2.backend.exception.UserWithThatEmailExistsException;
+import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,20 @@ public class DefaultExceptionHandler {
 
     @ExceptionHandler(ProjectNotFoundException.class)
     public ResponseEntity<?> handleProjectNotFoundException(ProjectNotFoundException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserWithThatNicknameExistsException.class)
+    protected ResponseEntity<?> handleUserWithThatNicknameExists(
+            UserWithThatNicknameExistsException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserWithThatEmailExistsException.class)
+    protected ResponseEntity<?> handleUserWithThatEmailExists(
+            UserWithThatEmailExistsException exception) {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
