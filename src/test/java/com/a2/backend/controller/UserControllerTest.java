@@ -72,8 +72,9 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("Nickname must be between 3 and 24 characters", getResponse.getBody());
     }
 
     @Test
@@ -91,8 +92,9 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("Email must be valid", getResponse.getBody());
     }
 
     @Test
@@ -110,8 +112,9 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("Password must be between 8 and 32 characters", getResponse.getBody());
     }
 
     @Test
@@ -165,6 +168,8 @@ class UserControllerTest {
         val anotherGetResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, anotherRequest, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, anotherGetResponse.getStatusCode());
+        assertEquals(
+                "There is an existing user the nickname " + nickname, anotherGetResponse.getBody());
     }
 
     @Test
@@ -201,5 +206,7 @@ class UserControllerTest {
         val anotherGetResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, anotherRequest, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, anotherGetResponse.getStatusCode());
+        assertEquals(
+                "There is an existing user with the email " + email, anotherGetResponse.getBody());
     }
 }

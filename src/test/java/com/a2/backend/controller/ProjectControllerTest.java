@@ -1,13 +1,8 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +13,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -73,8 +74,9 @@ class ProjectControllerTest {
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("Title must be between 3 and 100 characters", getResponse.getBody());
     }
 
     @Test
@@ -98,8 +100,9 @@ class ProjectControllerTest {
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("Description must be between 10 and 500 characters", getResponse.getBody());
     }
 
     @Test
@@ -122,7 +125,7 @@ class ProjectControllerTest {
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
 
@@ -267,6 +270,7 @@ class ProjectControllerTest {
                         null,
                         String.class);
         assertEquals(HttpStatus.BAD_REQUEST, deleteResponse1.getStatusCode());
+        assertEquals("No project found for id: " + projects[0].getId(), deleteResponse1.getBody());
     }
 
     @Test
