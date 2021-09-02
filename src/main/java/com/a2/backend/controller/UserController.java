@@ -1,9 +1,12 @@
 package com.a2.backend.controller;
 
-import com.a2.backend.entity.User;
+import com.a2.backend.entity.ApplicationUser;
 import com.a2.backend.model.UserCreateDTO;
-import com.a2.backend.service.UserService;
+
 import javax.validation.Valid;
+
+import com.a2.backend.service.ApplicationUserService;
+
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
+    private final ApplicationUserService applicationUserService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(ApplicationUserService applicationUserService) {
+        this.applicationUserService = applicationUserService;
     }
 
     @PostMapping
-    public ResponseEntity<User> postNewUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        val createdUser = userService.createUser(userCreateDTO);
+    public ResponseEntity<ApplicationUser> postNewUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+        val createdUser = applicationUserService.createUser(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 }

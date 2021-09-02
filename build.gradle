@@ -6,6 +6,7 @@ plugins {
     id 'jacoco'
 }
 
+
 group = 'com.a2'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -37,12 +38,19 @@ jacocoTestCoverageVerification {
 check.dependsOn jacocoTestCoverageVerification
 
 dependencies {
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
@@ -55,6 +63,7 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
 }
+
 
 test {
     useJUnitPlatform()

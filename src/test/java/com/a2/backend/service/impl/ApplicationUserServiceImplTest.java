@@ -1,12 +1,10 @@
 package com.a2.backend.service.impl;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-import com.a2.backend.entity.User;
+import com.a2.backend.entity.ApplicationUser;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
-import com.a2.backend.service.UserService;
+import com.a2.backend.service.ApplicationUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,10 +14,11 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class UserServiceImplTest {
+class ApplicationUserServiceImplTest {
 
-    @Autowired private UserService userService;
 
+    @Autowired
+    private ApplicationUserService applicationUserService;
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";
@@ -35,14 +34,14 @@ class UserServiceImplTest {
 
     @Test
     void
-            Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
-        User persistedUser = userService.createUser(userCreateDTO);
 
-        assertEquals(nickname, persistedUser.getNickname());
-        assertEquals(email, persistedUser.getEmail());
-        assertEquals(biography, persistedUser.getBiography());
-        assertNotEquals(password, persistedUser.getPassword());
-        assertFalse(persistedUser.isActive());
+    Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
+        ApplicationUser persistedApplicationUser = applicationUserService.createUser(userCreateDTO);
+        assertEquals(nickname, persistedApplicationUser.getNickname());
+        assertEquals(email, persistedApplicationUser.getEmail());
+        assertEquals(biography, persistedApplicationUser.getBiography());
+        assertNotEquals(password, persistedApplicationUser.getPassword());
+        assertFalse(persistedApplicationUser.isActive());
     }
 
     @Test
@@ -55,11 +54,14 @@ class UserServiceImplTest {
                         .password("anotherPassword")
                         .build();
 
-        userService.createUser(userCreateDTO);
+        applicationUserService.createUser(userCreateDTO);
 
         assertThrows(
                 UserWithThatNicknameExistsException.class,
-                () -> userService.createUser(nonValidUserCreateDTO));
+
+                () -> {
+                    applicationUserService.createUser(nonValidUserCreateDTO);
+                });
     }
 
     @Test
@@ -72,10 +74,13 @@ class UserServiceImplTest {
                         .password("anotherPassword")
                         .build();
 
-        userService.createUser(userCreateDTO);
+        applicationUserService.createUser(userCreateDTO);
 
         assertThrows(
                 UserWithThatEmailExistsException.class,
-                () -> userService.createUser(nonValidUserCreateDTO));
+
+                () -> {
+                    applicationUserService.createUser(nonValidUserCreateDTO);
+                });
     }
 }

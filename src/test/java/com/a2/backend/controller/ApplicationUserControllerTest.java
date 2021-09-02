@@ -1,8 +1,6 @@
 package com.a2.backend.controller;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-import com.a2.backend.entity.User;
+import com.a2.backend.entity.ApplicationUser;
 import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class UserControllerTest {
+class ApplicationUserControllerTest {
 
     @Autowired TestRestTemplate restTemplate;
 
@@ -43,7 +41,7 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         val persistedUser = getResponse.getBody();
@@ -71,7 +69,8 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Nickname must be between 3 and 24 characters", getResponse.getBody());
     }
@@ -91,7 +90,8 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Email must be valid", getResponse.getBody());
     }
@@ -111,7 +111,8 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Password must be between 8 and 32 characters", getResponse.getBody());
     }
@@ -125,7 +126,7 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         val persistedUser = getResponse.getBody();
@@ -147,7 +148,7 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         String anotherEmail = "another@gmail.com";
@@ -185,7 +186,7 @@ class UserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         String anotherNickname = "anotherNickname";
