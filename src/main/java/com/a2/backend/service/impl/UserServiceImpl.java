@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
             throw new UserWithThatEmailExistsException(
                     String.format(
                             "There is an existing user with the email %s",
-                            userCreateDTO.getNickname()));
+                            userCreateDTO.getEmail()));
         User user =
                 User.builder()
                         .nickname(userCreateDTO.getNickname())

@@ -64,7 +64,7 @@ class UserRepositoryTest {
     void Test002_GivenAPersistedUserWhenFindingByNicknameThenItIsReturned() {
         userRepository.save(user);
 
-        val optionalPersistedUser = userRepository.findByNickname("nickname");
+        val optionalPersistedUser = userRepository.findByNickname(nickname);
 
         assertTrue(optionalPersistedUser.isPresent());
 
@@ -91,7 +91,7 @@ class UserRepositoryTest {
     void Test004_GivenAPersistedUserWhenFindingByEmailThenItIsReturned() {
         userRepository.save(user);
 
-        val optionalPersistedUser = userRepository.findByEmail("some@email.com");
+        val optionalPersistedUser = userRepository.findByEmail(email);
 
         assertTrue(optionalPersistedUser.isPresent());
 

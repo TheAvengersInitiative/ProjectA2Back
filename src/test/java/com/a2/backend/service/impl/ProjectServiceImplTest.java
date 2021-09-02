@@ -1,7 +1,5 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
@@ -9,16 +7,19 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -95,9 +96,7 @@ class ProjectServiceImplTest {
 
         assertThrows(
                 ProjectWithThatTitleExistsException.class,
-                () -> {
-                    projectService.createProject(projectToCreateWithRepeatedTitle);
-                });
+                () -> projectService.createProject(projectToCreateWithRepeatedTitle));
     }
 
     @Test
@@ -165,9 +164,7 @@ class ProjectServiceImplTest {
 
         assertThrows(
                 ProjectNotFoundException.class,
-                () -> {
-                    projectService.updateProject(projectUpdateDTO, nonexistentID);
-                });
+                () -> projectService.updateProject(projectUpdateDTO, nonexistentID));
     }
 
     /**
@@ -178,20 +175,15 @@ class ProjectServiceImplTest {
     void Test008_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProject() {
         val projectToModify = projectService.createProject(projectToCreate);
 
-        assertEquals("Project title", projectToModify.getTitle());
-        assertEquals("Testing exception for existing title", projectToModify.getDescription());
+        assertEquals(projectToCreate.getTitle(), projectToModify.getTitle());
+        assertEquals(projectToCreate.getDescription(), projectToModify.getDescription());
 
         val modifiedProject =
                 projectService.updateProject(projectUpdateDTO, projectToModify.getId());
 
-        // val my_Updated_Projects = projectService.getAllProjects();
-        // assertFalse(my_Updated_Projects.isEmpty());
-        // assertEquals(1, my_Updated_Projects.size());
-        //
-        // val myUpdatedProject = my_Updated_Projects.get(0);
-        // assertEquals(myUpdatedProject.getTitle() , projectToModify.getTitle());
-        assertEquals("new title", modifiedProject.getTitle());
-        assertEquals("new description", modifiedProject.getDescription());
+        assertEquals(projectToModify.getId(), modifiedProject.getId());
+        assertEquals(projectUpdateDTO.getTitle(), modifiedProject.getTitle());
+        assertEquals(projectUpdateDTO.getDescription(), modifiedProject.getDescription());
     }
 
     @Test
@@ -209,9 +201,7 @@ class ProjectServiceImplTest {
         // Then
         assertThrows(
                 ProjectNotFoundException.class,
-                () -> {
-                    projectService.deleteProject(project.getId());
-                });
+                () -> projectService.deleteProject(project.getId()));
     }
 
     @Test

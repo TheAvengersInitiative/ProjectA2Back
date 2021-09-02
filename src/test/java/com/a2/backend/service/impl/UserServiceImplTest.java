@@ -60,9 +60,7 @@ class UserServiceImplTest {
 
         assertThrows(
                 UserWithThatNicknameExistsException.class,
-                () -> {
-                    userService.createUser(nonValidUserCreateDTO);
-                });
+                () -> userService.createUser(nonValidUserCreateDTO));
     }
 
     @Test
@@ -79,8 +77,6 @@ class UserServiceImplTest {
 
         assertThrows(
                 UserWithThatEmailExistsException.class,
-                () -> {
-                    userService.createUser(nonValidUserCreateDTO);
-                });
+                () -> userService.createUser(nonValidUserCreateDTO));
     }
 }
