@@ -1,24 +1,17 @@
 package com.a2.backend.service.impl;
 
-import static java.util.Collections.emptyList;
-
 import com.a2.backend.entity.ApplicationUser;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.repository.ApplicationUserRepository;
 import com.a2.backend.service.ApplicationUserService;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApplicationUserServiceImpl implements ApplicationUserService, UserDetailsService {
+public class ApplicationUserServiceImpl implements ApplicationUserService {
 
     private final ApplicationUserRepository applicationUserRepository;
 
@@ -48,18 +41,5 @@ public class ApplicationUserServiceImpl implements ApplicationUserService, UserD
                         .password(passwordEncoder.encode(userCreateDTO.getPassword()))
                         .build();
         return applicationUserRepository.save(user);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String nickname) throws UsernameNotFoundException {
-        Optional<ApplicationUser> applicationUser =
-                applicationUserRepository.findByNickname(nickname);
-        if (!applicationUser.isPresent()) {
-            throw new UsernameNotFoundException(nickname);
-        }
-        return new User(
-                applicationUser.get().getNickname(),
-                applicationUser.get().getPassword(),
-                emptyList());
     }
 }
