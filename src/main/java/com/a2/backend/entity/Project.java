@@ -30,9 +30,9 @@ public class Project implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> links;
 
-    @ElementCollection
+    @OneToMany(cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<String> tags;
+    private List<Tag> tags;
 
     private String owner;
 }

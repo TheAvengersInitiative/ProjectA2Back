@@ -1,13 +1,14 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
+import com.a2.backend.entity.Tag;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
-import java.util.Arrays;
+import com.a2.backend.service.TagService;
 import java.util.List;
 import java.util.UUID;
 import lombok.val;
@@ -18,8 +19,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository) {
+    private final TagService tagService;
+
+    public ProjectServiceImpl(ProjectRepository projectRepository, TagService tagService) {
         this.projectRepository = projectRepository;
+        this.tagService = tagService;
     }
 
     @Override
@@ -27,12 +31,15 @@ public class ProjectServiceImpl implements ProjectService {
         // TODO: verify owner is user that created the project
         val existingProjectWithTitle = projectRepository.findByTitle(projectCreateDTO.getTitle());
         if (existingProjectWithTitle.isEmpty()) {
+
+            List<Tag> tags = tagService.createTagsList(projectCreateDTO.getTags());
+
             Project project =
                     Project.builder()
                             .title(projectCreateDTO.getTitle())
                             .description(projectCreateDTO.getDescription())
-                            .links(Arrays.asList(projectCreateDTO.getLinks().clone()))
-                            .tags(Arrays.asList(projectCreateDTO.getTags().clone()))
+                            .links(projectCreateDTO.getLinks())
+                            .tags(tags)
                             .owner(projectCreateDTO.getOwner())
                             .build();
             return projectRepository.save(project);
@@ -56,10 +63,13 @@ public class ProjectServiceImpl implements ProjectService {
                     String.format(
                             "The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
+
+        List<Tag> tags = tagService.createTagsList(projectUpdateDTO.getTags());
+
         val updatedProject = projectToModifyOptional.get();
         updatedProject.setTitle(projectUpdateDTO.getTitle());
         updatedProject.setLinks(projectUpdateDTO.getLinks());
-        updatedProject.setTags(projectUpdateDTO.getTags());
+        updatedProject.setTags(tags);
         updatedProject.setDescription(projectUpdateDTO.getDescription());
 
         return projectRepository.save(updatedProject);
