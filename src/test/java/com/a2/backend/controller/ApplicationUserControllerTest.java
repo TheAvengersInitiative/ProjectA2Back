@@ -71,8 +71,7 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Nickname must be between 3 and 24 characters", getResponse.getBody());
     }
@@ -92,8 +91,7 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Email must be valid", getResponse.getBody());
     }
@@ -113,8 +111,7 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Password must be between 8 and 32 characters", getResponse.getBody());
     }
