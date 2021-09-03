@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.ApplicationUser;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
@@ -16,9 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ApplicationUserServiceImplTest {
 
-
-    @Autowired
-    private ApplicationUserService applicationUserService;
+    @Autowired private ApplicationUserService applicationUserService;
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";
@@ -34,8 +34,7 @@ class ApplicationUserServiceImplTest {
 
     @Test
     void
-
-    Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
+            Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
         ApplicationUser persistedApplicationUser = applicationUserService.createUser(userCreateDTO);
         assertEquals(nickname, persistedApplicationUser.getNickname());
         assertEquals(email, persistedApplicationUser.getEmail());
@@ -58,7 +57,6 @@ class ApplicationUserServiceImplTest {
 
         assertThrows(
                 UserWithThatNicknameExistsException.class,
-
                 () -> {
                     applicationUserService.createUser(nonValidUserCreateDTO);
                 });
@@ -78,7 +76,6 @@ class ApplicationUserServiceImplTest {
 
         assertThrows(
                 UserWithThatEmailExistsException.class,
-
                 () -> {
                     applicationUserService.createUser(nonValidUserCreateDTO);
                 });

@@ -6,6 +6,4 @@ import com.a2.backend.model.UserCreateDTO;
 public interface ApplicationUserService {
 
     ApplicationUser createUser(UserCreateDTO userCreateDTO);
-
-
 }

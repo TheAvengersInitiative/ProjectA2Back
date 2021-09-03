@@ -1,5 +1,7 @@
 package com.a2.backend.controller;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.ApplicationUser;
 import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
@@ -21,7 +23,6 @@ class ApplicationUserControllerTest {
     @Autowired TestRestTemplate restTemplate;
 
     private final String baseUrl = "/user";
-
     private final String nickname = "nickname";
     private final String email = "some@gmail.com";
     private final String biography = "bio";
@@ -41,7 +42,8 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         val persistedUser = getResponse.getBody();
@@ -69,8 +71,8 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Nickname must be between 3 and 24 characters", getResponse.getBody());
     }
@@ -90,8 +92,8 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Email must be valid", getResponse.getBody());
     }
@@ -111,8 +113,8 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Password must be between 8 and 32 characters", getResponse.getBody());
     }
@@ -126,7 +128,8 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         val persistedUser = getResponse.getBody();
@@ -148,7 +151,8 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         String anotherEmail = "another@gmail.com";
@@ -186,7 +190,8 @@ class ApplicationUserControllerTest {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         String anotherNickname = "anotherNickname";

@@ -23,8 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ApplicationUserRepositoryTest {
 
-    @Autowired
-    private ApplicationUserRepository applicationUserRepository;
+    @Autowired private ApplicationUserRepository applicationUserRepository;
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";
@@ -63,7 +62,6 @@ class ApplicationUserRepositoryTest {
     void Test002_GivenAPersistedUserWhenFindingByNicknameThenItIsReturned() {
         applicationUserRepository.save(applicationUser);
 
-
         val optionalPersistedUser = applicationUserRepository.findByNickname("nickname");
         assertTrue(optionalPersistedUser.isPresent());
         val persistedUser = optionalPersistedUser.get();
@@ -87,7 +85,6 @@ class ApplicationUserRepositoryTest {
     @Test
     void Test004_GivenAPersistedUserWhenFindingByEmailThenItIsReturned() {
         applicationUserRepository.save(applicationUser);
-
 
         val optionalPersistedUser = applicationUserRepository.findByEmail("some@email.com");
 

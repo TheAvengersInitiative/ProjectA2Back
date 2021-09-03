@@ -1,27 +1,25 @@
 package com.a2.backend.service.impl;
+
+import static java.util.Collections.emptyList;
+
 import com.a2.backend.entity.ApplicationUser;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.repository.ApplicationUserRepository;
 import com.a2.backend.service.ApplicationUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.userdetails.User;
-import static java.util.Collections.emptyList;
-import java.util.Optional;
 
 @Service
 public class ApplicationUserServiceImpl implements ApplicationUserService, UserDetailsService {
 
     private final ApplicationUserRepository applicationUserRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public ApplicationUserServiceImpl(ApplicationUserRepository applicationUserRepository) {
         this.applicationUserRepository = applicationUserRepository;
@@ -44,18 +42,21 @@ public class ApplicationUserServiceImpl implements ApplicationUserService, UserD
                         .nickname(userCreateDTO.getNickname())
                         .email(userCreateDTO.getEmail())
                         .biography(userCreateDTO.getBiography())
-                        .password(passwordEncoder.encode(userCreateDTO.getPassword()))
+                        .password(new BCryptPasswordEncoder().encode(userCreateDTO.getPassword()))
                         .build();
         return applicationUserRepository.save(user);
     }
 
-
     @Override
     public UserDetails loadUserByUsername(String nickname) throws UsernameNotFoundException {
-        Optional<ApplicationUser> applicationUser = applicationUserRepository.findByNickname(nickname);
+        Optional<ApplicationUser> applicationUser =
+                applicationUserRepository.findByNickname(nickname);
         if (!applicationUser.isPresent()) {
             throw new UsernameNotFoundException(nickname);
         }
-        return new User(applicationUser.get().getNickname(), applicationUser.get().getPassword(), emptyList());
+        return new User(
+                applicationUser.get().getNickname(),
+                applicationUser.get().getPassword(),
+                emptyList());
     }
 }
