@@ -1,9 +1,8 @@
 package com.a2.backend.entity;
 
-import lombok.*;
-
-import javax.persistence.*;
 import java.util.UUID;
+import javax.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter
@@ -29,6 +28,5 @@ public class User {
 
     String password; // Hashed
 
-    @Builder.Default
-    boolean isActive = false;
+    @Builder.Default boolean isActive = false;
 }

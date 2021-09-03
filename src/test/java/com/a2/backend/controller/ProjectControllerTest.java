@@ -417,7 +417,7 @@ class ProjectControllerTest {
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
 
@@ -442,7 +442,7 @@ class ProjectControllerTest {
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
 
@@ -467,7 +467,7 @@ class ProjectControllerTest {
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
 
@@ -492,7 +492,7 @@ class ProjectControllerTest {
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
 }
