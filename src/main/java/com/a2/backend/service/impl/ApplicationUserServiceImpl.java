@@ -9,17 +9,20 @@ import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.repository.ApplicationUserRepository;
 import com.a2.backend.service.ApplicationUserService;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ApplicationUserServiceImpl implements ApplicationUserService, UserDetailsService {
 
     private final ApplicationUserRepository applicationUserRepository;
+
+    @Autowired private PasswordEncoder passwordEncoder;
 
     public ApplicationUserServiceImpl(ApplicationUserRepository applicationUserRepository) {
         this.applicationUserRepository = applicationUserRepository;
@@ -36,13 +39,13 @@ public class ApplicationUserServiceImpl implements ApplicationUserService, UserD
             throw new UserWithThatEmailExistsException(
                     String.format(
                             "There is an existing user with the email %s",
-                            userCreateDTO.getNickname()));
+                            userCreateDTO.getEmail()));
         ApplicationUser user =
                 ApplicationUser.builder()
                         .nickname(userCreateDTO.getNickname())
                         .email(userCreateDTO.getEmail())
                         .biography(userCreateDTO.getBiography())
-                        .password(new BCryptPasswordEncoder().encode(userCreateDTO.getPassword()))
+                        .password(passwordEncoder.encode(userCreateDTO.getPassword()))
                         .build();
         return applicationUserRepository.save(user);
     }
