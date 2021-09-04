@@ -1,6 +1,7 @@
 package com.a2.backend.security;
 
-import static com.a2.backend.constants.SecurityConstants.*;
+import static com.a2.backend.constants.SecurityConstants.HEADER_NAME;
+import static com.a2.backend.constants.SecurityConstants.KEY;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,9 +1,6 @@
 package com.a2.backend.exceptionhandler;
 
-import com.a2.backend.exception.ProjectNotFoundException;
-import com.a2.backend.exception.ProjectWithThatTitleExistsException;
-import com.a2.backend.exception.UserWithThatEmailExistsException;
-import com.a2.backend.exception.UserWithThatNicknameExistsException;
+import com.a2.backend.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -49,5 +46,11 @@ public class DefaultExceptionHandler {
         logger.info(exception.getMessage());
         return new ResponseEntity(
                 exception.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserIsNotActiveException.class)
+    protected ResponseEntity<?> handleUserIsNotActive(UserIsNotActiveException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 }
