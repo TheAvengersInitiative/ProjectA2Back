@@ -4,6 +4,7 @@ import static com.a2.backend.constants.SecurityConstants.HEADER_NAME;
 import static com.a2.backend.constants.SecurityConstants.KEY;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.io.IOException;
@@ -43,11 +44,11 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     private UsernamePasswordAuthenticationToken authenticate(HttpServletRequest request) {
         String token = request.getHeader(HEADER_NAME);
         if (token != null) {
-            Claims user =
-                    Jwts.parser()
+            Jws<Claims> user =
+                    Jwts.parserBuilder()
                             .setSigningKey(Keys.hmacShaKeyFor(KEY.getBytes()))
-                            .parseClaimsJws(token)
-                            .getBody();
+                            .build()
+                            .parseClaimsJws(token);
 
             if (user != null) {
                 return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());

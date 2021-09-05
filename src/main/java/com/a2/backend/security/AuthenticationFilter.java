@@ -60,7 +60,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String token =
                 Jwts.builder()
                         .setClaims(claims)
-                        .signWith(SignatureAlgorithm.HS512, key)
+                        .signWith(key, SignatureAlgorithm.HS512)
                         .setExpiration(exp)
                         .compact();
         res.addHeader("token", token);
