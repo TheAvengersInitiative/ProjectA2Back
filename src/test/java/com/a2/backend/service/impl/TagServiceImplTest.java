@@ -3,6 +3,7 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Tag;
+import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.TagService;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +20,8 @@ class TagServiceImplTest {
 
     @Autowired private TagService tagService;
 
+    @Autowired private TagRepository tagRepository;
+
     @Test
     void Test001_TagServiceWhenReceivesValidTagNameShouldCreateTagWithGivenName() {
         Tag tag = tagService.createTag("Tag name");
@@ -31,11 +34,23 @@ class TagServiceImplTest {
     void Test002_TagServiceWhenReceivesValidTagNamesShouldCreateTagListWithGivenNames() {
         List<String> tagNames = Arrays.asList("tag1", "tag2");
 
-        List<Tag> tagList = tagService.createTagsList(tagNames);
+        List<Tag> tagList = tagService.findOrCreateTag(tagNames);
 
         assertEquals(2, tagList.size());
 
         assertEquals("tag1", tagList.get(0).getName());
         assertEquals("tag2", tagList.get(1).getName());
+    }
+
+    @Test
+    void Test003_TagServiceGivenAnExistingTagWhenTheSameTagIsSentTheOldTagIsReused() {
+
+        Tag tag1 = tagRepository.save(tagService.createTag("tag1"));
+
+        List<Tag> tagList = tagService.findOrCreateTag(Arrays.asList("tag1", "tag2"));
+
+        assertEquals(2, tagList.size());
+
+        assertEquals(tagList.get(0).getId(), tag1.getId());
     }
 }

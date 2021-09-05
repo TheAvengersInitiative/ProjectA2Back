@@ -32,7 +32,7 @@ public class ProjectServiceImpl implements ProjectService {
         val existingProjectWithTitle = projectRepository.findByTitle(projectCreateDTO.getTitle());
         if (existingProjectWithTitle.isEmpty()) {
 
-            List<Tag> tags = tagService.createTagsList(projectCreateDTO.getTags());
+            List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
 
             Project project =
                     Project.builder()
@@ -64,7 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
                             "The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
 
-        List<Tag> tags = tagService.createTagsList(projectUpdateDTO.getTags());
+        List<Tag> tags = tagService.findOrCreateTag(projectUpdateDTO.getTags());
 
         val updatedProject = projectToModifyOptional.get();
         updatedProject.setTitle(projectUpdateDTO.getTitle());

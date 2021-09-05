@@ -72,7 +72,7 @@ class ProjectServiceImplTest {
 
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
-        assertEquals(tagService.createTagsList(projectToCreate.getTags()), project.getTags());
+        assertEquals(tagService.findOrCreateTag(projectToCreate.getTags()), project.getTags());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
     }
 
@@ -134,7 +134,8 @@ class ProjectServiceImplTest {
 
         assertEquals(projectToCreate.getTitle(), singleProject.getTitle());
         assertEquals(projectToCreate.getDescription(), singleProject.getDescription());
-        assertEquals(tagService.createTagsList(projectToCreate.getTags()), singleProject.getTags());
+        assertEquals(
+                tagService.findOrCreateTag(projectToCreate.getTags()), singleProject.getTags());
         assertEquals(projectToCreate.getLinks(), singleProject.getLinks());
     }
 
@@ -214,7 +215,7 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(
-                tagService.createTagsList(projectToCreate.getTags()),
+                tagService.findOrCreateTag(projectToCreate.getTags()),
                 projectToBeDisplayed.getTags());
         assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
     }

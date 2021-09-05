@@ -17,7 +17,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> createTagsList(List<String> tagsToAdd) {
+    public List<Tag> findOrCreateTag(List<String> tagsToAdd) {
         List<Tag> tagList = new ArrayList<>();
 
         for (String tagName : tagsToAdd) {

@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface TagService {
 
-    List<Tag> createTagsList(List<String> tagsToAdd);
+    List<Tag> findOrCreateTag(List<String> tagsToAdd);
 
     Tag createTag(String tagName);
 }
