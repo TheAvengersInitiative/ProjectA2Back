@@ -1,8 +1,14 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +19,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -34,8 +34,8 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -59,8 +59,8 @@ class ProjectControllerTest {
 
         String title = "a";
         String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -85,8 +85,8 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Short";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -110,8 +110,8 @@ class ProjectControllerTest {
             Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
         String title = "a";
         String description = "Short";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -141,8 +141,8 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -181,8 +181,8 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -228,8 +228,8 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -277,8 +277,8 @@ class ProjectControllerTest {
     void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest() {
         String title = "Project title";
         String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         String titleforUpdate = "New Project Title";
@@ -333,8 +333,8 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -370,8 +370,8 @@ class ProjectControllerTest {
     void Test011_GivenAnExistingProjectWhenGettingAllProjectsThenItIsReturned() {
         String title = "Project title";
         String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
@@ -394,5 +394,105 @@ class ProjectControllerTest {
         assertEquals(1, projects.length);
         assertEquals(title, projects[0].getTitle());
         assertEquals(owner, projects[0].getOwner());
+    }
+
+    @Test
+    void
+            Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest() {
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("", "tag2");
+        String owner = "Owner´s name";
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+    }
+
+    @Test
+    void
+            Test013_ProjectControllerWhenReceiveCreateProjectDTOWithTagLargerThanTwentyfourCharactersShouldReturnStatusBadRequest() {
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("This is not a valid tag for a project", "tag2");
+        String owner = "Owner´s name";
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+    }
+
+    @Test
+    void
+            Test014_ProjectControllerWhenReceiveCreateProjectDTOWithNoLinksShouldReturnStatusBadRequest() {
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList();
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        String owner = "Owner´s name";
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+    }
+
+    @Test
+    void
+            Test015_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanFiveLinksShouldReturnStatusBadRequest() {
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2", "link3", "link4", "link5", "link6");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        String owner = "Owner´s name";
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
     }
 }

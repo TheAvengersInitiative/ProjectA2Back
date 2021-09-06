@@ -1,5 +1,6 @@
 package com.a2.backend.model;
 
+import java.util.List;
 import javax.validation.constraints.Size;
 import lombok.*;
 
@@ -18,9 +19,11 @@ public class ProjectCreateDTO {
     @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters")
     private String description;
 
-    private String[] links;
+    @Size(min = 1, max = 5)
+    private List<String> links;
 
-    private String[] tags;
+    @Size(min = 1, max = 5)
+    private List<@Size(min = 1, max = 24) String> tags;
 
     @NonNull private String owner;
 }

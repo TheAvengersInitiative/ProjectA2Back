@@ -1,7 +1,10 @@
 package com.a2.backend.entity;
 
 import java.util.UUID;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.*;
 
 @Entity
@@ -12,21 +15,11 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class User {
+public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(unique = true)
-    String email;
-
-    @Column(unique = true)
-    String nickname;
-
-    String biography;
-
-    String password; // Hashed
-
-    @Builder.Default boolean isActive = false;
+    private String name;
 }

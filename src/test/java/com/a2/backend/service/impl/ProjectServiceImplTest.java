@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.Project;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
@@ -7,19 +9,16 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
+import com.a2.backend.service.TagService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -28,18 +27,18 @@ class ProjectServiceImplTest {
 
     @Autowired private ProjectService projectService;
 
+    @Autowired private TagService tagService;
+
     @Autowired private ProjectRepository projectRepository;
 
     String title = "Project title";
     String description = "Testing exception for existing title";
-    String[] links = {"link1", "link2"};
-    String[] tags = {"tag1", "tag2"};
+    List<String> links = Arrays.asList("link1", "link2");
+    List<String> tags = Arrays.asList("tag1", "tag2");
     String owner = "Owner´s name";
 
-    String[] uLinks = {"link1", "link4"};
-    String[] uTags = {"tag4", "tag2"};
-    List<String> linksUpdate = new ArrayList<>(Arrays.asList(uLinks));
-    List<String> tagsUpdate = new ArrayList<>(Arrays.asList(uTags));
+    List<String> linksUpdate = Arrays.asList("link1", "link4");
+    List<String> tagsUpdate = Arrays.asList("tag3", "tag4");
 
     ProjectCreateDTO projectToCreate =
             ProjectCreateDTO.builder()
@@ -60,11 +59,11 @@ class ProjectServiceImplTest {
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
 
-        assertTrue(projectRepository.findAll().isEmpty());
+        assertTrue(projectService.getAllProjects().isEmpty());
 
         Project projectCreated = projectService.createProject(projectToCreate);
 
-        val projects = projectRepository.findAll();
+        val projects = projectService.getAllProjects();
 
         assertFalse(projects.isEmpty());
         assertEquals(1, projects.size());
@@ -73,8 +72,8 @@ class ProjectServiceImplTest {
 
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
-        assertEquals(Arrays.asList(projectToCreate.getTags()), project.getTags());
-        assertEquals(Arrays.asList(projectToCreate.getLinks()), project.getLinks());
+        assertEquals(tagService.findOrCreateTag(projectToCreate.getTags()), project.getTags());
+        assertEquals(projectToCreate.getLinks(), project.getLinks());
     }
 
     @Test
@@ -135,8 +134,9 @@ class ProjectServiceImplTest {
 
         assertEquals(projectToCreate.getTitle(), singleProject.getTitle());
         assertEquals(projectToCreate.getDescription(), singleProject.getDescription());
-        assertEquals(Arrays.asList(projectToCreate.getTags()), singleProject.getTags());
-        assertEquals(Arrays.asList(projectToCreate.getLinks()), singleProject.getLinks());
+        assertEquals(
+                tagService.findOrCreateTag(projectToCreate.getTags()), singleProject.getTags());
+        assertEquals(projectToCreate.getLinks(), singleProject.getLinks());
     }
 
     @Test
@@ -214,7 +214,9 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getOwner(), projectToBeDisplayed.getOwner());
         assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
-        assertEquals(Arrays.asList(projectToCreate.getTags()), projectToBeDisplayed.getTags());
-        assertEquals(Arrays.asList(projectToCreate.getLinks()), projectToBeDisplayed.getLinks());
+        assertEquals(
+                tagService.findOrCreateTag(projectToCreate.getTags()),
+                projectToBeDisplayed.getTags());
+        assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
     }
 }
