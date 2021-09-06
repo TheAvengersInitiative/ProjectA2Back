@@ -5,7 +5,6 @@ import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
-import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -27,8 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProjectServiceImplTest {
 
     @Autowired private ProjectService projectService;
-
-    @Autowired private ProjectRepository projectRepository;
 
     String title = "Project title";
     String description = "Testing exception for existing title";
@@ -60,11 +57,11 @@ class ProjectServiceImplTest {
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
 
-        assertTrue(projectRepository.findAll().isEmpty());
+        assertTrue(projectService.getAllProjects().isEmpty());
 
         Project projectCreated = projectService.createProject(projectToCreate);
 
-        val projects = projectRepository.findAll();
+        val projects = projectService.getAllProjects();
 
         assertFalse(projects.isEmpty());
         assertEquals(1, projects.size());
@@ -160,7 +157,7 @@ class ProjectServiceImplTest {
     void
             Test007_ProjectServiceWhenRecievesNonExistentProjectIDShouldThrowProjectNotFoundException() {
         UUID nonexistentID = UUID.randomUUID();
-        assertTrue(projectRepository.findById(nonexistentID).isEmpty());
+        assertTrue(projectService.getAllProjects().isEmpty());
 
         assertThrows(
                 ProjectNotFoundException.class,
