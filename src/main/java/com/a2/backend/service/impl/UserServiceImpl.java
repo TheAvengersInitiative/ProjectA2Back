@@ -4,6 +4,7 @@ import com.a2.backend.entity.User;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
+import com.a2.backend.repository.ConfirmationTokenRepository;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,15 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+
     @Autowired private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            ConfirmationTokenRepository confirmationTokenRepository) {
         this.userRepository = userRepository;
+        this.confirmationTokenRepository = confirmationTokenRepository;
     }
 
     @Override
@@ -41,5 +47,18 @@ public class UserServiceImpl implements UserService {
                         .password(passwordEncoder.encode(userCreateDTO.getPassword()))
                         .build();
         return userRepository.save(user);
+    }
+
+    @Override
+    public User confirmUser(String token) {
+        return null;
+        /*
+        buscar si el token existe
+        if not, throw new exception : InvalidToken
+        user.setisActive = true;
+        confirmationToken.delete()
+
+        return userRepository.save();
+         */
     }
 }

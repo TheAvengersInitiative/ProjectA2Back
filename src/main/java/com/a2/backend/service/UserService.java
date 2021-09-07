@@ -6,4 +6,6 @@ import com.a2.backend.model.UserCreateDTO;
 public interface UserService {
 
     User createUser(UserCreateDTO userCreateDTO);
+
+    User confirmUser(String token);
 }
