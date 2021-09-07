@@ -1,7 +1,5 @@
 package com.a2.backend.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.User;
 import lombok.val;
@@ -14,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebCl
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureWebClient
 @DataJpaTest
@@ -107,5 +107,16 @@ class UserRepositoryTest {
         val nonExistingUser = userRepository.findByEmail("nonPersisted@email.com");
 
         assertTrue(nonExistingUser.isEmpty());
+    }
+
+    @Test
+    void Test006_GivenASinglePersistedUserWhenDeletingByIdThenNoUsersRemain() {
+        val persistedUser = userRepository.save(user);
+
+        assertEquals(1, userRepository.findAll().size());
+
+        userRepository.deleteById(persistedUser.getId());
+
+        assertTrue(userRepository.findAll().isEmpty());
     }
 }

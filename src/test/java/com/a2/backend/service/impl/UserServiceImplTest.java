@@ -1,8 +1,7 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.User;
+import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
@@ -13,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -50,7 +53,7 @@ class UserServiceImplTest {
     void Test002_GivenAUserCreateDTOWithAnExistingNicknameWhenCreatingUserThenExceptionIsThrown() {
         UserCreateDTO nonValidUserCreateDTO =
                 UserCreateDTO.builder()
-                        .nickname("nickname")
+                        .nickname(nickname)
                         .email("another@email.com")
                         .biography("another bio")
                         .password("anotherPassword")
@@ -70,7 +73,7 @@ class UserServiceImplTest {
         UserCreateDTO nonValidUserCreateDTO =
                 UserCreateDTO.builder()
                         .nickname("anotherNickname")
-                        .email("some@email.com")
+                        .email(email)
                         .biography("another bio")
                         .password("anotherPassword")
                         .build();
@@ -82,6 +85,38 @@ class UserServiceImplTest {
                 () -> {
                     userService.createUser(nonValidUserCreateDTO);
                 });
+    }
+
+    @Test
+    void Test004_GivenAnExistingUserWhenDeletingItThenAUserWithThatNicknameAndEmailCanBeCreated() {
+        User createdUser = userService.createUser(userCreateDTO);
+
+        userService.deleteUser(createdUser.getId());
+
+        UserCreateDTO anotherUserCreateDTO =
+                UserCreateDTO.builder()
+                        .nickname(nickname)
+                        .email(email)
+                        .biography("new bio")
+                        .password("new password")
+                        .build();
+
+        User anotherCreatedUser = userService.createUser(anotherUserCreateDTO);
+
+        assertNotEquals(createdUser.getId(), anotherCreatedUser.getId());
+
+        assertEquals(nickname, anotherCreatedUser.getNickname());
+        assertEquals(email, anotherCreatedUser.getEmail());
+        assertEquals("new bio", anotherCreatedUser.getBiography());
+        assertNotEquals("new password", anotherCreatedUser.getPassword());
+        assertFalse(anotherCreatedUser.isActive());
+    }
+
+    @Test
+    void Test005_GivenANonExistentIdWhenDeletingByIdThenExceptionIsThrown() {
+        UUID nonExistentId = UUID.randomUUID();
+
+        assertThrows(UserNotFoundException.class, () -> userService.deleteUser(nonExistentId));
     }
 
     @Test

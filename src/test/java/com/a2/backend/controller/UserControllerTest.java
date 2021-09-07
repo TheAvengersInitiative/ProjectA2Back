@@ -1,7 +1,5 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
@@ -14,6 +12,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -212,7 +214,50 @@ class UserControllerTest {
     }
 
     @Test
-    void Test008_GivenAValidTokenAndUserWhenConfirmingUserThenStatusOKisReturned() {
+    void Test008_GivenAnExistingUserWhenDeletedThenANewUserWithSameNicknameAndEmailCanBeCreated() {
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
+                        .nickname(nickname)
+                        .email(email)
+                        .biography(biography)
+                        .password(password)
+                        .build();
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
+
+        assertNotNull(getResponse.getBody());
+
+        val getDeleteResponse =
+                restTemplate.exchange(
+                        baseUrl + "/" + getResponse.getBody().getId(),
+                        HttpMethod.DELETE,
+                        null,
+                        String.class);
+        assertEquals(HttpStatus.OK, getDeleteResponse.getStatusCode());
+
+        val anotherGetResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, anotherGetResponse.getStatusCode());
+    }
+
+    @Test
+    void
+    Test009_GivenANonExistentIdWhenDeletingUserByIdThenExceptionIsThrownAndBadRequestIsReturned() {
+        UUID nonExistentId = UUID.randomUUID();
+
+        val getResponse =
+                restTemplate.exchange(
+                        baseUrl + "/" + nonExistentId, HttpMethod.DELETE, null, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+
+        assertEquals("No user found for id: " + nonExistentId, getResponse.getBody());
+    }
+
+    @Test
+    void Test010_GivenAValidTokenAndUserWhenConfirmingUserThenStatusOKisReturned() {
         UserCreateDTO userCreateDTO =
                 UserCreateDTO.builder()
                         .nickname(nickname)

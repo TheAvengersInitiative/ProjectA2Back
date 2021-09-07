@@ -31,4 +31,10 @@ public class UserController {
         val userConfirmed = userService.confirmUser(token, id);
         return ResponseEntity.status(HttpStatus.OK).body(userConfirmed);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
+        userService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
 }

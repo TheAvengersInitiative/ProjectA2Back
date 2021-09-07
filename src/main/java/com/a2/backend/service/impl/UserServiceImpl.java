@@ -1,6 +1,7 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
@@ -12,6 +13,8 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -45,6 +48,13 @@ public class UserServiceImpl implements UserService {
                         .confirmationToken(userCreateDTO.getConfirmationToken())
                         .build();
         return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser(UUID id) {
+        if (!userRepository.existsById(id))
+            throw new UserNotFoundException(String.format("No user found for id: %s", id));
+        userRepository.deleteById(id);
     }
 
     @Override
