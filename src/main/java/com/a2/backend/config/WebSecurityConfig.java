@@ -1,7 +1,6 @@
 package com.a2.backend.config;
 
-import com.a2.backend.security.AuthenticationFilter;
-import com.a2.backend.security.AuthorizationFilter;
+import com.a2.backend.security.*;
 import com.a2.backend.service.impl.ApplicationUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .logout()
+                .and()
                 .cors()
                 .and()
                 .csrf()

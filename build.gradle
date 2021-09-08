@@ -38,6 +38,8 @@ jacocoTestCoverageVerification {
 check.dependsOn jacocoTestCoverageVerification
 
 dependencies {
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl

@@ -14,7 +14,6 @@ import java.security.Key;
 import java.sql.Date;
 import java.util.ArrayList;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,22 +36,24 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         try {
             ApplicationUser applicationUser =
                     new ObjectMapper().readValue(req.getInputStream(), ApplicationUser.class);
-
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            applicationUser.getNickname(),
+                            applicationUser.getEmail(),
                             applicationUser.getPassword(),
                             new ArrayList<>()));
+
         } catch (IOException e) {
+
             throw new RuntimeException(e);
         }
     }
 
     @Override
     protected void successfulAuthentication(
-            HttpServletRequest req, HttpServletResponse res, FilterChain chain, Authentication auth)
-            throws IOException, ServletException {
-
+            HttpServletRequest req,
+            HttpServletResponse res,
+            FilterChain chain,
+            Authentication auth) {
         Date exp = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
 
         Key key = Keys.hmacShaKeyFor(KEY.getBytes());
