@@ -1,6 +1,7 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Tag;
+import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.TagService;
 import java.util.ArrayList;
@@ -13,8 +14,11 @@ public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
 
-    public TagServiceImpl(TagRepository tagRepository) {
+    private final ProjectRepository projectRepository;
+
+    public TagServiceImpl(TagRepository tagRepository, ProjectRepository projectRepository) {
         this.tagRepository = tagRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Override
@@ -52,5 +56,28 @@ public class TagServiceImpl implements TagService {
             optionalTag.ifPresent(tagsFound::add);
         }
         return tagsFound;
+    }
+
+    @Override
+    public List<Tag> updateTags(List<String> updatedTags, List<Tag> currentTags) {
+        List<Tag> removedTags = new ArrayList<>();
+
+        for (Tag tag : currentTags) {
+            if (!updatedTags.contains(tag.getName())) {
+                removedTags.add(tag);
+            }
+        }
+
+        deleteUnusedTags(removedTags);
+        return findOrCreateTag(updatedTags);
+    }
+
+    @Override
+    public void deleteUnusedTags(List<Tag> tags) {
+        for (Tag tag : tags) {
+            if (projectRepository.findProjectsByTagName(tag.getName()).isEmpty()) {
+                tagRepository.deleteById(tag.getId());
+            }
+        }
     }
 }

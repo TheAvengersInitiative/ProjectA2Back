@@ -3,6 +3,9 @@ package com.a2.backend.repository;
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
+import com.a2.backend.entity.Tag;
+import java.util.Arrays;
+import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -143,5 +146,49 @@ class ProjectRepositoryTest {
         assertEquals(1, projectRepository.findAll().size());
 
         assertEquals("JohnDoe", projectRepository.findAll().get(0).getOwner().getNickname());
+    }
+
+    @Test
+    void Test007_ProjectRepositoryWhenGivenTagNameShouldReturnAllProjectsThatHaveThatTag() {
+        Tag tag1 = Tag.builder().name("tag1").build();
+        Tag tag2 = Tag.builder().name("tag2").build();
+        Tag tag3 = Tag.builder().name("tag3").build();
+
+        Project project1 =
+                Project.builder()
+                        .title("Project1")
+                        .description("My description")
+                        .owner("Owner1")
+                        .links(Arrays.asList("link1", "link2"))
+                        .tags(Arrays.asList(tag1, tag2))
+                        .build();
+
+        Project project2 =
+                Project.builder()
+                        .title("Project2")
+                        .description("My description")
+                        .owner("Owner2")
+                        .links(Arrays.asList("link1", "link2"))
+                        .tags(Arrays.asList(tag1, tag3))
+                        .build();
+
+        Project project3 =
+                Project.builder()
+                        .title("Project3")
+                        .description("My description")
+                        .owner("Owner3")
+                        .links(Arrays.asList("link1", "link2"))
+                        .tags(Arrays.asList(tag1, tag3))
+                        .build();
+
+        projectRepository.save(project1);
+        projectRepository.save(project2);
+        projectRepository.save(project3);
+
+        List<Project> projectsWithTag3 = projectRepository.findProjectsByTagName("tag3");
+
+        assertEquals(2, projectsWithTag3.size());
+        assertEquals("Project2", projectsWithTag3.get(0).getTitle());
+        assertEquals("Project3", projectsWithTag3.get(1).getTitle());
     }
 }

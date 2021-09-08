@@ -13,4 +13,8 @@ public interface TagService {
     Optional<Tag> findTag(String tagName);
 
     List<Tag> findTags(List<String> tagsToFind);
+
+    List<Tag> updateTags(List<String> updated, List<Tag> current);
+
+    void deleteUnusedTags(List<Tag> tags);
 }
