@@ -16,6 +16,9 @@ import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
@@ -31,9 +34,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public Project createProject(ProjectCreateDTO projectCreateDTO) {
-        // TODO: verify owner is user that created the project
         val existingProjectWithTitle = projectRepository.findByTitle(projectCreateDTO.getTitle());
-        if (existingProjectWithTitle.isEmpty()) {
+        if (existingProjectWithTitle.isEmpty()
+                || !existingProjectWithTitle.get().getOwner().equals(projectCreateDTO.getOwner())) {
 
             List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
 

@@ -1,8 +1,7 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.Project;
+import com.a2.backend.entity.User;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -10,9 +9,6 @@ import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +16,37 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectServiceImplTest {
 
-    @Autowired private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
-    @Autowired private TagService tagService;
+    @Autowired
+    private TagService tagService;
 
-    @Autowired private ProjectRepository projectRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     String title = "Project title";
     String description = "Testing exception for existing title";
     List<String> links = Arrays.asList("link1", "link2");
     List<String> tags = Arrays.asList("tag1", "tag2");
-    String owner = "Owner´s name";
+    User owner =
+            User.builder()
+                    .nickname("nickname")
+                    .email("some@email.com")
+                    .biography("bio")
+                    .password("password")
+                    .build();
 
     List<String> linksUpdate = Arrays.asList("link1", "link4");
     List<String> tagsUpdate = Arrays.asList("tag3", "tag4");
@@ -82,7 +93,6 @@ class ProjectServiceImplTest {
 
         String title2 = "Project title";
         String description2 = "Testing exception for existing title";
-        String owner2 = "Owner´s name";
 
         ProjectCreateDTO projectToCreateWithRepeatedTitle =
                 ProjectCreateDTO.builder()
@@ -90,7 +100,7 @@ class ProjectServiceImplTest {
                         .description(description2)
                         .links(links)
                         .tags(tags)
-                        .owner(owner2)
+                        .owner(owner)
                         .build();
 
         assertThrows(
@@ -219,7 +229,47 @@ class ProjectServiceImplTest {
     }
 
     @Test
-    void Test011_GivenASingleExistingProjectWhenSearchedByTitleItShouldBeFound() {
+    void
+    Test011_GivenACreateProjectDTOWithExistingTitleButDifferentOwnerWhenCreatingProjectThenItIsCreated() {
+        projectService.createProject(projectToCreate);
+
+        String title2 = "Project title";
+        String description2 = "Testing no exception for existing title but different owner";
+        User owner2 =
+                User.builder()
+                        .nickname("nickname2")
+                        .email("another@email.com")
+                        .biography("another bio")
+                        .password("anotherPassword")
+                        .build();
+        List<String> links2 = Arrays.asList("link3", "link4");
+        List<String> tags2 = Arrays.asList("tag3", "tag4");
+
+        ProjectCreateDTO projectToCreateWithRepeatedTitle =
+                ProjectCreateDTO.builder()
+                        .title(title2)
+                        .description(description2)
+                        .links(links2)
+                        .tags(tags2)
+                        .owner(owner2)
+                        .build();
+
+        projectService.createProject(projectToCreateWithRepeatedTitle);
+
+        val projects = projectService.getAllProjects();
+
+        assertFalse(projects.isEmpty());
+        assertEquals(2, projects.size());
+
+        val project = projects.get(0);
+        val project2 = projects.get(1);
+
+        assertEquals(project.getTitle(), project2.getTitle());
+        assertNotEquals(project.getOwner(), project2.getOwner());
+    }
+
+    @Test
+    void Test012_GivenASingleExistingProjectWhenSearchedByTitleItShouldBeFound() {
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title("Not Project")
@@ -253,7 +303,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
-    void Test012_GivenExistingTagsAndAValidProjectCreateDTOWhenCreatingProjectThenItIsCreated() {
+    void Test013_GivenExistingTagsAndAValidProjectCreateDTOWhenCreatingProjectThenItIsCreated() {
         projectService.createProject(projectToCreate);
 
         String title2 = "A Non Existent Project title";
