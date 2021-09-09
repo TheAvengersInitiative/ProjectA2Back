@@ -1,5 +1,6 @@
 package com.a2.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.UUID;
 import javax.persistence.*;
 import lombok.*;
@@ -26,7 +27,9 @@ public class User {
 
     String biography;
 
-    String password; // Hashed
+    @JsonIgnore String password; // Hashed
+
+    @JsonIgnore String confirmationToken;
 
     @Builder.Default boolean isActive = false;
 }

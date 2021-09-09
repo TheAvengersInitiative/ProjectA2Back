@@ -21,7 +21,12 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public void sendConfirmationMail(User user, String confirmationToken) {
-        this.sendEmail(user.getEmail(), " ", confirmationToken);
+        this.sendEmail(
+                user.getEmail(),
+                "Account confirmation",
+                "Hello in order to confirm your account press this link: "
+                        + "http://localhost:3000/user/confirm?token="
+                        + confirmationToken);
     }
 
     @Override

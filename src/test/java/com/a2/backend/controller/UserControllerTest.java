@@ -23,11 +23,13 @@ class UserControllerTest {
     @Autowired TestRestTemplate restTemplate;
 
     private final String baseUrl = "/user";
+    private final String confirmationUrl = "/confirm";
 
     private final String nickname = "nickname";
     private final String email = "some@gmail.com";
     private final String biography = "bio";
     private final String password = "password";
+    private final String confirmationToken = "token001";
 
     @Test
     void
@@ -207,5 +209,42 @@ class UserControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, anotherGetResponse.getStatusCode());
         assertEquals(
                 "There is an existing user with the email " + email, anotherGetResponse.getBody());
+    }
+
+    @Test
+    void Test008_GivenAValidTokenAndUserWhenConfirmingUserThenStatusOKisReturned() {
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
+                        .nickname(nickname)
+                        .email(email)
+                        .biography(biography)
+                        .password(password)
+                        .confirmationToken(confirmationToken)
+                        .build();
+        String validConfirmationToken = "token001";
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        val userToActivate = postResponse.getBody();
+
+        val getResponse =
+                restTemplate.exchange(
+                        String.format(
+                                "%s/%s/%s/%s",
+                                baseUrl,
+                                confirmationUrl,
+                                validConfirmationToken,
+                                userToActivate.getId()),
+                        HttpMethod.GET,
+                        null,
+                        User.class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+
+        val activatedUser = getResponse.getBody();
+
+        assertTrue(activatedUser.isActive());
     }
 }

@@ -3,6 +3,7 @@ package com.a2.backend.controller;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.service.UserService;
+import java.util.UUID;
 import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,10 @@ public class UserController {
         val createdUser = userService.createUser(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
-    //    @GetMapping("/confirm/{token}")
-    //    public ResponseEntity<User> confirmUser(@PathVariable String token){
-    //
-    //    }
+
+    @GetMapping("/confirm/{token}/{id}")
+    public ResponseEntity<User> confirmUser(@PathVariable String token, @PathVariable UUID id) {
+        val userConfirmed = userService.confirmUser(token, id);
+        return ResponseEntity.status(HttpStatus.OK).body(userConfirmed);
+    }
 }
