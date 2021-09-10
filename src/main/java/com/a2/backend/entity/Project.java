@@ -35,6 +35,6 @@ public class Project implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Tag> tags;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.MERGE})
     private User owner;
 }

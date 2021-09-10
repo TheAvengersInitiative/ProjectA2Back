@@ -2,6 +2,7 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
+import com.a2.backend.entity.User;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -16,6 +17,7 @@ import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
@@ -98,6 +100,12 @@ public class ProjectServiceImpl implements ProjectService {
                         () ->
                                 new ProjectNotFoundException(
                                         String.format("No project found for id: %s", projectID)));
+    }
+
+    @Override
+    @Transactional
+    public void deleteProjectsFromUser(User owner) {
+        projectRepository.deleteByOwner(owner);
     }
 
     @Override

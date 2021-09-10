@@ -5,7 +5,9 @@ import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
+import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.UserCreateDTO;
+import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserServiceImplTest {
 
-    @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ProjectService projectService;
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";
@@ -120,7 +127,28 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test006_GivenAvalidValidTokenWhenConfirmAccountThenUserisActiveEqualsTrue() {
+    void Test006_GivenAUserThatHasAProjectWhenDeletingTheUserThenTheProjectIsDeleted() {
+
+        User user = userService.createUser(userCreateDTO);
+
+        projectService.createProject(
+                ProjectCreateDTO.builder()
+                        .title("Project Title")
+                        .description("description")
+                        .owner(user)
+                        .tags(Arrays.asList("tag1", "tag2"))
+                        .links(Arrays.asList("link1", "link2"))
+                        .build());
+
+        assertEquals(1, projectService.getAllProjects().size());
+
+        userService.deleteUser(user.getId());
+
+        assertTrue(projectService.getAllProjects().isEmpty());
+    }
+
+    @Test
+    void Test007_GivenAvalidValidTokenWhenConfirmAccountThenUserisActiveEqualsTrue() {
         User user = userService.createUser(userCreateDTO);
         String confirmationToken1 = "token001";
 
@@ -130,7 +158,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test007_GivenAnInvalidTokenWhenWantToConfirmAccountThenThrowexceptionInvalidToken() {
+    void Test008_GivenAnInvalidTokenWhenWantToConfirmAccountThenThrowexceptionInvalidToken() {
         User user = userService.createUser(userCreateDTO);
         String invalidToken = "token002";
 
@@ -141,7 +169,7 @@ class UserServiceImplTest {
 
     @Test
     void
-            Test008_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
+            Test009_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
         User user = userService.createUser(userCreateDTO);
         String validToken = "token001";
 

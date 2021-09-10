@@ -6,6 +6,7 @@ import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
+import com.a2.backend.repository.UserRepository;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ class ProjectControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private final String baseUrl = "/project";
 
     User owner =
@@ -45,6 +49,7 @@ class ProjectControllerTest {
 
     @Test
     void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -69,6 +74,7 @@ class ProjectControllerTest {
     @Test
     void
             Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
 
         String title = "a";
         String description = "Testing exception for existing title";
@@ -94,6 +100,7 @@ class ProjectControllerTest {
     @Test
     void
             Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Short";
@@ -119,6 +126,8 @@ class ProjectControllerTest {
     @Test
     void
             Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
+
         String title = "a";
         String description = "Short";
         List<String> links = Arrays.asList("link1", "link2");
@@ -148,6 +157,7 @@ class ProjectControllerTest {
 
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -187,6 +197,7 @@ class ProjectControllerTest {
 
     @Test
     void Test007_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -233,6 +244,7 @@ class ProjectControllerTest {
 
     @Test
     void Test008_GivenASingleExistingProjectWhenDeletedTwiceErrorShouldBeThrown() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -282,6 +294,8 @@ class ProjectControllerTest {
 
     @Test
     void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest() {
+        userRepository.save(owner);
+
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
@@ -336,6 +350,7 @@ class ProjectControllerTest {
     /** Given valid ID Should return */
     @Test
     void Test010_ProjectControllerWhenReceivesValidIdShouldReturnHttpOkTest() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -375,6 +390,8 @@ class ProjectControllerTest {
 
     @Test
     void Test011_GivenAnExistingProjectWhenGettingAllProjectsThenItIsReturned() {
+        userRepository.save(owner);
+
         String title = "Project title";
         String description = "description";
         List<String> links = Arrays.asList("link1", "link2");
@@ -407,6 +424,7 @@ class ProjectControllerTest {
     @Test
     void
             Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -431,6 +449,7 @@ class ProjectControllerTest {
     @Test
     void
             Test013_ProjectControllerWhenReceiveCreateProjectDTOWithTagLargerThanTwentyfourCharactersShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -455,6 +474,7 @@ class ProjectControllerTest {
     @Test
     void
             Test014_ProjectControllerWhenReceiveCreateProjectDTOWithNoLinksShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -479,6 +499,8 @@ class ProjectControllerTest {
     @Test
     void
             Test015_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanFiveLinksShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
+
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3", "link4", "link5", "link6");

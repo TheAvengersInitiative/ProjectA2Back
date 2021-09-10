@@ -7,6 +7,7 @@ import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
+import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import lombok.val;
@@ -35,6 +36,9 @@ class ProjectServiceImplTest {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     String title = "Project title";
     String description = "Testing exception for existing title";
@@ -69,6 +73,7 @@ class ProjectServiceImplTest {
 
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
+        userRepository.save(owner);
 
         assertTrue(projectService.getAllProjects().isEmpty());
 
@@ -89,6 +94,8 @@ class ProjectServiceImplTest {
 
     @Test
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
+        userRepository.save(owner);
+
         projectService.createProject(projectToCreate);
 
         String title2 = "Project title";
@@ -132,6 +139,8 @@ class ProjectServiceImplTest {
 
     @Test
     void Test005_ProjectListWithSavedProjectsShouldContainProjects() {
+        userRepository.save(owner);
+
         assertTrue(projectService.getAllProjects().isEmpty());
 
         Project savedProject = projectService.createProject(projectToCreate);
@@ -150,6 +159,7 @@ class ProjectServiceImplTest {
 
     @Test
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
+        userRepository.save(owner);
 
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
@@ -182,6 +192,8 @@ class ProjectServiceImplTest {
      */
     @Test
     void Test008_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProject() {
+        userRepository.save(owner);
+
         val projectToModify = projectService.createProject(projectToCreate);
 
         assertEquals(projectToCreate.getTitle(), projectToModify.getTitle());
@@ -197,6 +209,7 @@ class ProjectServiceImplTest {
 
     @Test
     void Test009_GivenASingleExistingProjectWhenDeletedTwiceThenExceptionShouldBeThrown() {
+        userRepository.save(owner);
 
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
@@ -215,6 +228,8 @@ class ProjectServiceImplTest {
 
     @Test
     void Test010_GivenValidProjectIDWhenAskedForProjectThenReturnProject() {
+        userRepository.save(owner);
+
         Project project = projectService.createProject(projectToCreate);
 
         val projectToBeDisplayed = projectService.getProjectDetails(project.getId());
@@ -231,6 +246,8 @@ class ProjectServiceImplTest {
     @Test
     void
     Test011_GivenACreateProjectDTOWithExistingTitleButDifferentOwnerWhenCreatingProjectThenItIsCreated() {
+        userRepository.save(owner);
+
         projectService.createProject(projectToCreate);
 
         String title2 = "Project title";
@@ -242,6 +259,7 @@ class ProjectServiceImplTest {
                         .biography("another bio")
                         .password("anotherPassword")
                         .build();
+        userRepository.save(owner2);
         List<String> links2 = Arrays.asList("link3", "link4");
         List<String> tags2 = Arrays.asList("tag3", "tag4");
 
