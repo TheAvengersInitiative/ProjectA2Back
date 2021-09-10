@@ -440,6 +440,7 @@ class ProjectControllerTest {
                         .owner(owner)
                         .build();
 
+
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
@@ -540,6 +541,7 @@ class ProjectControllerTest {
                         .tags(fourthTags)
                         .owner(owner)
                         .build();
+
         HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
         HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
         HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
@@ -566,8 +568,10 @@ class ProjectControllerTest {
         System.out.println(projects);
         assertEquals(4, projects.length);
         assertEquals(title, projects[0].getTitle());
+
         assertEquals("Project2 Title", projects[1].getTitle());
         assertEquals("Project3 Title", projects[2].getTitle());
         assertEquals("Not Start Project", projects[3].getTitle());
+
     }
 }
