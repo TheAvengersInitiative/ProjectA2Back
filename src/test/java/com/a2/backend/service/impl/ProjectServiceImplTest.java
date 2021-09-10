@@ -253,4 +253,30 @@ class ProjectServiceImplTest {
         // Then
 
     }
+
+    @Test
+    void Test012_GivenExistingTagsAndAValidProjectCreateDTOWhenCreatingProjectThenItIsCreated() {
+        projectService.createProject(projectToCreate);
+
+        String title2 = "A Non Existent Project title";
+        List<String> tags2 = Arrays.asList("tag1", "tag4");
+
+        ProjectCreateDTO projectToCreateWithRepeatedTag =
+                ProjectCreateDTO.builder()
+                        .title(title2)
+                        .description(description)
+                        .links(links)
+                        .tags(tags2)
+                        .owner(owner)
+                        .build();
+
+        val project = projectService.createProject(projectToCreateWithRepeatedTag);
+
+        assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
+        assertEquals(projectToCreateWithRepeatedTag.getDescription(), project.getDescription());
+        assertEquals(
+                tagService.findOrCreateTag(projectToCreateWithRepeatedTag.getTags()),
+                project.getTags());
+        assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
+    }
 }
