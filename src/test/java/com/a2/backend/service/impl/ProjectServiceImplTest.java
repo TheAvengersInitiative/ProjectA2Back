@@ -219,4 +219,38 @@ class ProjectServiceImplTest {
                 projectToBeDisplayed.getTags());
         assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
     }
+
+    @Test
+    void Test011_GivenASingleExistingProjectWhenSearchedByTitleItShouldBeFound() {
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Project")
+                        .description(description)
+                        .links(Arrays.asList("link3", "link4"))
+                        .tags(Arrays.asList("tag5", "tag7"))
+                        .owner("Owner3")
+                        .build();
+
+        ProjectCreateDTO thirdProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("ProjectProject")
+                        .description(description)
+                        .links(linksUpdate)
+                        .tags(tagsUpdate)
+                        .owner("Owner2")
+                        .build();
+        // Given
+        assertTrue(projectService.getAllProjects().isEmpty());
+
+        projectService.createProject(projectToCreate);
+        projectService.createProject(secondProjectToCreate);
+        projectService.createProject(thirdProjectToCreate);
+        List<Project> projects = projectService.getProjectsByTitleSearch("Project");
+        assertEquals(3, projects.size());
+        assertEquals(projects.get(0).getTitle(), "Project title");
+        assertEquals(projects.get(1).getTitle(), "ProjectProject");
+        assertEquals(projects.get(2).getTitle(), "Not Project");
+        // Then
+
+    }
 }

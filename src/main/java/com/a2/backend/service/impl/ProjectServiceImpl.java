@@ -11,6 +11,7 @@ import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -92,5 +93,27 @@ public class ProjectServiceImpl implements ProjectService {
                         () ->
                                 new ProjectNotFoundException(
                                         String.format("No project found for id: %s", projectID)));
+    }
+
+    @Override
+    public List<Project> getProjectsByTitleSearch(String pattern) {
+        List<Project> projectsStartingWithPattern =
+                projectRepository.findByTitleStartsWithIgnoreCaseOrderByTitleAsc(pattern);
+        val projectsStartingNames =
+                projectsStartingWithPattern.stream()
+                        .map(Project::getTitle)
+                        .collect(Collectors.toList());
+
+        List<Project> projectsContainingPattern =
+                projectRepository.findByTitleContainingIgnoreCaseOrderByTitleAsc(pattern).stream()
+                        .filter(
+                                p ->
+                                        projectsStartingNames.stream()
+                                                .noneMatch(s -> s.equals(p.getTitle())))
+                        .collect(Collectors.toList());
+
+        projectsStartingWithPattern.addAll(projectsContainingPattern);
+
+        return projectsStartingWithPattern;
     }
 }
