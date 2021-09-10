@@ -1,6 +1,7 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.a2.backend.entity.Tag;
 import com.a2.backend.repository.TagRepository;

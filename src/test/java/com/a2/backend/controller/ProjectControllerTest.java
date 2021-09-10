@@ -497,9 +497,16 @@ class ProjectControllerTest {
     void Test016_ProjectControllerSuccesfulOrderedSearch() {
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("link1", "link2", "link3");
+        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
+        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
+        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> secondTags = Arrays.asList("tag3", "tag4");
+        List<String> thirdTags = Arrays.asList("tag5", "tag6");
+        List<String> fourthTags = Arrays.asList("tag7", "tag8");
         String owner = "Owner´s name";
+        String secondOwner = "Owner´s name2";
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -513,24 +520,24 @@ class ProjectControllerTest {
                 ProjectCreateDTO.builder()
                         .title("Not Start Project")
                         .description(description)
-                        .links(links)
-                        .tags(tags)
+                        .links(secondLinks)
+                        .tags(secondTags)
                         .owner(owner)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title("Project2 Title")
                         .description(description)
-                        .links(links)
-                        .tags(tags)
+                        .links(thirdLinks)
+                        .tags(thirdTags)
                         .owner(owner)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title("Project3 Title")
                         .description(description)
-                        .links(links)
-                        .tags(tags)
+                        .links(fourthLinks)
+                        .tags(fourthTags)
                         .owner(owner)
                         .build();
         HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
@@ -559,8 +566,8 @@ class ProjectControllerTest {
         System.out.println(projects);
         assertEquals(4, projects.length);
         assertEquals(title, projects[0].getTitle());
-        assertEquals("Project2 title", projects[1].getTitle());
-        assertEquals("Project3 title", projects[2].getTitle());
+        assertEquals("Project2 Title", projects[1].getTitle());
+        assertEquals("Project3 Title", projects[2].getTitle());
         assertEquals("Not Start Project", projects[3].getTitle());
     }
 }

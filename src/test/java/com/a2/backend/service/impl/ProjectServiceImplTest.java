@@ -226,18 +226,18 @@ class ProjectServiceImplTest {
                 ProjectCreateDTO.builder()
                         .title("Not Project")
                         .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .owner(owner)
+                        .links(Arrays.asList("link3", "link4"))
+                        .tags(Arrays.asList("tag5", "tag7"))
+                        .owner("Owner3")
                         .build();
 
         ProjectCreateDTO thirdProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title("ProjectProject")
                         .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .owner(owner)
+                        .links(linksUpdate)
+                        .tags(tagsUpdate)
+                        .owner("Owner2")
                         .build();
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
