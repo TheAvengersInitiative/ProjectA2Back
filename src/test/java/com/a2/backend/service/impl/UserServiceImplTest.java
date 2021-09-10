@@ -3,6 +3,7 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
@@ -24,6 +25,7 @@ class UserServiceImplTest {
     String email = "some@email.com";
     String biography = "bio";
     String password = "password";
+    String confirmationToken = "token001";
 
     UserCreateDTO userCreateDTO =
             UserCreateDTO.builder()
@@ -31,6 +33,7 @@ class UserServiceImplTest {
                     .email(email)
                     .biography(biography)
                     .password(password)
+                    .confirmationToken(confirmationToken)
                     .build();
 
     @Test
@@ -77,5 +80,38 @@ class UserServiceImplTest {
         assertThrows(
                 UserWithThatEmailExistsException.class,
                 () -> userService.createUser(nonValidUserCreateDTO));
+    }
+
+    @Test
+    void Test006_GivenAvalidValidTokenWhenConfirmAccountThenUserisActiveEqualsTrue() {
+        User user = userService.createUser(userCreateDTO);
+        String confirmationToken1 = "token001";
+
+        User activatedUser = userService.confirmUser(confirmationToken1, user.getId());
+
+        assertTrue(activatedUser.isActive());
+    }
+
+    @Test
+    void Test007_GivenAnInvalidTokenWhenWantToConfirmAccountThenThrowexceptionInvalidToken() {
+        User user = userService.createUser(userCreateDTO);
+        String invalidToken = "token002";
+
+        assertThrows(
+                TokenConfirmationFailedException.class,
+                () -> userService.confirmUser(invalidToken, user.getId()));
+    }
+
+    @Test
+    void
+            Test008_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
+        User user = userService.createUser(userCreateDTO);
+        String validToken = "token001";
+
+        User validatedUser = userService.confirmUser(validToken, user.getId());
+
+        assertThrows(
+                TokenConfirmationFailedException.class,
+                () -> userService.confirmUser(validToken, validatedUser.getId()));
     }
 }

@@ -2,6 +2,7 @@ package com.a2.backend.exceptionhandler;
 
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
+import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import org.slf4j.Logger;
@@ -49,5 +50,11 @@ public class DefaultExceptionHandler {
         logger.info(exception.getMessage());
         return new ResponseEntity(
                 exception.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TokenConfirmationFailedException.class)
+    public ResponseEntity<?> validateToken(TokenConfirmationFailedException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
