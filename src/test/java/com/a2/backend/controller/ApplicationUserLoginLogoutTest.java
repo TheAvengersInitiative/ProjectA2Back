@@ -3,7 +3,7 @@ package com.a2.backend.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.a2.backend.entity.ApplicationUser;
-import com.a2.backend.model.UserCreateDTO;
+import com.a2.backend.model.ApplicationUserCreateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +28,15 @@ public class ApplicationUserLoginLogoutTest {
     @Test
     void Test001_GivenAnExistingUserLoginIsSuccesfull() {
 
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
+        ApplicationUserCreateDTO applicationUserCreateDTO =
+                ApplicationUserCreateDTO.builder()
                         .nickname(nickname)
                         .email(email)
                         .biography(biography)
                         .password(password)
                         .build();
         ApplicationUser user = ApplicationUser.builder().email(email).password(password).build();
-        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
 
         val getResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
@@ -61,8 +61,8 @@ public class ApplicationUserLoginLogoutTest {
     @Test
     void Test002_GivenANonExistingUserLoginShouldFail() {
 
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
+        ApplicationUserCreateDTO applicationUserCreateDTO =
+                ApplicationUserCreateDTO.builder()
                         .nickname(nickname)
                         .email(email)
                         .biography(biography)
@@ -75,7 +75,7 @@ public class ApplicationUserLoginLogoutTest {
                         .biography(biography)
                         .password(password)
                         .build();
-        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
 
         val getResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
@@ -85,35 +85,5 @@ public class ApplicationUserLoginLogoutTest {
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, String.class);
         assertEquals(loginResponse.getStatusCode(), HttpStatus.UNAUTHORIZED);
-    }
-
-    @Test
-    void Test003_GivenAInactiveUser403ShouldBeThrownOnLogin() {
-
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
-        ApplicationUser user =
-                ApplicationUser.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .isActive(false)
-                        .build();
-        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
-
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
-        assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
-
-        HttpEntity<ApplicationUser> loginRequest = new HttpEntity<>(user);
-        val loginResponse =
-                restTemplate.exchange("/login", HttpMethod.POST, loginRequest, String.class);
-        assertEquals(HttpStatus.FORBIDDEN, loginResponse.getStatusCode());
     }
 }

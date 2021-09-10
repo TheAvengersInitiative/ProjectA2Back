@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.ApplicationUser;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
-import com.a2.backend.model.UserCreateDTO;
+import com.a2.backend.model.ApplicationUserCreateDTO;
 import com.a2.backend.service.ApplicationUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ class ApplicationUserServiceImplTest {
     String biography = "bio";
     String password = "password";
 
-    UserCreateDTO userCreateDTO =
-            UserCreateDTO.builder()
+    ApplicationUserCreateDTO applicationUserCreateDTO =
+            ApplicationUserCreateDTO.builder()
                     .nickname(nickname)
                     .email(email)
                     .biography(biography)
@@ -35,7 +35,8 @@ class ApplicationUserServiceImplTest {
     @Test
     void
             Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
-        ApplicationUser persistedApplicationUser = applicationUserService.createUser(userCreateDTO);
+        ApplicationUser persistedApplicationUser =
+                applicationUserService.createUser(applicationUserCreateDTO);
         assertEquals(nickname, persistedApplicationUser.getNickname());
         assertEquals(email, persistedApplicationUser.getEmail());
         assertEquals(biography, persistedApplicationUser.getBiography());
@@ -45,39 +46,39 @@ class ApplicationUserServiceImplTest {
 
     @Test
     void Test002_GivenAUserCreateDTOWithAnExistingNicknameWhenCreatingUserThenExceptionIsThrown() {
-        UserCreateDTO nonValidUserCreateDTO =
-                UserCreateDTO.builder()
+        ApplicationUserCreateDTO nonValidApplicationUserCreateDTO =
+                ApplicationUserCreateDTO.builder()
                         .nickname("nickname")
                         .email("another@email.com")
                         .biography("another bio")
                         .password("anotherPassword")
                         .build();
 
-        applicationUserService.createUser(userCreateDTO);
+        applicationUserService.createUser(applicationUserCreateDTO);
 
         assertThrows(
                 UserWithThatNicknameExistsException.class,
                 () -> {
-                    applicationUserService.createUser(nonValidUserCreateDTO);
+                    applicationUserService.createUser(nonValidApplicationUserCreateDTO);
                 });
     }
 
     @Test
     void Test003_GivenAUserCreateDTOWithAnExistingEmailWhenCreatingUserThenExceptionIsThrown() {
-        UserCreateDTO nonValidUserCreateDTO =
-                UserCreateDTO.builder()
+        ApplicationUserCreateDTO nonValidApplicationUserCreateDTO =
+                ApplicationUserCreateDTO.builder()
                         .nickname("anotherNickname")
                         .email("some@email.com")
                         .biography("another bio")
                         .password("anotherPassword")
                         .build();
 
-        applicationUserService.createUser(userCreateDTO);
+        applicationUserService.createUser(applicationUserCreateDTO);
 
         assertThrows(
                 UserWithThatEmailExistsException.class,
                 () -> {
-                    applicationUserService.createUser(nonValidUserCreateDTO);
+                    applicationUserService.createUser(nonValidApplicationUserCreateDTO);
                 });
     }
 }
