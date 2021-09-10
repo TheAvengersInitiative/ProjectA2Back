@@ -72,7 +72,7 @@ class ProjectServiceImplTest {
 
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
-        assertEquals(tagService.findOrCreateTag(projectToCreate.getTags()), project.getTags());
+        assertEquals(tagService.findTags(projectToCreate.getTags()), project.getTags());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
     }
 
@@ -134,8 +134,7 @@ class ProjectServiceImplTest {
 
         assertEquals(projectToCreate.getTitle(), singleProject.getTitle());
         assertEquals(projectToCreate.getDescription(), singleProject.getDescription());
-        assertEquals(
-                tagService.findOrCreateTag(projectToCreate.getTags()), singleProject.getTags());
+        assertEquals(tagService.findTags(projectToCreate.getTags()), singleProject.getTags());
         assertEquals(projectToCreate.getLinks(), singleProject.getLinks());
     }
 
@@ -215,8 +214,7 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(
-                tagService.findOrCreateTag(projectToCreate.getTags()),
-                projectToBeDisplayed.getTags());
+                tagService.findTags(projectToCreate.getTags()), projectToBeDisplayed.getTags());
         assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
     }
 
@@ -275,8 +273,7 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
         assertEquals(projectToCreateWithRepeatedTag.getDescription(), project.getDescription());
         assertEquals(
-                tagService.findOrCreateTag(projectToCreateWithRepeatedTag.getTags()),
-                project.getTags());
+                tagService.findTags(projectToCreateWithRepeatedTag.getTags()), project.getTags());
         assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
     }
 }
