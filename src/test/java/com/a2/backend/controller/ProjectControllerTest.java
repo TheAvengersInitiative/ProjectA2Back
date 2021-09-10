@@ -7,7 +7,6 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.List;
 import java.util.UUID;
 import lombok.val;
@@ -398,7 +397,6 @@ class ProjectControllerTest {
     }
 
     @Test
-
     void
             Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest() {
 
@@ -466,7 +464,6 @@ class ProjectControllerTest {
                         .tags(tags)
                         .owner(owner)
                         .build();
-
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
