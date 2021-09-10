@@ -440,7 +440,6 @@ class ProjectControllerTest {
                         .owner(owner)
                         .build();
 
-
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
@@ -572,6 +571,5 @@ class ProjectControllerTest {
         assertEquals("Project2 Title", projects[1].getTitle());
         assertEquals("Project3 Title", projects[2].getTitle());
         assertEquals("Not Start Project", projects[3].getTitle());
-
     }
 }
