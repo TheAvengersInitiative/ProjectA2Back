@@ -6,10 +6,8 @@ import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Arrays;
-=======
->>>>>>> 42efcf8 (Buscar proyecto por nombre)
+
 import java.util.List;
 import java.util.UUID;
 import lombok.val;
@@ -400,7 +398,7 @@ class ProjectControllerTest {
     }
 
     @Test
-<<<<<<< HEAD
+
     void
             Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest() {
 
@@ -436,16 +434,6 @@ class ProjectControllerTest {
         String owner = "Owner´s name";
 
         ProjectCreateDTO projectToCreate =
-=======
-    void Test012_GivenExistingTitlesWhenSearchingByTitleStartTheyShouldBeFound() {
-        String title = "Project1 title";
-        String description = "Testing exception for existing title";
-        String[] links = {"link1", "link2"};
-        String[] tags = {"tag1", "tag2"};
-        String owner = "Owner´s name";
-
-        ProjectCreateDTO firstProjectToCreate =
->>>>>>> 42efcf8 (Buscar proyecto por nombre)
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
@@ -453,7 +441,6 @@ class ProjectControllerTest {
                         .tags(tags)
                         .owner(owner)
                         .build();
-<<<<<<< HEAD
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
@@ -474,17 +461,12 @@ class ProjectControllerTest {
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
-=======
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 title")
->>>>>>> 42efcf8 (Buscar proyecto por nombre)
                         .description(description)
                         .links(links)
                         .tags(tags)
                         .owner(owner)
                         .build();
-<<<<<<< HEAD
+
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
 
@@ -504,17 +486,11 @@ class ProjectControllerTest {
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
-=======
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 title")
->>>>>>> 42efcf8 (Buscar proyecto por nombre)
                         .description(description)
                         .links(links)
                         .tags(tags)
                         .owner(owner)
                         .build();
-<<<<<<< HEAD
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
@@ -538,17 +514,11 @@ class ProjectControllerTest {
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
-=======
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("NotProject2")
->>>>>>> 42efcf8 (Buscar proyecto por nombre)
                         .description(description)
                         .links(links)
                         .tags(tags)
                         .owner(owner)
                         .build();
-<<<<<<< HEAD
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title("Not Start Project")
@@ -573,8 +543,6 @@ class ProjectControllerTest {
                         .tags(fourthTags)
                         .owner(owner)
                         .build();
-=======
->>>>>>> 42efcf8 (Buscar proyecto por nombre)
 
         HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
         HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
@@ -602,15 +570,9 @@ class ProjectControllerTest {
         System.out.println(projects);
         assertEquals(4, projects.length);
         assertEquals(title, projects[0].getTitle());
-<<<<<<< HEAD
 
         assertEquals("Project2 Title", projects[1].getTitle());
         assertEquals("Project3 Title", projects[2].getTitle());
         assertEquals("Not Start Project", projects[3].getTitle());
-=======
-        assertEquals("Project2 title", projects[1].getTitle());
-        assertEquals("Project3 title", projects[2].getTitle());
-        assertEquals("NotProject2", projects[3].getTitle());
->>>>>>> 42efcf8 (Buscar proyecto por nombre)
     }
 }

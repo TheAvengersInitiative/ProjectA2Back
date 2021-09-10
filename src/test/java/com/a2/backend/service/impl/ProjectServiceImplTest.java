@@ -9,11 +9,7 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
-<<<<<<< HEAD
 import com.a2.backend.service.TagService;
-=======
-import java.util.ArrayList;
->>>>>>> 42efcf8 (Buscar proyecto por nombre)
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -242,40 +238,6 @@ class ProjectServiceImplTest {
                         .links(linksUpdate)
                         .tags(tagsUpdate)
                         .owner("Owner2")
-                        .build();
-        // Given
-        assertTrue(projectService.getAllProjects().isEmpty());
-
-        projectService.createProject(projectToCreate);
-        projectService.createProject(secondProjectToCreate);
-        projectService.createProject(thirdProjectToCreate);
-        List<Project> projects = projectService.getProjectsByTitleSearch("Project");
-        assertEquals(3, projects.size());
-        assertEquals(projects.get(0).getTitle(), "Project title");
-        assertEquals(projects.get(1).getTitle(), "ProjectProject");
-        assertEquals(projects.get(2).getTitle(), "Not Project");
-        // Then
-
-    }
-
-    @Test
-    void Test011_GivenASingleExistingProjectWhenSearchedByTitleItShouldBeFound() {
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Project")
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .owner(owner)
-                        .build();
-
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("ProjectProject")
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .owner(owner)
                         .build();
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
