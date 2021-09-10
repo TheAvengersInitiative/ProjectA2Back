@@ -93,4 +93,29 @@ public class ProjectServiceImpl implements ProjectService {
                                 new ProjectNotFoundException(
                                         String.format("No project found for id: %s", projectID)));
     }
+
+    @Override
+    public List<Project> getProjectsByTitleSearch(String pattern) {
+        List<Project> projectsStartingWithPattern =
+                projectRepository.findByTitleStartsWithIgnoreCaseOrderByTitleAsc(pattern);
+        List<Project> projectsContainingPattern =
+                projectRepository.findByTitleContainingIgnoreCaseOrderByTitleAsc(pattern);
+
+        for (int i = 0; i < projectsContainingPattern.size(); i++) {
+            for (int j = 0; j < projectsStartingWithPattern.size(); j++) {
+                if (projectsContainingPattern
+                        .get(i)
+                        .getTitle()
+                        .equals(projectsStartingWithPattern.get(j).getTitle())) {
+                    projectsContainingPattern.remove(i);
+                    i--;
+                    break;
+                }
+            }
+        }
+
+        projectsStartingWithPattern.addAll(projectsContainingPattern);
+
+        return projectsStartingWithPattern;
+    }
 }

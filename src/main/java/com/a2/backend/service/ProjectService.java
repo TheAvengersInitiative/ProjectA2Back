@@ -17,4 +17,6 @@ public interface ProjectService {
     void deleteProject(UUID uuid);
 
     Project getProjectDetails(UUID id);
+
+    List<Project> getProjectsByTitleSearch(String pattern);
 }

@@ -1,6 +1,6 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -474,7 +474,6 @@ class ProjectControllerTest {
     @Test
     void
             Test015_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanFiveLinksShouldReturnStatusBadRequest() {
-
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3", "link4", "link5", "link6");
@@ -489,10 +488,79 @@ class ProjectControllerTest {
                         .tags(tags)
                         .owner(owner)
                         .build();
-
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
-
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+    }
+
+    @Test
+    void Test016_ProjectControllerSuccesfulOrderedSearch() {
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        String owner = "Owner´s name";
+
+        ProjectCreateDTO firstProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Start Project")
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO thirdProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project2 Title")
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO fourthProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project3 Title")
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+
+        val postFirstResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
+        val postSecondResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+        val postThirdResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        val postFourthResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+
+        val getResponse =
+                restTemplate.exchange(
+                        "/project/title/Project", HttpMethod.GET, null, Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        Project[] projects = getResponse.getBody();
+        System.out.println(projects);
+        assertEquals(4, projects.length);
+        assertEquals(title, projects[0].getTitle());
+        assertEquals("Project2 title", projects[1].getTitle());
+        assertEquals("Project3 title", projects[2].getTitle());
+        assertEquals("Not Start Project", projects[3].getTitle());
     }
 }

@@ -35,6 +35,12 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
+    @GetMapping("/title/{pattern}")
+    public ResponseEntity<List<Project>> getProjectsByTitleSearch(@PathVariable String pattern) {
+        val projects = projectService.getProjectsByTitleSearch(pattern);
+        return ResponseEntity.status(HttpStatus.OK).body(projects);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<UUID> deleteProject(@PathVariable UUID id) {
         projectService.deleteProject(id);
