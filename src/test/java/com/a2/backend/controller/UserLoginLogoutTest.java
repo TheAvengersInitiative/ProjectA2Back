@@ -2,8 +2,8 @@ package com.a2.backend.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.a2.backend.entity.ApplicationUser;
-import com.a2.backend.model.ApplicationUserCreateDTO;
+import com.a2.backend.entity.User;
+import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-public class ApplicationUserLoginLogoutTest {
+public class UserLoginLogoutTest {
 
     @Autowired TestRestTemplate restTemplate;
     private final String baseUrl = "/user";
@@ -28,21 +28,20 @@ public class ApplicationUserLoginLogoutTest {
     @Test
     void Test001_GivenAnExistingUserLoginIsSuccesfull() {
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(nickname)
                         .email(email)
                         .biography(biography)
                         .password(password)
                         .build();
-        ApplicationUser user = ApplicationUser.builder().email(email).password(password).build();
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        User user = User.builder().email(email).password(password).build();
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
         System.out.println(getResponse);
-        HttpEntity<ApplicationUser> loginRequest = new HttpEntity<>(user);
+        HttpEntity<User> loginRequest = new HttpEntity<>(user);
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, String.class);
         assertEquals(HttpStatus.OK, loginResponse.getStatusCode());
@@ -61,27 +60,26 @@ public class ApplicationUserLoginLogoutTest {
     @Test
     void Test002_GivenANonExistingUserLoginShouldFail() {
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(nickname)
                         .email(email)
                         .biography(biography)
                         .password(password)
                         .build();
-        ApplicationUser user =
-                ApplicationUser.builder()
+        User user =
+                User.builder()
                         .nickname("estatareanomelades")
                         .email("jjjjjjjjjjjjj@gmail.com")
                         .biography(biography)
                         .password(password)
                         .build();
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
-        HttpEntity<ApplicationUser> loginRequest = new HttpEntity<>(user);
+        HttpEntity<User> loginRequest = new HttpEntity<>(user);
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, String.class);
         assertEquals(loginResponse.getStatusCode(), HttpStatus.UNAUTHORIZED);

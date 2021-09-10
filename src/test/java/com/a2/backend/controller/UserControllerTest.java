@@ -2,8 +2,8 @@ package com.a2.backend.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.a2.backend.entity.ApplicationUser;
-import com.a2.backend.model.ApplicationUserCreateDTO;
+import com.a2.backend.entity.User;
+import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class ApplicationUserControllerTest {
+class UserControllerTest {
 
     @Autowired TestRestTemplate restTemplate;
 
@@ -32,18 +32,17 @@ class ApplicationUserControllerTest {
     void
             Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(nickname)
                         .email(email)
                         .biography(biography)
                         .password(password)
                         .build();
 
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         val persistedUser = getResponse.getBody();
@@ -61,15 +60,15 @@ class ApplicationUserControllerTest {
             Test002_GivenAUserCreateDTOWithInvalidNicknameWhenCreatingUserThenBadStatusResponseIsReturned() {
         String invalidNickname = "not a valid nickname as it is way too long";
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(invalidNickname)
                         .email(email)
                         .biography(biography)
                         .password(password)
                         .build();
 
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
@@ -81,15 +80,15 @@ class ApplicationUserControllerTest {
             Test003_GivenAUserCreateDTOWithInvalidEmailWhenCreatingUserThenBadStatusResponseIsReturned() {
         String invalidEmail = "this is not a real email";
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(nickname)
                         .email(invalidEmail)
                         .biography(biography)
                         .password(password)
                         .build();
 
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
@@ -101,15 +100,15 @@ class ApplicationUserControllerTest {
             Test004_GivenAUserCreateDTOWithInvalidPasswordWhenCreatingUserThenBadStatusResponseIsReturned() {
         String invalidPassword = "short";
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(nickname)
                         .email(email)
                         .biography(biography)
                         .password(invalidPassword)
                         .build();
 
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
@@ -120,17 +119,12 @@ class ApplicationUserControllerTest {
     void
             Test005_GivenAUserCreateDTOWithNoBiographyWhenCreatingUserThenStatusIsCreatedAndBiographyIsNull() {
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .password(password)
-                        .build();
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder().nickname(nickname).email(email).password(password).build();
 
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         val persistedUser = getResponse.getBody();
@@ -142,34 +136,32 @@ class ApplicationUserControllerTest {
     void
             Test006_GivenAUserCreateDTOWithExistingNicknameWhenCreatingUserThenExceptionIsHandledAndBadRequestIsReturned() {
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(nickname)
                         .email(email)
                         .biography(biography)
                         .password(password)
                         .build();
 
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         String anotherEmail = "another@gmail.com";
         String anotherBiography = "another bio";
         String anotherPassword = "anotherPassword";
 
-        ApplicationUserCreateDTO sameNicknameApplicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO sameNicknameUserCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(nickname)
                         .email(anotherEmail)
                         .biography(anotherBiography)
                         .password(anotherPassword)
                         .build();
 
-        HttpEntity<ApplicationUserCreateDTO> anotherRequest =
-                new HttpEntity<>(sameNicknameApplicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> anotherRequest = new HttpEntity<>(sameNicknameUserCreateDTO);
 
         val anotherGetResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, anotherRequest, String.class);
@@ -182,34 +174,32 @@ class ApplicationUserControllerTest {
     void
             Test007_GivenAUserCreateDTOWithExistingEmailWhenCreatingUserThenExceptionIsHandledAndBadRequestIsReturned() {
 
-        ApplicationUserCreateDTO applicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(nickname)
                         .email(email)
                         .biography(biography)
                         .password(password)
                         .build();
 
-        HttpEntity<ApplicationUserCreateDTO> request = new HttpEntity<>(applicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, request, ApplicationUser.class);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
 
         String anotherNickname = "anotherNickname";
         String anotherBiography = "another bio";
         String anotherPassword = "anotherPassword";
 
-        ApplicationUserCreateDTO sameNicknameApplicationUserCreateDTO =
-                ApplicationUserCreateDTO.builder()
+        UserCreateDTO sameNicknameUserCreateDTO =
+                UserCreateDTO.builder()
                         .nickname(anotherNickname)
                         .email(email)
                         .biography(anotherBiography)
                         .password(anotherPassword)
                         .build();
 
-        HttpEntity<ApplicationUserCreateDTO> anotherRequest =
-                new HttpEntity<>(sameNicknameApplicationUserCreateDTO);
+        HttpEntity<UserCreateDTO> anotherRequest = new HttpEntity<>(sameNicknameUserCreateDTO);
 
         val anotherGetResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, anotherRequest, String.class);

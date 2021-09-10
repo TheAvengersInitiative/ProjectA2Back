@@ -12,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class ApplicationUser {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

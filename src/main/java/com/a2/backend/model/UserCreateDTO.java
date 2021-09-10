@@ -11,7 +11,7 @@ import org.springframework.lang.Nullable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApplicationUserCreateDTO {
+public class UserCreateDTO {
 
     @Size(min = 3, max = 24, message = "Nickname must be between 3 and 24 characters")
     String nickname;

@@ -3,7 +3,7 @@ package com.a2.backend.security;
 import static com.a2.backend.constants.SecurityConstants.EXPIRATION_TIME;
 import static com.a2.backend.constants.SecurityConstants.KEY;
 
-import com.a2.backend.entity.ApplicationUser;
+import com.a2.backend.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,7 +20,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -34,8 +33,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res)
             throws AuthenticationException {
         try {
-            ApplicationUser applicationUser =
-                    new ObjectMapper().readValue(req.getInputStream(), ApplicationUser.class);
+            User applicationUser = new ObjectMapper().readValue(req.getInputStream(), User.class);
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             applicationUser.getEmail(),
@@ -57,7 +55,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         Date exp = new Date(System.currentTimeMillis() + EXPIRATION_TIME);
 
         Key key = Keys.hmacShaKeyFor(KEY.getBytes());
-        Claims claims = Jwts.claims().setSubject(((User) auth.getPrincipal()).getUsername());
+        Claims claims =
+                Jwts.claims()
+                        .setSubject(
+                                ((org.springframework.security.core.userdetails.User)
+                                                auth.getPrincipal())
+                                        .getUsername());
         String token =
                 Jwts.builder()
                         .setClaims(claims)
