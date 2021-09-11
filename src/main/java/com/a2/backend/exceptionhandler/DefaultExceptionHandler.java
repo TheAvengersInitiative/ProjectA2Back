@@ -1,11 +1,6 @@
 package com.a2.backend.exceptionhandler;
 
 import com.a2.backend.exception.*;
-import com.a2.backend.exception.ProjectNotFoundException;
-import com.a2.backend.exception.ProjectWithThatTitleExistsException;
-import com.a2.backend.exception.TokenConfirmationFailedException;
-import com.a2.backend.exception.UserWithThatEmailExistsException;
-import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

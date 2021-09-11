@@ -7,18 +7,20 @@ import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.UserService;
-import java.util.UUID;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;

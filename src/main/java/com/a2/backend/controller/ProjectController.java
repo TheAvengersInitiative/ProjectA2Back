@@ -4,13 +4,14 @@ import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.service.ProjectService;
-import java.util.List;
-import java.util.UUID;
-import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/project")

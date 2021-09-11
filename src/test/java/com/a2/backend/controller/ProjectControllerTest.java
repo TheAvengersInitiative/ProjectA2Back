@@ -1,14 +1,8 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +14,20 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectControllerTest {
 
-    @Autowired private TestRestTemplate restTemplate;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     private final String baseUrl = "/project";
 
@@ -55,7 +57,7 @@ class ProjectControllerTest {
 
     @Test
     void
-            Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
+    Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
 
         String title = "a";
         String description = "Testing exception for existing title";
@@ -81,7 +83,7 @@ class ProjectControllerTest {
 
     @Test
     void
-            Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest() {
+    Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest() {
 
         String title = "Project title";
         String description = "Short";
@@ -107,7 +109,7 @@ class ProjectControllerTest {
 
     @Test
     void
-            Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
+    Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
         String title = "a";
         String description = "Short";
         List<String> links = Arrays.asList("link1", "link2");
@@ -327,7 +329,9 @@ class ProjectControllerTest {
         assertEquals(projectUpdateDTO.getDescription(), project.getDescription());
     }
 
-    /** Given valid ID Should return */
+    /**
+     * Given valid ID Should return
+     */
     @Test
     void Test010_ProjectControllerWhenReceivesValidIdShouldReturnHttpOkTest() {
 
@@ -398,7 +402,7 @@ class ProjectControllerTest {
 
     @Test
     void
-            Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest() {
+    Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest() {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -423,7 +427,7 @@ class ProjectControllerTest {
 
     @Test
     void
-            Test013_ProjectControllerWhenReceiveCreateProjectDTOWithTagLargerThanTwentyfourCharactersShouldReturnStatusBadRequest() {
+    Test013_ProjectControllerWhenReceiveCreateProjectDTOWithTagLargerThanTwentyfourCharactersShouldReturnStatusBadRequest() {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -448,7 +452,7 @@ class ProjectControllerTest {
 
     @Test
     void
-            Test014_ProjectControllerWhenReceiveCreateProjectDTOWithNoLinksShouldReturnStatusBadRequest() {
+    Test014_ProjectControllerWhenReceiveCreateProjectDTOWithNoLinksShouldReturnStatusBadRequest() {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -473,7 +477,7 @@ class ProjectControllerTest {
 
     @Test
     void
-            Test015_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanFiveLinksShouldReturnStatusBadRequest() {
+    Test015_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanFiveLinksShouldReturnStatusBadRequest() {
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3", "link4", "link5", "link6");

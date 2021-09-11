@@ -1,10 +1,7 @@
 package com.a2.backend.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Project;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +13,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @AutoConfigureWebClient
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -24,7 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectRepositoryTest {
 
-    @Autowired private ProjectRepository projectRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     String title = "New project";
     String description = "Testing project repository";

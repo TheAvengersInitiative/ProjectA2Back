@@ -1,15 +1,16 @@
 package com.a2.backend.service.impl;
 
-import static java.util.Collections.emptyList;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.UserIsNotActiveException;
 import com.a2.backend.repository.UserRepository;
-import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+import static java.util.Collections.emptyList;
 
 @Service
 public class ApplicationUserDetailsService implements UserDetailsService {
