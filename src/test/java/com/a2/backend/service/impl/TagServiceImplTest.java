@@ -54,4 +54,17 @@ class TagServiceImplTest {
 
         assertEquals(tagList.get(0).getId(), tag1.getId());
     }
+
+    @Test
+    void Test004_TagServiceWhenReceivesValidTagNameShouldReturnTagWithGivenName() {
+
+        Tag tag1 = tagRepository.save(tagService.createTag("tag1"));
+        Tag tag2 = tagRepository.save(tagService.createTag("tag2"));
+
+        List<Tag> tags = tagService.findTags(Arrays.asList("tag1", "tag2"));
+
+        assertEquals(2, tags.size());
+        assertEquals(tag1, tags.get(0));
+        assertEquals(tag2, tags.get(1));
+    }
 }

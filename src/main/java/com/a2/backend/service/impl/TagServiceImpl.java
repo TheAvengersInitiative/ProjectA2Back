@@ -5,6 +5,7 @@ import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.TagService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,10 +22,12 @@ public class TagServiceImpl implements TagService {
         List<Tag> tagList = new ArrayList<>();
 
         for (String tagName : tagsToAdd) {
-            if (tagRepository.findByName(tagName).isEmpty()) {
+            Optional<Tag> optionalTag = findTag(tagName);
+
+            if (optionalTag.isEmpty()) {
                 tagList.add(createTag(tagName));
             } else {
-                tagList.add(tagRepository.findByName(tagName).get());
+                tagList.add(optionalTag.get());
             }
         }
         return tagList;
@@ -33,5 +36,21 @@ public class TagServiceImpl implements TagService {
     @Override
     public Tag createTag(String tagName) {
         return Tag.builder().name(tagName).build();
+    }
+
+    @Override
+    public Optional<Tag> findTag(String tagName) {
+        return tagRepository.findByName(tagName);
+    }
+
+    @Override
+    public List<Tag> findTags(List<String> tagsToFind) {
+        List<Tag> tagsFound = new ArrayList<>();
+
+        for (String tagName : tagsToFind) {
+            Optional<Tag> optionalTag = findTag(tagName);
+            optionalTag.ifPresent(tagsFound::add);
+        }
+        return tagsFound;
     }
 }
