@@ -244,7 +244,6 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
         val activatedUser = getResponse.getBody();
-
         assertTrue(activatedUser.isActive());
     }
 }

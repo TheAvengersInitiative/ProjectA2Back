@@ -23,12 +23,11 @@ public class ApplicationUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email)
             throws UsernameNotFoundException, UserIsNotActiveException {
-        Optional<User> applicationUser = userRepository.findByEmail(email);
-        if (!applicationUser.isPresent()) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (!user.isPresent()) {
             throw new UsernameNotFoundException("User was not found");
         }
-
         return new org.springframework.security.core.userdetails.User(
-                applicationUser.get().getEmail(), applicationUser.get().getPassword(), emptyList());
+                user.get().getEmail(), user.get().getPassword(), emptyList());
     }
 }
