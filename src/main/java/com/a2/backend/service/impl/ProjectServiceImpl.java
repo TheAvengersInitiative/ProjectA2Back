@@ -9,13 +9,12 @@ import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import java.util.stream.Collectors;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {

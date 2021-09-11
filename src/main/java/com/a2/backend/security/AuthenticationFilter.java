@@ -1,27 +1,26 @@
 package com.a2.backend.security;
 
+import static com.a2.backend.constants.SecurityConstants.EXPIRATION_TIME;
+import static com.a2.backend.constants.SecurityConstants.KEY;
+
 import com.a2.backend.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import java.io.IOException;
+import java.security.Key;
+import java.sql.Date;
+import java.util.ArrayList;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import javax.servlet.FilterChain;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.security.Key;
-import java.sql.Date;
-import java.util.ArrayList;
-
-import static com.a2.backend.constants.SecurityConstants.EXPIRATION_TIME;
-import static com.a2.backend.constants.SecurityConstants.KEY;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
@@ -59,7 +58,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 Jwts.claims()
                         .setSubject(
                                 ((org.springframework.security.core.userdetails.User)
-                                        auth.getPrincipal())
+                                                auth.getPrincipal())
                                         .getUsername());
         String token =
                 Jwts.builder()
