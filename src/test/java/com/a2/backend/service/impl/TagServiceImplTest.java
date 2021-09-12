@@ -1,27 +1,30 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 import com.a2.backend.entity.Tag;
 import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.TagService;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class TagServiceImplTest {
 
-    @Autowired private TagService tagService;
+    @Autowired
+    private TagService tagService;
 
-    @Autowired private TagRepository tagRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     @Test
     void Test001_TagServiceWhenReceivesValidTagNameShouldCreateTagWithGivenName() {

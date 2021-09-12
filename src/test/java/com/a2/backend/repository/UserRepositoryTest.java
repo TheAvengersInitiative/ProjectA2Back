@@ -1,7 +1,5 @@
 package com.a2.backend.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.User;
 import lombok.val;
@@ -15,6 +13,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @AutoConfigureWebClient
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -23,7 +23,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserRepositoryTest {
 
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";

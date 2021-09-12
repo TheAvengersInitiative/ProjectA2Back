@@ -1,10 +1,7 @@
 package com.a2.backend.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Tag;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +13,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @AutoConfigureWebClient
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -24,7 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class TagRepositoryTest {
 
-    @Autowired private TagRepository tagRepository;
+    @Autowired
+    private TagRepository tagRepository;
 
     Tag tag1 = Tag.builder().name("tag1").build();
 

@@ -48,12 +48,6 @@ public class DefaultExceptionHandler {
                 exception.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserIsNotActiveException.class)
-    protected ResponseEntity<?> handleUserIsNotActive(UserIsNotActiveException exception) {
-        logger.info(exception.getMessage());
-        return new ResponseEntity(exception.getMessage(), HttpStatus.FORBIDDEN);
-    }
-
     @ExceptionHandler(TokenConfirmationFailedException.class)
     public ResponseEntity<?> validateToken(TokenConfirmationFailedException exception) {
         logger.info(exception.getMessage());

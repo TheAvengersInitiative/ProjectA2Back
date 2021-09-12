@@ -1,8 +1,5 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
@@ -17,12 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class UserLoginLogoutTest {
 
-    @Autowired TestRestTemplate restTemplate;
+    @Autowired
+    TestRestTemplate restTemplate;
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
 
@@ -32,7 +33,8 @@ public class UserLoginLogoutTest {
     private final String password = "password";
     private final String confirmationToken = "token001";
 
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     void Test001_GivenAnExistingUserLoginShouldSucced() {
@@ -75,5 +77,56 @@ public class UserLoginLogoutTest {
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
         assertEquals(HttpStatus.OK, loginResponse.getStatusCode());
+    }
+
+    @Test
+    void Test002_GivenNonExistingUserLoginShouldFail() {
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
+                        .nickname(nickname)
+                        .email(email + "l")
+                        .biography(biography)
+                        .password(password)
+                        .confirmationToken(confirmationToken)
+                        .build();
+        String validConfirmationToken = "token001";
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        User loginUser = User.builder().email(email).password(password).build();
+
+        HttpEntity<User> loginRequest = new HttpEntity<>(loginUser);
+        val loginResponse =
+                restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
+        assertEquals(HttpStatus.FORBIDDEN, loginResponse.getStatusCode());
+    }
+
+    @Test
+    void Test003_GivenNonActiveUserLoginShouldFail() {
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
+                        .nickname(nickname)
+                        .email(email)
+                        .biography(biography)
+                        .password(password)
+                        .confirmationToken(confirmationToken)
+                        .build();
+        String validConfirmationToken = "token001";
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        User loginUser = User.builder().email(email).password(password).build();
+        System.out.println(loginUser.isActive());
+
+        HttpEntity<User> loginRequest = new HttpEntity<>(loginUser);
+        val loginResponse =
+                restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
+        assertEquals(HttpStatus.FORBIDDEN, loginResponse.getStatusCode());
     }
 }

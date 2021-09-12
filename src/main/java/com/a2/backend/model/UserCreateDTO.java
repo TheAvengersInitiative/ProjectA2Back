@@ -1,9 +1,10 @@
 package com.a2.backend.model;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Size;
 import lombok.*;
 import org.springframework.lang.Nullable;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter

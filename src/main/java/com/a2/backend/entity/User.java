@@ -1,9 +1,10 @@
 package com.a2.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.UUID;
-import javax.persistence.*;
 import lombok.*;
+
+import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -29,7 +30,12 @@ public class User {
 
     String password; // Hashed
 
-    @JsonIgnore String confirmationToken;
+    @Builder.Default
+    String authorities = null;
 
-    @Builder.Default boolean isActive = false;
+    @JsonIgnore
+    String confirmationToken;
+
+    @Builder.Default
+    boolean isActive = false;
 }

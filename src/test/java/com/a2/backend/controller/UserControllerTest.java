@@ -1,7 +1,5 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
@@ -15,12 +13,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserControllerTest {
 
-    @Autowired TestRestTemplate restTemplate;
+    @Autowired
+    TestRestTemplate restTemplate;
 
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
@@ -33,7 +34,7 @@ class UserControllerTest {
 
     @Test
     void
-            Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
+    Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
 
         UserCreateDTO userCreateDTO =
                 UserCreateDTO.builder()
@@ -60,7 +61,7 @@ class UserControllerTest {
 
     @Test
     void
-            Test002_GivenAUserCreateDTOWithInvalidNicknameWhenCreatingUserThenBadStatusResponseIsReturned() {
+    Test002_GivenAUserCreateDTOWithInvalidNicknameWhenCreatingUserThenBadStatusResponseIsReturned() {
         String invalidNickname = "not a valid nickname as it is way too long";
 
         UserCreateDTO userCreateDTO =
@@ -80,7 +81,7 @@ class UserControllerTest {
 
     @Test
     void
-            Test003_GivenAUserCreateDTOWithInvalidEmailWhenCreatingUserThenBadStatusResponseIsReturned() {
+    Test003_GivenAUserCreateDTOWithInvalidEmailWhenCreatingUserThenBadStatusResponseIsReturned() {
         String invalidEmail = "this is not a real email";
 
         UserCreateDTO userCreateDTO =
@@ -100,7 +101,7 @@ class UserControllerTest {
 
     @Test
     void
-            Test004_GivenAUserCreateDTOWithInvalidPasswordWhenCreatingUserThenBadStatusResponseIsReturned() {
+    Test004_GivenAUserCreateDTOWithInvalidPasswordWhenCreatingUserThenBadStatusResponseIsReturned() {
         String invalidPassword = "short";
 
         UserCreateDTO userCreateDTO =
@@ -120,7 +121,7 @@ class UserControllerTest {
 
     @Test
     void
-            Test005_GivenAUserCreateDTOWithNoBiographyWhenCreatingUserThenStatusIsCreatedAndBiographyIsNull() {
+    Test005_GivenAUserCreateDTOWithNoBiographyWhenCreatingUserThenStatusIsCreatedAndBiographyIsNull() {
 
         UserCreateDTO userCreateDTO =
                 UserCreateDTO.builder().nickname(nickname).email(email).password(password).build();
@@ -137,7 +138,7 @@ class UserControllerTest {
 
     @Test
     void
-            Test006_GivenAUserCreateDTOWithExistingNicknameWhenCreatingUserThenExceptionIsHandledAndBadRequestIsReturned() {
+    Test006_GivenAUserCreateDTOWithExistingNicknameWhenCreatingUserThenExceptionIsHandledAndBadRequestIsReturned() {
 
         UserCreateDTO userCreateDTO =
                 UserCreateDTO.builder()
@@ -175,7 +176,7 @@ class UserControllerTest {
 
     @Test
     void
-            Test007_GivenAUserCreateDTOWithExistingEmailWhenCreatingUserThenExceptionIsHandledAndBadRequestIsReturned() {
+    Test007_GivenAUserCreateDTOWithExistingEmailWhenCreatingUserThenExceptionIsHandledAndBadRequestIsReturned() {
 
         UserCreateDTO userCreateDTO =
                 UserCreateDTO.builder()
@@ -245,5 +246,6 @@ class UserControllerTest {
 
         val activatedUser = getResponse.getBody();
         assertTrue(activatedUser.isActive());
+        assertEquals(activatedUser.getAuthorities(), "ROLE_USER");
     }
 }
