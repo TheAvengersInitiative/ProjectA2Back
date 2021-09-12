@@ -20,7 +20,6 @@ import org.springframework.test.annotation.DirtiesContext;
 class UserServiceImplTest {
 
     @Autowired private UserService userService;
-
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";
@@ -39,13 +38,12 @@ class UserServiceImplTest {
     @Test
     void
             Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
-        User persistedUser = userService.createUser(userCreateDTO);
-
-        assertEquals(nickname, persistedUser.getNickname());
-        assertEquals(email, persistedUser.getEmail());
-        assertEquals(biography, persistedUser.getBiography());
-        assertNotEquals(password, persistedUser.getPassword());
-        assertFalse(persistedUser.isActive());
+        User persistedApplicationUser = userService.createUser(userCreateDTO);
+        assertEquals(nickname, persistedApplicationUser.getNickname());
+        assertEquals(email, persistedApplicationUser.getEmail());
+        assertEquals(biography, persistedApplicationUser.getBiography());
+        assertNotEquals(password, persistedApplicationUser.getPassword());
+        assertFalse(persistedApplicationUser.isActive());
     }
 
     @Test
@@ -62,7 +60,9 @@ class UserServiceImplTest {
 
         assertThrows(
                 UserWithThatNicknameExistsException.class,
-                () -> userService.createUser(nonValidUserCreateDTO));
+                () -> {
+                    userService.createUser(nonValidUserCreateDTO);
+                });
     }
 
     @Test
@@ -79,7 +79,9 @@ class UserServiceImplTest {
 
         assertThrows(
                 UserWithThatEmailExistsException.class,
-                () -> userService.createUser(nonValidUserCreateDTO));
+                () -> {
+                    userService.createUser(nonValidUserCreateDTO);
+                });
     }
 
     @Test

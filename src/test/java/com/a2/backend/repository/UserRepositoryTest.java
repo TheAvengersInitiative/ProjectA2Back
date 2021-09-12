@@ -24,13 +24,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class UserRepositoryTest {
 
     @Autowired private UserRepository userRepository;
-
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";
     String password = "hashed_password";
 
-    User user =
+    User applicationUser =
             User.builder()
                     .nickname(nickname)
                     .email(email)
@@ -43,32 +42,29 @@ class UserRepositoryTest {
 
         assertTrue(userRepository.findAll().isEmpty());
 
-        userRepository.save(user);
+        userRepository.save(applicationUser);
 
         val users = userRepository.findAll();
 
         assertEquals(1, users.size());
 
-        User persistedUser = users.get(0);
+        User persistedApplicationUser = users.get(0);
 
-        assertNotNull(persistedUser.getId());
-        assertEquals(nickname, persistedUser.getNickname());
-        assertEquals(email, persistedUser.getEmail());
-        assertEquals(biography, persistedUser.getBiography());
-        assertEquals(password, persistedUser.getPassword());
-        assertFalse(persistedUser.isActive());
+        assertNotNull(persistedApplicationUser.getId());
+        assertEquals(nickname, persistedApplicationUser.getNickname());
+        assertEquals(email, persistedApplicationUser.getEmail());
+        assertEquals(biography, persistedApplicationUser.getBiography());
+        assertEquals(password, persistedApplicationUser.getPassword());
+        assertFalse(persistedApplicationUser.isActive());
     }
 
     @Test
     void Test002_GivenAPersistedUserWhenFindingByNicknameThenItIsReturned() {
-        userRepository.save(user);
+        userRepository.save(applicationUser);
 
-        val optionalPersistedUser = userRepository.findByNickname(nickname);
-
+        val optionalPersistedUser = userRepository.findByNickname("nickname");
         assertTrue(optionalPersistedUser.isPresent());
-
         val persistedUser = optionalPersistedUser.get();
-
         assertNotNull(persistedUser.getId());
         assertEquals(nickname, persistedUser.getNickname());
         assertEquals(email, persistedUser.getEmail());
@@ -79,7 +75,7 @@ class UserRepositoryTest {
 
     @Test
     void Test003_GivenANonExistingNicknameWhenFindingByNicknameThenItIsNotPresent() {
-        userRepository.save(user);
+        userRepository.save(applicationUser);
 
         val nonExistingUser = userRepository.findByNickname("Not a Nickname");
 
@@ -88,9 +84,9 @@ class UserRepositoryTest {
 
     @Test
     void Test004_GivenAPersistedUserWhenFindingByEmailThenItIsReturned() {
-        userRepository.save(user);
+        userRepository.save(applicationUser);
 
-        val optionalPersistedUser = userRepository.findByEmail(email);
+        val optionalPersistedUser = userRepository.findByEmail("some@email.com");
 
         assertTrue(optionalPersistedUser.isPresent());
 
@@ -106,7 +102,7 @@ class UserRepositoryTest {
 
     @Test
     void Test005_GivenANonExistingEmailWhenFindingByEmailThenItIsNotPresent() {
-        userRepository.save(user);
+        userRepository.save(applicationUser);
 
         val nonExistingUser = userRepository.findByEmail("nonPersisted@email.com");
 

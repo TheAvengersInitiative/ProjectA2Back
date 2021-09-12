@@ -27,7 +27,9 @@ public class User {
 
     String biography;
 
-    @JsonIgnore String password; // Hashed
+    String password; // Hashed
+
+    @Builder.Default String authorities = null;
 
     @JsonIgnore String confirmationToken;
 
