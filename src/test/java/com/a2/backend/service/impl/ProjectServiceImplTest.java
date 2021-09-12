@@ -12,7 +12,6 @@ import com.a2.backend.service.ProjectService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

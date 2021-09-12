@@ -8,9 +8,10 @@ import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-
+import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public Project updateProject(ProjectUpdateDTO projectUpdateDTO, UUID projectToBeUpdatedID) {
         val projectToModifyOptional = projectRepository.findById(projectToBeUpdatedID);
         if (projectToModifyOptional.isEmpty()) {
@@ -59,8 +61,8 @@ public class ProjectServiceImpl implements ProjectService {
         }
         val updatedProject = projectToModifyOptional.get();
         updatedProject.setTitle(projectUpdateDTO.getTitle());
-        updatedProject.setLinks(Arrays.asList(projectUpdateDTO.getLinks().clone()));
-        updatedProject.setTags(Arrays.asList(projectUpdateDTO.getTags().clone()));
+        updatedProject.setLinks(new LinkedList<>(Arrays.asList(projectUpdateDTO.getLinks())));
+        updatedProject.setTags(new LinkedList<>(Arrays.asList(projectUpdateDTO.getTags())));
         updatedProject.setDescription(projectUpdateDTO.getDescription());
 
         return projectRepository.save(updatedProject);

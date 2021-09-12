@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Project;
-import java.util.List;
+import java.util.*;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,8 +29,16 @@ class ProjectRepositoryTest {
     String title = "New project";
     String description = "Testing project repository";
     String owner = "Owner´s name";
-
-    Project project = Project.builder().title(title).description(description).owner(owner).build();
+    List<String> links = new LinkedList<>(Collections.singletonList("http://google.com"));
+    List<String> tags = new LinkedList<>(Collections.singletonList("C++"));
+    Project project =
+            Project.builder()
+                    .title(title)
+                    .description(description)
+                    .owner(owner)
+                    .links(links)
+                    .tags(tags)
+                    .build();
 
     @Test
     void Test001_ProjectRepositoryShouldSaveProjects() {
