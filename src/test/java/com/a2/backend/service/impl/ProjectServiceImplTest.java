@@ -288,13 +288,15 @@ class ProjectServiceImplTest {
 
     @Test
     void Test012_GivenASingleExistingProjectWhenSearchedByTitleItShouldBeFound() {
+        userRepository.save(owner);
+
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title("Not Project")
                         .description(description)
                         .links(Arrays.asList("link3", "link4"))
                         .tags(Arrays.asList("tag5", "tag7"))
-                        .owner("Owner3")
+                        .owner(owner)
                         .build();
 
         ProjectCreateDTO thirdProjectToCreate =
@@ -303,7 +305,7 @@ class ProjectServiceImplTest {
                         .description(description)
                         .links(linksUpdate)
                         .tags(tagsUpdate)
-                        .owner("Owner2")
+                        .owner(owner)
                         .build();
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
@@ -322,6 +324,8 @@ class ProjectServiceImplTest {
 
     @Test
     void Test013_GivenExistingTagsAndAValidProjectCreateDTOWhenCreatingProjectThenItIsCreated() {
+        userRepository.save(owner);
+
         projectService.createProject(projectToCreate);
 
         String title2 = "A Non Existent Project title";

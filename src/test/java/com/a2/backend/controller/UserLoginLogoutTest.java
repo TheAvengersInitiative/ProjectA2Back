@@ -1,8 +1,5 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
@@ -17,12 +14,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class UserLoginLogoutTest {
 
-    @Autowired TestRestTemplate restTemplate;
+    @Autowired
+    TestRestTemplate restTemplate;
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
 
@@ -35,7 +36,7 @@ public class UserLoginLogoutTest {
     @Autowired private PasswordEncoder passwordEncoder;
 
     @Test
-    void Test001_GivenAnExistingUserLoginShouldSucced() {
+    void Test001_GivenAnExistingUserLoginShouldSucceed() {
         UserCreateDTO userCreateDTO =
                 UserCreateDTO.builder()
                         .nickname(nickname)

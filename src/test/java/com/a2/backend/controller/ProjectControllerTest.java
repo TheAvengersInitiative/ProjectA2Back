@@ -1,7 +1,5 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -521,6 +519,8 @@ class ProjectControllerTest {
 
     @Test
     void Test016_ProjectControllerSuccesfulOrderedSearch() {
+        userRepository.save(owner);
+
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3");
@@ -531,8 +531,6 @@ class ProjectControllerTest {
         List<String> secondTags = Arrays.asList("tag3", "tag4");
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
         List<String> fourthTags = Arrays.asList("tag7", "tag8");
-        String owner = "Owner´s name";
-        String secondOwner = "Owner´s name2";
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()

@@ -1,15 +1,15 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
-import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.TokenConfirmationFailedException;
+import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import java.util.UUID;
+import com.a2.backend.utils.SecurityUtils;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,12 +57,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(UUID id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty())
-            throw new UserNotFoundException(String.format("No user found for id: %s", id));
-        projectService.deleteProjectsFromUser(optionalUser.get());
-        userRepository.deleteById(id);
+    public void deleteUser() {
+        String email = SecurityUtils.getCurrentUserLogin().get();
+        Optional<User> loggedUser = userRepository.findByEmail(email);
+        if (loggedUser.isEmpty())
+            throw new UserNotFoundException(String.format("No user found for email: %s", email));
+        projectService.deleteProjectsFromUser(loggedUser.get());
+        userRepository.deleteById(loggedUser.get().getId());
     }
 
     @Override

@@ -6,23 +6,32 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.UUID;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@AutoConfigureMockMvc
 class UserControllerTest {
 
-    @Autowired TestRestTemplate restTemplate;
+    @Autowired
+    TestRestTemplate restTemplate;
+
+    @Autowired
+    MockMvc mvc;
 
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
@@ -214,7 +223,9 @@ class UserControllerTest {
     }
 
     @Test
-    void Test008_GivenAnExistingUserWhenDeletedThenANewUserWithSameNicknameAndEmailCanBeCreated() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test008_GivenAnExistingUserWhenDeletedThenANewUserWithSameNicknameAndEmailCanBeCreated()
+            throws Exception {
         UserCreateDTO userCreateDTO =
                 UserCreateDTO.builder()
                         .nickname(nickname)
@@ -230,13 +241,8 @@ class UserControllerTest {
 
         assertNotNull(getResponse.getBody());
 
-        val getDeleteResponse =
-                restTemplate.exchange(
-                        baseUrl + "/" + getResponse.getBody().getId(),
-                        HttpMethod.DELETE,
-                        null,
-                        String.class);
-        assertEquals(HttpStatus.OK, getDeleteResponse.getStatusCode());
+        mvc.perform(MockMvcRequestBuilders.delete(baseUrl).accept(MediaType.ALL))
+                .andExpect(status().isOk());
 
         val anotherGetResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -244,16 +250,18 @@ class UserControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-    Test009_GivenANonExistentIdWhenDeletingUserByIdThenExceptionIsThrownAndBadRequestIsReturned() {
-        UUID nonExistentId = UUID.randomUUID();
+    Test009_GivenANonExistentEmailWhenDeletingUserThenExceptionIsHandledAndBadRequestIsReturned()
+            throws Exception {
+        val deleteResponse =
+                mvc.perform(MockMvcRequestBuilders.delete(baseUrl).accept(MediaType.ALL))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse();
 
-        val getResponse =
-                restTemplate.exchange(
-                        baseUrl + "/" + nonExistentId, HttpMethod.DELETE, null, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-
-        assertEquals("No user found for id: " + nonExistentId, getResponse.getBody());
+        assertEquals(
+                "No user found for email: some@gmail.com", deleteResponse.getContentAsString());
     }
 
     @Test

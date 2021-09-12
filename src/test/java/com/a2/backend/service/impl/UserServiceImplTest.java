@@ -1,8 +1,8 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
-import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.TokenConfirmationFailedException;
+import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -13,10 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,6 +30,7 @@ class UserServiceImplTest {
 
     @Autowired
     private ProjectService projectService;
+
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";
@@ -95,10 +96,11 @@ class UserServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test004_GivenAnExistingUserWhenDeletingItThenAUserWithThatNicknameAndEmailCanBeCreated() {
         User createdUser = userService.createUser(userCreateDTO);
 
-        userService.deleteUser(createdUser.getId());
+        userService.deleteUser();
 
         UserCreateDTO anotherUserCreateDTO =
                 UserCreateDTO.builder()
@@ -120,13 +122,13 @@ class UserServiceImplTest {
     }
 
     @Test
+    @WithMockUser
     void Test005_GivenANonExistentIdWhenDeletingByIdThenExceptionIsThrown() {
-        UUID nonExistentId = UUID.randomUUID();
-
-        assertThrows(UserNotFoundException.class, () -> userService.deleteUser(nonExistentId));
+        assertThrows(UserNotFoundException.class, () -> userService.deleteUser());
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test006_GivenAUserThatHasAProjectWhenDeletingTheUserThenTheProjectIsDeleted() {
 
         User user = userService.createUser(userCreateDTO);
@@ -142,7 +144,7 @@ class UserServiceImplTest {
 
         assertEquals(1, projectService.getAllProjects().size());
 
-        userService.deleteUser(user.getId());
+        userService.deleteUser();
 
         assertTrue(projectService.getAllProjects().isEmpty());
     }

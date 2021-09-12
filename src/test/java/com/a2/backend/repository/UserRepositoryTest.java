@@ -111,7 +111,7 @@ class UserRepositoryTest {
 
     @Test
     void Test006_GivenASinglePersistedUserWhenDeletingByIdThenNoUsersRemain() {
-        val persistedUser = userRepository.save(user);
+        val persistedUser = userRepository.save(applicationUser);
 
         assertEquals(1, userRepository.findAll().size());
 
