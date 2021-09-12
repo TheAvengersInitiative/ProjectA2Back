@@ -29,8 +29,6 @@ public class User {
 
     String password; // Hashed
 
-    @Builder.Default String authorities = null;
-
     @JsonIgnore String confirmationToken;
 
     @Builder.Default boolean isActive = false;
