@@ -1,6 +1,8 @@
 package com.a2.backend.model;
 
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.*;
 
@@ -19,9 +21,13 @@ public class ProjectUpdateDTO {
     @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters")
     private String description;
 
+    @NotNull
+    @NotEmpty
     @Size(min = 1, max = 5, message = "Number of links must be between 1 and 5")
     private List<String> links;
 
+    @NotNull
+    @NotEmpty
     @Size(min = 1, max = 5, message = "Number of tags must be between 1 and 5")
     private List<@Size(min = 1, max = 24) String> tags;
 

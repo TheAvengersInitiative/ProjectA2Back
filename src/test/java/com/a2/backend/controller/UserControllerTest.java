@@ -1,5 +1,8 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.PreferencesUpdateDTO;
@@ -7,6 +10,7 @@ import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +26,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -72,7 +71,7 @@ class UserControllerTest {
 
     @Test
     void
-    Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
+            Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -99,7 +98,8 @@ class UserControllerTest {
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("Nickname must be between 3 and 24 characters", getResponse.getBody());
+        assertEquals(
+                "nickname: Nickname must be between 3 and 24 characters\n", getResponse.getBody());
     }
 
     @Test
@@ -112,7 +112,7 @@ class UserControllerTest {
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("Email must be valid", getResponse.getBody());
+        assertEquals("email: Email must be valid\n", getResponse.getBody());
     }
 
     @Test
@@ -125,7 +125,8 @@ class UserControllerTest {
 
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("Password must be between 8 and 32 characters", getResponse.getBody());
+        assertEquals(
+                "password: Password must be between 8 and 32 characters\n", getResponse.getBody());
     }
 
     @Test
@@ -333,7 +334,7 @@ class UserControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Nickname must be between 3 and 24 characters", errorMessage);
+        assertEquals("nickname: Nickname must be between 3 and 24 characters\n", errorMessage);
     }
 
     @Test
@@ -362,7 +363,7 @@ class UserControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Password must be between 8 and 32 characters", errorMessage);
+        assertEquals("password: Password must be between 8 and 32 characters\n", errorMessage);
     }
 
     @Test
@@ -466,8 +467,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test016_GivenAValidPreferencesUpdateDTOAndAnExistingUserWhenUpdatingPreferencesThenTheyAreUpdated()
-            throws Exception {
+            Test016_GivenAValidPreferencesUpdateDTOAndAnExistingUserWhenUpdatingPreferencesThenTheyAreUpdated()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -499,8 +500,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test017_GivenAPreferencesUpdateDTOWithTooManyLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
-            throws Exception {
+            Test017_GivenAPreferencesUpdateDTOWithTooManyLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -524,14 +525,14 @@ class UserControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Maximum number of languages is 3", errorMessage);
+        assertEquals("languages: Maximum number of languages is 3\n", errorMessage);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test018_GivenAPreferencesUpdateDTOWithTooManyTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
-            throws Exception {
+            Test018_GivenAPreferencesUpdateDTOWithTooManyTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -555,14 +556,14 @@ class UserControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Maximum number of tags is 4", errorMessage);
+        assertEquals("tags: Maximum number of tags is 4\n", errorMessage);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test019_GivenAPreferencesUpdateDTOWithRepeatedLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
-            throws Exception {
+            Test019_GivenAPreferencesUpdateDTOWithRepeatedLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -586,14 +587,14 @@ class UserControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Languages must be unique", errorMessage);
+        assertEquals("languages: Languages must be unique\n", errorMessage);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test020_GivenAPreferencesUpdateDTOWithRepeatedTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
-            throws Exception {
+            Test020_GivenAPreferencesUpdateDTOWithRepeatedTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -617,6 +618,6 @@ class UserControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Tag names must be unique", errorMessage);
+        assertEquals("tags: Tag names must be unique\n", errorMessage);
     }
 }

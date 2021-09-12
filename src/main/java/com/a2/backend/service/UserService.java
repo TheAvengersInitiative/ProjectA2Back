@@ -6,7 +6,6 @@ import com.a2.backend.model.PasswordRecoveryInitDTO;
 import com.a2.backend.model.PreferencesUpdateDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
-
 import java.util.UUID;
 
 public interface UserService {

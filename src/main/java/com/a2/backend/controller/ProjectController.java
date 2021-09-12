@@ -47,7 +47,7 @@ public class ProjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<UUID> deleteProject(@PathVariable UUID id) {
         projectService.deleteProject(id);
-        return ResponseEntity.status(HttpStatus.OK).body(id);
+        return new ResponseEntity<>(id, HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{id}")
