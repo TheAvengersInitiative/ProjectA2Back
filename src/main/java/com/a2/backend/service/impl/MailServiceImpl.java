@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailServiceImpl implements MailService {
 
-    @Autowired
-    private JavaMailSender emailsender;
+    @Autowired private JavaMailSender emailsender;
 
     private final UserRepository userRepository;
 
@@ -31,8 +30,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendForgotPasswordMail(String mail) {
-    }
+    public void sendForgotPasswordMail(String mail) {}
 
     private void sendEmail(String mailTO, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();

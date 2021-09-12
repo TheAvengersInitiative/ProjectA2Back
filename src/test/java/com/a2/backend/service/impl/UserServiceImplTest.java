@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
@@ -12,15 +14,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserServiceImplTest {
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
     String nickname = "nickname";
     String email = "some@email.com";
     String biography = "bio";
@@ -38,7 +37,7 @@ class UserServiceImplTest {
 
     @Test
     void
-    Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
+            Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
         User persistedApplicationUser = userService.createUser(userCreateDTO);
         assertEquals(nickname, persistedApplicationUser.getNickname());
         assertEquals(email, persistedApplicationUser.getEmail());
@@ -107,7 +106,7 @@ class UserServiceImplTest {
 
     @Test
     void
-    Test008_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
+            Test008_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
         User user = userService.createUser(userCreateDTO);
         String validToken = "token001";
 
