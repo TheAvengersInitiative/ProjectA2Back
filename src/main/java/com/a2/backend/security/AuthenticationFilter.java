@@ -35,6 +35,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         try {
 
             User applicationUser = new ObjectMapper().readValue(req.getInputStream(), User.class);
+
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             applicationUser.getEmail(),

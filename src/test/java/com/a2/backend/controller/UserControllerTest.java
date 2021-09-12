@@ -245,6 +245,5 @@ class UserControllerTest {
 
         val activatedUser = getResponse.getBody();
         assertTrue(activatedUser.isActive());
-        assertEquals(activatedUser.getAuthorities(), "ROLE_USER");
     }
 }

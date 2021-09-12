@@ -99,7 +99,7 @@ public class UserLoginLogoutTest {
         HttpEntity<User> loginRequest = new HttpEntity<>(loginUser);
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
-        assertEquals(HttpStatus.FORBIDDEN, loginResponse.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, loginResponse.getStatusCode());
     }
 
     @Test
@@ -120,11 +120,10 @@ public class UserLoginLogoutTest {
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
         User loginUser = User.builder().email(email).password(password).build();
-        System.out.println(loginUser.isActive());
 
         HttpEntity<User> loginRequest = new HttpEntity<>(loginUser);
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
-        assertEquals(HttpStatus.FORBIDDEN, loginResponse.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, loginResponse.getStatusCode());
     }
 }

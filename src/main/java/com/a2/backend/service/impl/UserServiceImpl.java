@@ -63,7 +63,6 @@ public class UserServiceImpl implements UserService {
             throw new TokenConfirmationFailedException(String.format("Invalid Token %s", token));
         }
         user.setActive(true);
-        user.setAuthorities("ROLE_USER");
         return userRepository.save(user);
     }
 }
