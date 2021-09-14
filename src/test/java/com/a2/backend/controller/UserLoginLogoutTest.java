@@ -59,8 +59,8 @@ public class UserLoginLogoutTest {
                                 "%s/%s/%s/%s",
                                 baseUrl,
                                 confirmationUrl,
-                                validConfirmationToken,
-                                userToActivate.getId()),
+                                userToActivate.getId(),
+                                validConfirmationToken),
                         HttpMethod.GET,
                         null,
                         User.class);

@@ -26,8 +26,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    @GetMapping("/confirm/{token}/{id}")
-    public ResponseEntity<User> confirmUser(@PathVariable String token, @PathVariable UUID id) {
+    @GetMapping("/confirm/{id}/{token}")
+    public ResponseEntity<User> confirmUser(@PathVariable UUID id, @PathVariable String token) {
         val userConfirmed = userService.confirmUser(token, id);
         return ResponseEntity.status(HttpStatus.OK).body(userConfirmed);
     }
