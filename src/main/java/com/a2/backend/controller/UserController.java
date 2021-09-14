@@ -35,6 +35,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userConfirmed);
     }
 
+    @PutMapping("/{email}")
+    public ResponseEntity<User> recoverPassword(@PathVariable String email, String newPassword) {
+        val userTobeUpdated = userService.recoverPassword(email, newPassword);
+        return ResponseEntity.status(HttpStatus.OK).body(userTobeUpdated);
+    }
+
     @Secured({SecurityConstants.USER_ROLE})
     @DeleteMapping
     public ResponseEntity<?> deleteUser() {

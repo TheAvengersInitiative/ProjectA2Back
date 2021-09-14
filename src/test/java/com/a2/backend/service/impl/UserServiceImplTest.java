@@ -162,6 +162,7 @@ class UserServiceImplTest {
         User activatedUser = userService.confirmUser(confirmationToken1, user.getId());
 
         assertTrue(activatedUser.isActive());
+        System.out.println("this is the password: " + activatedUser.getPassword());
     }
 
     @Test
@@ -255,5 +256,16 @@ class UserServiceImplTest {
         assertThrows(
                 UserWithThatNicknameExistsException.class,
                 () -> userService.updateUser(userUpdateDTO));
+    }
+
+    @Test
+    void
+            Test009_GivenaValidEmailandValidNewPasswordWhenWantToRecoverPasswordThenChangeTheOldPasswordForNewOne() {
+        User user = userService.createUser(userCreateDTO);
+        String newPassword = "newpassword001";
+
+        User passwordUpdatedUser = userService.recoverPassword(user.getEmail(), newPassword);
+
+        assertEquals(newPassword, passwordUpdatedUser.getPassword());
     }
 }

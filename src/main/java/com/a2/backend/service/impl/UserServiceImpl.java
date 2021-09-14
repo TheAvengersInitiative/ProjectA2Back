@@ -106,4 +106,17 @@ public class UserServiceImpl implements UserService {
         user.setActive(true);
         return userRepository.save(user);
     }
+
+    @Override
+    public User recoverPassword(String email, String newPassword) {
+        val userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return null;
+        }
+        val userToUpdatePassword = userOptional.get();
+
+        userToUpdatePassword.setPassword(newPassword);
+
+        return userRepository.save(userToUpdatePassword);
+    }
 }

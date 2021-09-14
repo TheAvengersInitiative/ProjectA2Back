@@ -11,6 +11,8 @@ public interface UserService {
 
     User confirmUser(String token, UUID userid);
 
+    User recoverPassword(String email, String newPassword);
+
     void deleteUser();
 
     User updateUser(UserUpdateDTO userUpdateDTO);

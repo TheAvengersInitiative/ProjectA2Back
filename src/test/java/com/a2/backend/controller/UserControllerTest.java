@@ -251,6 +251,8 @@ class UserControllerTest {
         val activatedUser = getResponse.getBody();
         assertNotNull(activatedUser);
         assertTrue(activatedUser.isActive());
+
+        System.out.println("This is a password: " + userToActivate.getPassword());
     }
 
     @Test
