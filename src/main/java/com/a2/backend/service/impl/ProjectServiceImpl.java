@@ -69,18 +69,20 @@ public class ProjectServiceImpl implements ProjectService {
                             "The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
 
-        List<Tag> tags =
-                tagService.updateTags(
+        List<Tag> removedTags =
+                tagService.getRemovedTags(
                         projectUpdateDTO.getTags(),
                         getProjectDetails(projectToBeUpdatedID).getTags());
 
-        val updatedProject = projectToModifyOptional.get();
-        updatedProject.setTitle(projectUpdateDTO.getTitle());
-        updatedProject.setLinks(projectUpdateDTO.getLinks());
-        updatedProject.setTags(tags);
-        updatedProject.setDescription(projectUpdateDTO.getDescription());
+        val project = projectToModifyOptional.get();
+        project.setTitle(projectUpdateDTO.getTitle());
+        project.setLinks(projectUpdateDTO.getLinks());
+        project.setTags(tagService.findOrCreateTag(projectUpdateDTO.getTags()));
+        project.setDescription(projectUpdateDTO.getDescription());
 
-        return projectRepository.save(updatedProject);
+        Project updatedProject = projectRepository.save(project);
+        tagService.deleteUnusedTags(removedTags);
+        return updatedProject;
     }
 
     @Override

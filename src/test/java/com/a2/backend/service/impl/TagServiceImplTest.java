@@ -61,7 +61,7 @@ class TagServiceImplTest {
         Tag tag1 = tagRepository.save(tagService.createTag("tag1"));
         Tag tag2 = tagRepository.save(tagService.createTag("tag2"));
 
-        List<Tag> tags = tagService.findTags(Arrays.asList("tag1", "tag2"));
+        List<Tag> tags = tagService.findTagsByNames(Arrays.asList("tag1", "tag2"));
 
         assertEquals(2, tags.size());
         assertEquals(tag1, tags.get(0));
@@ -69,7 +69,7 @@ class TagServiceImplTest {
     }
 
     @Test
-    void Test004_TagServiceGivenValidTagNamesToUpdateShouldCreateTagListWithGivenNamesAndDeleteUnusedTags() {
+    void Test005_TagServiceGivenValidTagNamesToUpdateAndCurrentTagsShouldReturnRemovedTags() {
 
         Tag tag1 = tagRepository.save(tagService.createTag("tag1"));
         Tag tag2 = tagRepository.save(tagService.createTag("tag2"));
@@ -77,13 +77,9 @@ class TagServiceImplTest {
         List<Tag> tagList = Arrays.asList(tag1, tag2);
         List<String> updatedTagNames = Arrays.asList("tag1", "tag3");
 
-        List<Tag> updatedTags = tagService.updateTags(updatedTagNames, tagList);
+        List<Tag> removedTags = tagService.getRemovedTags(updatedTagNames, tagList);
 
-        assertEquals(2, tagList.size());
-
-        assertEquals("tag1", updatedTags.get(0).getName());
-        assertEquals("tag3", updatedTags.get(1).getName());
-
-
+        assertEquals(1, removedTags.size());
+        assertEquals("tag2", removedTags.get(0).getName());
     }
 }
