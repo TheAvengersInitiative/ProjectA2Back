@@ -282,6 +282,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
         val userToActivate = postResponse.getBody();
+        assertNotNull(userToActivate);
 
         val getResponse =
                 restTemplate.exchange(
@@ -297,6 +298,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
         val activatedUser = getResponse.getBody();
+        assertNotNull(activatedUser);
         assertTrue(activatedUser.isActive());
     }
 }

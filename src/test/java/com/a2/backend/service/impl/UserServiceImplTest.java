@@ -71,9 +71,7 @@ class UserServiceImplTest {
 
         assertThrows(
                 UserWithThatNicknameExistsException.class,
-                () -> {
-                    userService.createUser(nonValidUserCreateDTO);
-                });
+                () -> userService.createUser(nonValidUserCreateDTO));
     }
 
     @Test
@@ -90,9 +88,7 @@ class UserServiceImplTest {
 
         assertThrows(
                 UserWithThatEmailExistsException.class,
-                () -> {
-                    userService.createUser(nonValidUserCreateDTO);
-                });
+                () -> userService.createUser(nonValidUserCreateDTO));
     }
 
     @Test
@@ -123,7 +119,7 @@ class UserServiceImplTest {
 
     @Test
     @WithMockUser
-    void Test005_GivenANonExistentIdWhenDeletingByIdThenExceptionIsThrown() {
+    void Test005_GivenANonExistentUserWhenDeletingThenExceptionIsThrown() {
         assertThrows(UserNotFoundException.class, () -> userService.deleteUser());
     }
 
@@ -150,7 +146,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test007_GivenAvalidValidTokenWhenConfirmAccountThenUserisActiveEqualsTrue() {
+    void Test007_GivenAValidValidTokenWhenConfirmAccountThenUserIsActiveEqualsTrue() {
         User user = userService.createUser(userCreateDTO);
         String confirmationToken1 = "token001";
 
@@ -160,7 +156,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test008_GivenAnInvalidTokenWhenWantToConfirmAccountThenThrowexceptionInvalidToken() {
+    void Test008_GivenAnInvalidTokenWhenWantToConfirmAccountThenThrowExceptionInvalidToken() {
         User user = userService.createUser(userCreateDTO);
         String invalidToken = "token002";
 

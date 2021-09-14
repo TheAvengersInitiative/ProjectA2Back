@@ -150,6 +150,7 @@ class ProjectControllerTest {
     void Test005_GivenNoExistingProjectsWhenGettingAllProjectsThenEmptyResponseIsReturned() {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        assertNotNull(getResponse.getBody());
         assertEquals(0, getResponse.getBody().length);
     }
 
@@ -181,6 +182,7 @@ class ProjectControllerTest {
 
         Project[] projects = getResponse.getBody();
 
+        assertNotNull(projects);
         assertEquals(1, projects.length);
 
         val deleteResponse =
@@ -221,6 +223,7 @@ class ProjectControllerTest {
 
         Project[] projects = getResponse.getBody();
 
+        assertNotNull(projects);
         assertEquals(1, projects.length);
 
         val deleteResponse =
@@ -237,6 +240,7 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.OK, getResponse1.getStatusCode());
         Project[] projects1 = getResponse1.getBody();
 
+        assertNotNull(projects1);
         assertEquals(0, projects1.length);
     }
 
@@ -268,6 +272,7 @@ class ProjectControllerTest {
 
         Project[] projects = getResponse.getBody();
 
+        assertNotNull(projects);
         assertEquals(1, projects.length);
 
         val deleteResponse =
@@ -330,6 +335,7 @@ class ProjectControllerTest {
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+        assertNotNull(postResponse.getBody());
 
         val updatedResponse =
                 restTemplate.exchange(
@@ -340,6 +346,7 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.OK, updatedResponse.getStatusCode());
 
         Project project = updatedResponse.getBody();
+        assertNotNull(project);
 
         assertEquals(projectUpdateDTO.getTitle(), project.getTitle());
         assertEquals(projectUpdateDTO.getDescription(), project.getDescription());
@@ -476,7 +483,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList();
+        List<String> links = List.of();
         List<String> tags = Arrays.asList("tag1", "tag2");
 
         ProjectCreateDTO projectToCreate =
