@@ -57,7 +57,12 @@ public class DemoRunner implements CommandLineRunner {
                         .description(
                                 "GNU is an extensive collection of free software, which can be used as an operating system or can be used in parts with other operating systems. ")
                         .links(listOf("https://www.gnu.org/", "https://www.linux.org/"))
-                        .tags(listOf(Tag.builder().name("C").build(),Tag.builder().name("C++").build(), Tag.builder().name("GNU").build(), Tag.builder().name("Linux").build()))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("C").build(),
+                                        Tag.builder().name("C++").build(),
+                                        Tag.builder().name("GNU").build(),
+                                        Tag.builder().name("Linux").build()))
                         .build();
         Project tensorFlow =
                 Project.builder()
@@ -65,7 +70,12 @@ public class DemoRunner implements CommandLineRunner {
                         .description(
                                 "TensorFlow is a free and open-source software library for machine learning. It can be used across a range of tasks but has a particular focus on training and inference of deep neural networks.")
                         .links(listOf("https://www.tensorflow.org/"))
-                        .tags(listOf(Tag.builder().name("Python").build(),Tag.builder().name("ML").build(), Tag.builder().name("CUDA").build(), Tag.builder().name("C").build()))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("Python").build(),
+                                        Tag.builder().name("ML").build(),
+                                        Tag.builder().name("CUDA").build(),
+                                        Tag.builder().name("C").build()))
                         .build();
         Project node =
                 Project.builder()
@@ -73,7 +83,11 @@ public class DemoRunner implements CommandLineRunner {
                         .description(
                                 "Node.js is an open-source, cross-platform, JavaScript runtime environment. It executes JavaScript code outside of a browser.")
                         .links(listOf("https://nodejs.org/"))
-                        .tags(listOf(Tag.builder().name("JavaScript").build(), Tag.builder().name("V8").build(), Tag.builder().name("Node").build()))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("JavaScript").build(),
+                                        Tag.builder().name("V8").build(),
+                                        Tag.builder().name("Node").build()))
                         .build();
         projectRepository.save(linux);
         projectRepository.save(tensorFlow);

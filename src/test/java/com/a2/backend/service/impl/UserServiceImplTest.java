@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserNotFoundException;
@@ -9,6 +11,7 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,20 +19,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserServiceImplTest {
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
 
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private ProjectService projectService;
 
     String nickname = "nickname";
     String email = "some@email.com";

@@ -1,9 +1,11 @@
 package com.a2.backend.repository;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Project;
-import com.a2.backend.entity.User;
 import com.a2.backend.entity.Tag;
+import com.a2.backend.entity.User;
 import java.util.Arrays;
 import java.util.List;
 import lombok.val;
@@ -17,10 +19,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @AutoConfigureWebClient
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -29,11 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectRepositoryTest {
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    @Autowired private ProjectRepository projectRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
     String title = "New project";
     String description = "Testing project repository";
@@ -123,7 +119,7 @@ class ProjectRepositoryTest {
 
     @Test
     void
-    Test006_GivenTwoSavedProjectsWithDifferentOwnersWhenDeletingByOwnerThenTheOtherProjectRemains() {
+            Test006_GivenTwoSavedProjectsWithDifferentOwnersWhenDeletingByOwnerThenTheOtherProjectRemains() {
         userRepository.save(owner);
         User owner2 =
                 User.builder()
@@ -150,6 +146,8 @@ class ProjectRepositoryTest {
 
     @Test
     void Test007_ProjectRepositoryWhenGivenTagNameShouldReturnAllProjectsThatHaveThatTag() {
+        userRepository.save(owner);
+
         Tag tag1 = Tag.builder().name("tag1").build();
         Tag tag2 = Tag.builder().name("tag2").build();
         Tag tag3 = Tag.builder().name("tag3").build();
@@ -158,7 +156,7 @@ class ProjectRepositoryTest {
                 Project.builder()
                         .title("Project1")
                         .description("My description")
-                        .owner("Owner1")
+                        .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag2))
                         .build();
@@ -167,7 +165,7 @@ class ProjectRepositoryTest {
                 Project.builder()
                         .title("Project2")
                         .description("My description")
-                        .owner("Owner2")
+                        .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
                         .build();
@@ -176,7 +174,7 @@ class ProjectRepositoryTest {
                 Project.builder()
                         .title("Project3")
                         .description("My description")
-                        .owner("Owner3")
+                        .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
                         .build();
