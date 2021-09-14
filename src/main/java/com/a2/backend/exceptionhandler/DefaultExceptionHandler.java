@@ -48,6 +48,12 @@ public class DefaultExceptionHandler {
                 exception.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    protected ResponseEntity<?> handleUserNotFoundException(UserNotFoundException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(TokenConfirmationFailedException.class)
     public ResponseEntity<?> validateToken(TokenConfirmationFailedException exception) {
         logger.info(exception.getMessage());

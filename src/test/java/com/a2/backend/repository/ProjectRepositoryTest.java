@@ -1,10 +1,8 @@
 package com.a2.backend.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Project;
-import java.util.List;
+import com.a2.backend.entity.User;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +14,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @AutoConfigureWebClient
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -24,16 +26,27 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectRepositoryTest {
 
-    @Autowired private ProjectRepository projectRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     String title = "New project";
     String description = "Testing project repository";
-    String owner = "Owner´s name";
+    User owner =
+            User.builder()
+                    .nickname("nickname")
+                    .email("some@email.com")
+                    .biography("bio")
+                    .password("password")
+                    .build();
 
     Project project = Project.builder().title(title).description(description).owner(owner).build();
 
     @Test
     void Test001_ProjectRepositoryShouldSaveProjects() {
+        userRepository.save(owner);
 
         assertTrue(projectRepository.findAll().isEmpty());
 
@@ -60,6 +73,7 @@ class ProjectRepositoryTest {
 
     @Test
     void Test002_ProjectRepositoryWhenGivenTitleShouldReturnProjectWithThatTitle() {
+        userRepository.save(owner);
 
         projectRepository.save(project);
 
@@ -68,6 +82,7 @@ class ProjectRepositoryTest {
 
     @Test
     void Test003_ProjectRepositoryWhenGivenNonExistingTitleShouldReturnEmptyList() {
+        userRepository.save(owner);
 
         projectRepository.save(project);
 
@@ -76,11 +91,57 @@ class ProjectRepositoryTest {
 
     @Test
     void Test004_ProjectRepositoryWhenDeletedOnlyExistingProjectShouldReturnEmptyList() {
+        userRepository.save(owner);
+
         projectRepository.save(project);
         List<Project> projects = projectRepository.findAll();
         val savedProject = projects.get(0);
         projectRepository.deleteById(savedProject.getId());
         List<Project> projects1 = projectRepository.findAll();
         assertEquals(0, projects1.size());
+    }
+
+    @Test
+    void Test005_GivenSomeSavedProjectsWithTheSameOwnerWhenDeletingByOwnerThenTheyAreDeleted() {
+        userRepository.save(owner);
+
+        projectRepository.save(project);
+        projectRepository.save(
+                Project.builder()
+                        .title("Project Title")
+                        .description("description")
+                        .owner(owner)
+                        .build());
+        assertEquals(2, projectRepository.findAll().size());
+
+        projectRepository.deleteByOwner(owner);
+        assertTrue(projectRepository.findAll().isEmpty());
+    }
+
+    @Test
+    void
+    Test006_GivenTwoSavedProjectsWithDifferentOwnersWhenDeletingByOwnerThenTheOtherProjectRemains() {
+        userRepository.save(owner);
+        User owner2 =
+                User.builder()
+                        .nickname("JohnDoe")
+                        .email("john@mail.com")
+                        .password("12345678")
+                        .build();
+        userRepository.save(owner2);
+
+        projectRepository.save(project);
+        projectRepository.save(
+                Project.builder()
+                        .title("Project Title")
+                        .description("description")
+                        .owner(owner2)
+                        .build());
+        assertEquals(2, projectRepository.findAll().size());
+
+        projectRepository.deleteByOwner(owner);
+        assertEquals(1, projectRepository.findAll().size());
+
+        assertEquals("JohnDoe", projectRepository.findAll().get(0).getOwner().getNickname());
     }
 }

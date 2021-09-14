@@ -1,26 +1,37 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@AutoConfigureMockMvc
 class UserControllerTest {
 
-    @Autowired TestRestTemplate restTemplate;
+    @Autowired
+    TestRestTemplate restTemplate;
+
+    @Autowired
+    MockMvc mvc;
 
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
@@ -212,7 +223,49 @@ class UserControllerTest {
     }
 
     @Test
-    void Test008_GivenAValidTokenAndUserWhenConfirmingUserThenStatusOKisReturned() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test008_GivenAnExistingUserWhenDeletedThenANewUserWithSameNicknameAndEmailCanBeCreated()
+            throws Exception {
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
+                        .nickname(nickname)
+                        .email(email)
+                        .biography(biography)
+                        .password(password)
+                        .build();
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
+
+        assertNotNull(getResponse.getBody());
+
+        mvc.perform(MockMvcRequestBuilders.delete(baseUrl).accept(MediaType.ALL))
+                .andExpect(status().isOk());
+
+        val anotherGetResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, anotherGetResponse.getStatusCode());
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test009_GivenANonExistentEmailWhenDeletingUserThenExceptionIsHandledAndBadRequestIsReturned()
+            throws Exception {
+        val deleteResponse =
+                mvc.perform(MockMvcRequestBuilders.delete(baseUrl).accept(MediaType.ALL))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse();
+
+        assertEquals(
+                "No user found for email: some@gmail.com", deleteResponse.getContentAsString());
+    }
+
+    @Test
+    void Test010_GivenAValidTokenAndUserWhenConfirmingUserThenStatusOKisReturned() {
         UserCreateDTO userCreateDTO =
                 UserCreateDTO.builder()
                         .nickname(nickname)
@@ -229,6 +282,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
         val userToActivate = postResponse.getBody();
+        assertNotNull(userToActivate);
 
         val getResponse =
                 restTemplate.exchange(
@@ -244,6 +298,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
         val activatedUser = getResponse.getBody();
+        assertNotNull(activatedUser);
         assertTrue(activatedUser.isActive());
     }
 }

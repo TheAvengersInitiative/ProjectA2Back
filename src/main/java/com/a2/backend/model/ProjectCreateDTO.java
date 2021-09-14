@@ -1,8 +1,10 @@
 package com.a2.backend.model;
 
-import java.util.List;
-import javax.validation.constraints.Size;
+import com.a2.backend.entity.User;
 import lombok.*;
+
+import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,5 +27,6 @@ public class ProjectCreateDTO {
     @Size(min = 1, max = 5)
     private List<@Size(min = 1, max = 24) String> tags;
 
-    @NonNull private String owner;
+    @NonNull
+    private User owner;
 }

@@ -2,6 +2,7 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
+import com.a2.backend.entity.User;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -9,12 +10,13 @@ import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
+import lombok.val;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import lombok.val;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -31,9 +33,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public Project createProject(ProjectCreateDTO projectCreateDTO) {
-        // TODO: verify owner is user that created the project
         val existingProjectWithTitle = projectRepository.findByTitle(projectCreateDTO.getTitle());
-        if (existingProjectWithTitle.isEmpty()) {
+        if (existingProjectWithTitle.isEmpty()
+                || !existingProjectWithTitle.get().getOwner().equals(projectCreateDTO.getOwner())) {
 
             List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
 
@@ -95,6 +97,12 @@ public class ProjectServiceImpl implements ProjectService {
                         () ->
                                 new ProjectNotFoundException(
                                         String.format("No project found for id: %s", projectID)));
+    }
+
+    @Override
+    @Transactional
+    public void deleteProjectsFromUser(User owner) {
+        projectRepository.deleteByOwner(owner);
     }
 
     @Override

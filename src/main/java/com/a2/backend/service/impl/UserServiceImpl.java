@@ -2,26 +2,35 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.TokenConfirmationFailedException;
+import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.repository.UserRepository;
+import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import java.util.UUID;
+import com.a2.backend.utils.SecurityUtils;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    @Autowired private PasswordEncoder passwordEncoder;
+    private final ProjectService projectService;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, ProjectService projectService) {
         this.userRepository = userRepository;
+        this.projectService = projectService;
     }
 
     @Override
@@ -45,6 +54,16 @@ public class UserServiceImpl implements UserService {
                         .confirmationToken(userCreateDTO.getConfirmationToken())
                         .build();
         return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser() {
+        String email = SecurityUtils.getCurrentUserLogin().get();
+        Optional<User> loggedUser = userRepository.findByEmail(email);
+        if (loggedUser.isEmpty())
+            throw new UserNotFoundException(String.format("No user found for email: %s", email));
+        projectService.deleteProjectsFromUser(loggedUser.get());
+        userRepository.deleteById(loggedUser.get().getId());
     }
 
     @Override
