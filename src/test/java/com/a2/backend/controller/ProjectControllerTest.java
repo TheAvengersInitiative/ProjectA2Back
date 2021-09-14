@@ -589,7 +589,7 @@ class ProjectControllerTest {
 
         val getResponse =
                 restTemplate.exchange(
-                        "/project/title/Project", HttpMethod.GET, null, Project[].class);
+                        "/project/search?name=pro", HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
         System.out.println(projects);
