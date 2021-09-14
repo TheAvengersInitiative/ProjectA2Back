@@ -35,8 +35,9 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
-    @GetMapping("/title/{pattern}")
-    public ResponseEntity<List<Project>> getProjectsByTitleSearch(@PathVariable String pattern) {
+    @GetMapping("/search")
+    public ResponseEntity<List<Project>> getProjectsByNameSearch(
+            @RequestParam(name = "name") String pattern) {
         val projects = projectService.getProjectsByTitleSearch(pattern);
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
