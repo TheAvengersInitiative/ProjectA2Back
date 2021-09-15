@@ -524,6 +524,7 @@ class ProjectControllerTest {
     @Test
     void Test016_ProjectControllerSuccesfulSearch() {
         userRepository.save(owner);
+
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3");
@@ -609,6 +610,7 @@ class ProjectControllerTest {
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
         List<String> fourthTags = Arrays.asList("tag7", "tag8");
 
+
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
@@ -646,6 +648,7 @@ class ProjectControllerTest {
         HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
         HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
         HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+
 
         val postFirstResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
