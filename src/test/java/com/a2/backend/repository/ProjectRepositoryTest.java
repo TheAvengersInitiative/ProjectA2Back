@@ -186,7 +186,7 @@ class ProjectRepositoryTest {
         List<Project> projectsWithTag3 = projectRepository.findProjectsByTagName("tag3");
 
         assertEquals(2, projectsWithTag3.size());
-        assertEquals("Project2", projectsWithTag3.get(0).getTitle());
-        assertEquals("Project3", projectsWithTag3.get(1).getTitle());
+        assertTrue(projectsWithTag3.contains(project2));
+        assertTrue(projectsWithTag3.contains(project3));
     }
 }

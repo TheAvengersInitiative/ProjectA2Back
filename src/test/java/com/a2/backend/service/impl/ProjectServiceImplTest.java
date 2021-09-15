@@ -351,6 +351,8 @@ class ProjectServiceImplTest {
     @Test
     void
             Test014_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProjectAndDeleteUnusedTags() {
+        userRepository.save(owner);
+
         Project createdProject = projectService.createProject(projectToCreate);
 
         List<Tag> tags = tagService.getAllTags();
