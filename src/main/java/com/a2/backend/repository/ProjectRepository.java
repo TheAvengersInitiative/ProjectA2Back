@@ -15,5 +15,4 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     void deleteByOwner(User owner);
 
     Page<Project> findByTitleContainingIgnoreCase(String pattern, Pageable pageable);
-
 }
