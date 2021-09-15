@@ -1,5 +1,7 @@
 package com.a2.backend.repository;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.User;
 import lombok.val;
@@ -12,8 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebCl
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @AutoConfigureWebClient
 @DataJpaTest

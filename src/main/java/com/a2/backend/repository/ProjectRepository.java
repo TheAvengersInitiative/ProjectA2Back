@@ -2,22 +2,17 @@ package com.a2.backend.repository;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     Optional<Project> findByTitle(String title);
 
-<<<<<<< HEAD
     void deleteByOwner(User owner);
 
-    List<Project> findByTitleStartsWithIgnoreCaseOrderByTitleAsc(String pattern);
-
-=======
->>>>>>> e5755c3 (fix de endpoint y paginacion)
-    List<Project> findByTitleContainingIgnoreCaseOrderByTitleAsc(String pattern);
+    Page<Project> findByTitleContainingIgnoreCase(String pattern, Pageable pageable);
 }

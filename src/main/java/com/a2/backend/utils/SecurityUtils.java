@@ -1,15 +1,12 @@
 package com.a2.backend.utils;
 
+import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Optional;
-
-/**
- * Utility class for Spring Security.
- */
+/** Utility class for Spring Security. */
 public final class SecurityUtils {
 
     private SecurityUtils() {}

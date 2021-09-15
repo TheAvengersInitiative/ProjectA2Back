@@ -1,4 +1,5 @@
 package com.a2.backend.service.impl;
+
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
@@ -9,17 +10,16 @@ import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import lombok.val;
-import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.ArrayList;
+import javax.transaction.Transactional;
+import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -108,18 +108,16 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.deleteByOwner(owner);
     }
 
+    public List<Project> getProjectsByTitleSearch(String pattern, int pageNo) {
+        Pageable paging = PageRequest.of(pageNo, 8, Sort.by("title").ascending());
 
+        Page<Project> pagedResult =
+                projectRepository.findByTitleContainingIgnoreCase(pattern, paging);
 
-    public List<Project> getProjectsByTitleSearch(String pattern, int pageNo){
-            Pageable paging = PageRequest.of(pageNo, 8, Sort.by("title").ascending());
-
-            Page<Project> pagedResult = projectRepository.findAll(paging);
-
-            if (pagedResult.hasContent()) {
-                return pagedResult.getContent();
-            } else {
-                return new ArrayList<Project>();
-            }
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+            return new ArrayList<Project>();
+        }
     }
-
 }
