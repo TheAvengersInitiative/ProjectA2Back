@@ -523,7 +523,7 @@ class ProjectControllerTest {
 
     @Test
     void Test016_ProjectControllerSuccesfulSearch() {
-            userRepository.save(owner);
+        userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3");
@@ -591,7 +591,6 @@ class ProjectControllerTest {
                         "/project/search?name=pro&page=0", HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
-        System.out.println(projects);
         assertEquals(4, projects.length);
     }
 
@@ -608,7 +607,6 @@ class ProjectControllerTest {
         List<String> secondTags = Arrays.asList("tag3", "tag4");
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
         List<String> fourthTags = Arrays.asList("tag7", "tag8");
-
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -666,7 +664,6 @@ class ProjectControllerTest {
                         "/project/search?name=pro&page=1", HttpMethod.GET, null, Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
-        System.out.println(projects);
         assertEquals(0, projects.length);
     }
 }
