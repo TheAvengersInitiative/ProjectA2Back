@@ -610,7 +610,6 @@ class ProjectControllerTest {
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
         List<String> fourthTags = Arrays.asList("tag7", "tag8");
 
-
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
@@ -648,7 +647,6 @@ class ProjectControllerTest {
         HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
         HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
         HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
-
 
         val postFirstResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);

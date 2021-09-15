@@ -24,5 +24,4 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t  WHERE t.name LIKE %?1%")
     List<Project> findProjectsByTagName(String tagName);
     Page<Project> findByTitleContainingIgnoreCase(String pattern, Pageable pageable);
-
 }
