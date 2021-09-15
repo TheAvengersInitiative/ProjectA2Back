@@ -1,6 +1,9 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.Project;
+import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
@@ -10,6 +13,9 @@ import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,28 +23,18 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectServiceImplTest {
 
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private ProjectService projectService;
 
-    @Autowired
-    private TagService tagService;
+    @Autowired private TagService tagService;
 
-    @Autowired
-    private ProjectRepository projectRepository;
+    @Autowired private ProjectRepository projectRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
     String title = "Project title";
     String description = "Testing exception for existing title";
@@ -53,7 +49,7 @@ class ProjectServiceImplTest {
                     .build();
 
     List<String> linksUpdate = Arrays.asList("link1", "link4");
-    List<String> tagsUpdate = Arrays.asList("tag3", "tag4");
+    List<String> tagsUpdate = Arrays.asList("tag1", "tag4");
 
     ProjectCreateDTO projectToCreate =
             ProjectCreateDTO.builder()
@@ -88,7 +84,7 @@ class ProjectServiceImplTest {
 
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
-        assertEquals(tagService.findTags(projectToCreate.getTags()), project.getTags());
+        assertEquals(tagService.findTagsByNames(projectToCreate.getTags()), project.getTags());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
     }
 
@@ -153,7 +149,8 @@ class ProjectServiceImplTest {
 
         assertEquals(projectToCreate.getTitle(), singleProject.getTitle());
         assertEquals(projectToCreate.getDescription(), singleProject.getDescription());
-        assertEquals(tagService.findTags(projectToCreate.getTags()), singleProject.getTags());
+        assertEquals(
+                tagService.findTagsByNames(projectToCreate.getTags()), singleProject.getTags());
         assertEquals(projectToCreate.getLinks(), singleProject.getLinks());
     }
 
@@ -239,13 +236,14 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(
-                tagService.findTags(projectToCreate.getTags()), projectToBeDisplayed.getTags());
+                tagService.findTagsByNames(projectToCreate.getTags()),
+                projectToBeDisplayed.getTags());
         assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
     }
 
     @Test
     void
-    Test011_GivenACreateProjectDTOWithExistingTitleButDifferentOwnerWhenCreatingProjectThenItIsCreated() {
+            Test011_GivenACreateProjectDTOWithExistingTitleButDifferentOwnerWhenCreatingProjectThenItIsCreated() {
         userRepository.save(owner);
 
         projectService.createProject(projectToCreate);
@@ -345,7 +343,35 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
         assertEquals(projectToCreateWithRepeatedTag.getDescription(), project.getDescription());
         assertEquals(
-                tagService.findTags(projectToCreateWithRepeatedTag.getTags()), project.getTags());
+                tagService.findTagsByNames(projectToCreateWithRepeatedTag.getTags()),
+                project.getTags());
         assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
+    }
+
+    @Test
+    void
+            Test014_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProjectAndDeleteUnusedTags() {
+        userRepository.save(owner);
+
+        Project createdProject = projectService.createProject(projectToCreate);
+
+        List<Tag> tags = tagService.getAllTags();
+        assertEquals(2, tags.size());
+        assertEquals("tag1", createdProject.getTags().get(0).getName());
+        assertEquals("tag2", createdProject.getTags().get(1).getName());
+
+        Project updatedProject =
+                projectService.updateProject(projectUpdateDTO, createdProject.getId());
+
+        assertEquals(createdProject.getId(), updatedProject.getId());
+        assertEquals(projectUpdateDTO.getTitle(), updatedProject.getTitle());
+        assertEquals(projectUpdateDTO.getDescription(), updatedProject.getDescription());
+        assertEquals(tagService.findTagsByNames(tagsUpdate), updatedProject.getTags());
+        assertEquals(projectUpdateDTO.getLinks(), updatedProject.getLinks());
+
+        List<Tag> updatedTags = tagService.getAllTags();
+        assertEquals(2, updatedTags.size());
+        assertEquals("tag1", updatedProject.getTags().get(0).getName());
+        assertEquals("tag4", updatedProject.getTags().get(1).getName());
     }
 }

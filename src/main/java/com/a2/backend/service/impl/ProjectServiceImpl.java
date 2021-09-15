@@ -10,13 +10,12 @@ import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -69,15 +68,20 @@ public class ProjectServiceImpl implements ProjectService {
                             "The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
 
-        List<Tag> tags = tagService.findOrCreateTag(projectUpdateDTO.getTags());
+        List<Tag> removedTags =
+                tagService.getRemovedTags(
+                        projectUpdateDTO.getTags(),
+                        getProjectDetails(projectToBeUpdatedID).getTags());
 
-        val updatedProject = projectToModifyOptional.get();
-        updatedProject.setTitle(projectUpdateDTO.getTitle());
-        updatedProject.setLinks(projectUpdateDTO.getLinks());
-        updatedProject.setTags(tags);
-        updatedProject.setDescription(projectUpdateDTO.getDescription());
+        val project = projectToModifyOptional.get();
+        project.setTitle(projectUpdateDTO.getTitle());
+        project.setLinks(projectUpdateDTO.getLinks());
+        project.setTags(tagService.findOrCreateTag(projectUpdateDTO.getTags()));
+        project.setDescription(projectUpdateDTO.getDescription());
 
-        return projectRepository.save(updatedProject);
+        Project updatedProject = projectRepository.save(project);
+        tagService.deleteUnusedTags(removedTags);
+        return updatedProject;
     }
 
     @Override

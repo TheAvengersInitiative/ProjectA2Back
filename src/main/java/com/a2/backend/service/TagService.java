@@ -10,7 +10,13 @@ public interface TagService {
 
     Tag createTag(String tagName);
 
-    Optional<Tag> findTag(String tagName);
+    Optional<Tag> findTagByName(String tagName);
 
-    List<Tag> findTags(List<String> tagsToFind);
+    List<Tag> findTagsByNames(List<String> tagsToFind);
+
+    List<Tag> getRemovedTags(List<String> updated, List<Tag> current);
+
+    void deleteUnusedTags(List<Tag> removedTags);
+
+    List<Tag> getAllTags();
 }
