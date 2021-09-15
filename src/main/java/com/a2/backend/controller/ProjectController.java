@@ -41,6 +41,7 @@ public class ProjectController {
             @RequestParam(name = "page") Integer pageNo) {
         val projects = projectService.getProjectsByTitleSearch(pattern, pageNo);
 
+
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 

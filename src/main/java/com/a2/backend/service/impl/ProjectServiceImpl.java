@@ -123,6 +123,7 @@ public class ProjectServiceImpl implements ProjectService {
         Page<Project> pagedResult =
                 projectRepository.findByTitleContainingIgnoreCase(pattern, paging);
 
+
         if (pagedResult.hasContent()) {
             return pagedResult.getContent();
         } else {
