@@ -22,5 +22,5 @@ public interface ProjectService {
 
     void deleteProjectsFromUser(User owner);
 
-    List<Project> getProjectsByTitleSearch(String pattern);
+    List<Project> getProjectsByTitleSearch(String pattern, int pageNo);
 }

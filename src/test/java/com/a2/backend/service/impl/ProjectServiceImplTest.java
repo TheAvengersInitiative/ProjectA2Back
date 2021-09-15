@@ -313,11 +313,9 @@ class ProjectServiceImplTest {
         projectService.createProject(projectToCreate);
         projectService.createProject(secondProjectToCreate);
         projectService.createProject(thirdProjectToCreate);
-        List<Project> projects = projectService.getProjectsByTitleSearch("Project");
+        List<Project> projects = projectService.getProjectsByTitleSearch("Project", 0);
         assertEquals(3, projects.size());
-        assertEquals(projects.get(0).getTitle(), "Project title");
-        assertEquals(projects.get(1).getTitle(), "ProjectProject");
-        assertEquals(projects.get(2).getTitle(), "Not Project");
+
         // Then
 
     }
