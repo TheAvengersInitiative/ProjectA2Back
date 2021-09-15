@@ -10,15 +10,11 @@ import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.val;
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
