@@ -10,11 +10,15 @@ import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.val;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -109,25 +113,16 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.deleteByOwner(owner);
     }
 
-    @Override
-    public List<Project> getProjectsByTitleSearch(String pattern) {
-        List<Project> projectsStartingWithPattern =
-                projectRepository.findByTitleStartsWithIgnoreCaseOrderByTitleAsc(pattern);
-        val projectsStartingNames =
-                projectsStartingWithPattern.stream()
-                        .map(Project::getTitle)
-                        .collect(Collectors.toList());
+    public List<Project> getProjectsByTitleSearch(String pattern, int pageNo) {
+        Pageable paging = PageRequest.of(pageNo, 8, Sort.by("title").ascending());
 
-        List<Project> projectsContainingPattern =
-                projectRepository.findByTitleContainingIgnoreCaseOrderByTitleAsc(pattern).stream()
-                        .filter(
-                                p ->
-                                        projectsStartingNames.stream()
-                                                .noneMatch(s -> s.equals(p.getTitle())))
-                        .collect(Collectors.toList());
+        Page<Project> pagedResult =
+                projectRepository.findByTitleContainingIgnoreCase(pattern, paging);
 
-        projectsStartingWithPattern.addAll(projectsContainingPattern);
-
-        return projectsStartingWithPattern;
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+            return new ArrayList<Project>();
+        }
     }
 }
