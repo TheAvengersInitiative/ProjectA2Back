@@ -7,6 +7,8 @@ import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
+import com.a2.backend.utils.SearchUtils.ProjectSpecification;
+import com.a2.backend.utils.SearchUtils.SearchCriteria;
 import java.util.Arrays;
 import java.util.List;
 import lombok.val;
