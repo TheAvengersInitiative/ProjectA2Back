@@ -1,5 +1,6 @@
 package com.a2.backend.service.impl;
 
+import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
@@ -8,6 +9,7 @@ import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
+import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import java.util.ArrayList;
@@ -28,9 +30,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final TagService tagService;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, TagService tagService) {
+    private final LanguageService languageService;
+
+    public ProjectServiceImpl(
+            ProjectRepository projectRepository,
+            TagService tagService,
+            LanguageService languageService) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
+        this.languageService = languageService;
     }
 
     @Override
@@ -41,6 +49,8 @@ public class ProjectServiceImpl implements ProjectService {
                 || !existingProjectWithTitle.get().getOwner().equals(projectCreateDTO.getOwner())) {
 
             List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
+            List<Language> languages =
+                    languageService.findOrCreateLanguage(projectCreateDTO.getLanguages());
 
             Project project =
                     Project.builder()
@@ -48,6 +58,7 @@ public class ProjectServiceImpl implements ProjectService {
                             .description(projectCreateDTO.getDescription())
                             .links(projectCreateDTO.getLinks())
                             .tags(tags)
+                            .languages(languages)
                             .owner(projectCreateDTO.getOwner())
                             .build();
             return projectRepository.save(project);
@@ -77,14 +88,21 @@ public class ProjectServiceImpl implements ProjectService {
                         projectUpdateDTO.getTags(),
                         getProjectDetails(projectToBeUpdatedID).getTags());
 
+        List<Language> removedLanguages =
+                languageService.getRemovedLanguages(
+                        projectUpdateDTO.getLanguages(),
+                        getProjectDetails(projectToBeUpdatedID).getLanguages());
+
         val project = projectToModifyOptional.get();
         project.setTitle(projectUpdateDTO.getTitle());
         project.setLinks(projectUpdateDTO.getLinks());
         project.setTags(tagService.findOrCreateTag(projectUpdateDTO.getTags()));
+        project.setLanguages(languageService.findOrCreateLanguage(projectUpdateDTO.getLanguages()));
         project.setDescription(projectUpdateDTO.getDescription());
 
         Project updatedProject = projectRepository.save(project);
         tagService.deleteUnusedTags(removedTags);
+        languageService.deleteUnusedLanguages(removedLanguages);
         return updatedProject;
     }
 
@@ -124,5 +142,10 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             return new ArrayList<Project>();
         }
+    }
+
+    @Override
+    public List<String> getValidLanguageNames() {
+        return languageService.getValidLanguages();
     }
 }
