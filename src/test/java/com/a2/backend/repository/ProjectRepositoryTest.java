@@ -6,6 +6,8 @@ import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
+import com.a2.backend.utils.SearchUtils.ProjectSpecification;
+import com.a2.backend.utils.SearchUtils.SearchCriteria;
 import java.util.Arrays;
 import java.util.List;
 import lombok.val;
@@ -188,5 +190,25 @@ class ProjectRepositoryTest {
         assertEquals(2, projectsWithTag3.size());
         assertTrue(projectsWithTag3.contains(project2));
         assertTrue(projectsWithTag3.contains(project3));
+    }
+
+    @Test
+    public void givenLast_whenGettingListOfUsers_thenCorrect() {
+        userRepository.save(owner);
+
+        assertTrue(projectRepository.findAll().isEmpty());
+
+        assertNull(project.getId());
+        assertEquals(project.getTitle(), title);
+        assertEquals(project.getDescription(), description);
+        assertEquals(project.getOwner(), owner);
+
+        projectRepository.save(project);
+
+        ProjectSpecification spec = new ProjectSpecification(new SearchCriteria("title", "New"));
+
+        List<Project> results = projectRepository.findAll(spec);
+
+        assertEquals(project, results.get(0));
     }
 }
