@@ -1,7 +1,5 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserNotFoundException;
@@ -9,9 +7,9 @@ import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.UserCreateDTO;
+import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -19,14 +17,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserServiceImplTest {
 
-    @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
 
-    @Autowired private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
     String nickname = "nickname";
     String email = "some@email.com";
@@ -43,9 +47,19 @@ class UserServiceImplTest {
                     .confirmationToken(confirmationToken)
                     .build();
 
+    String updatedNickname = "updated nickname";
+    String updatedBiography = "updated bio";
+    String updatedPassword = "updated password";
+    UserUpdateDTO userUpdateDTO =
+            UserUpdateDTO.builder()
+                    .nickname(updatedNickname)
+                    .biography(updatedBiography)
+                    .password(updatedPassword)
+                    .build();
+
     @Test
     void
-            Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
+    Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
         User persistedApplicationUser = userService.createUser(userCreateDTO);
         assertEquals(nickname, persistedApplicationUser.getNickname());
         assertEquals(email, persistedApplicationUser.getEmail());
@@ -164,7 +178,7 @@ class UserServiceImplTest {
 
     @Test
     void
-            Test009_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
+    Test009_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
         User user = userService.createUser(userCreateDTO);
         String validToken = "token001";
 
@@ -173,5 +187,75 @@ class UserServiceImplTest {
         assertThrows(
                 TokenConfirmationFailedException.class,
                 () -> userService.confirmUser(validToken, validatedUser.getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void Test010_GivenAUserAndAUserUpdateDTOWithAvailableNicknameWhenUpdatingUserThenItIsUpdated() {
+
+        User persistedApplicationUser = userService.createUser(userCreateDTO);
+
+        User updatedApplicationUser = userService.updateUser(userUpdateDTO);
+        assertEquals(updatedNickname, updatedApplicationUser.getNickname());
+        assertEquals(email, updatedApplicationUser.getEmail());
+        assertEquals(updatedBiography, updatedApplicationUser.getBiography());
+        assertNotEquals(updatedPassword, updatedApplicationUser.getPassword());
+        assertFalse(updatedApplicationUser.isActive());
+
+        assertEquals(persistedApplicationUser.getId(), updatedApplicationUser.getId());
+        assertNotEquals(
+                persistedApplicationUser.getNickname(), updatedApplicationUser.getNickname());
+        assertNotEquals(
+                persistedApplicationUser.getBiography(), updatedApplicationUser.getBiography());
+        assertNotEquals(
+                persistedApplicationUser.getPassword(), updatedApplicationUser.getPassword());
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void
+    Test010_GivenAUserAndAUserUpdateDTOWithSameNicknameAsBeforeWhenUpdatingUserThenItIsUpdated() {
+
+        User persistedApplicationUser = userService.createUser(userCreateDTO);
+
+        userUpdateDTO.setNickname(nickname);
+
+        User updatedApplicationUser = userService.updateUser(userUpdateDTO);
+        assertEquals(nickname, updatedApplicationUser.getNickname());
+        assertEquals(email, updatedApplicationUser.getEmail());
+        assertEquals(updatedBiography, updatedApplicationUser.getBiography());
+        assertNotEquals(updatedPassword, updatedApplicationUser.getPassword());
+        assertFalse(updatedApplicationUser.isActive());
+
+        assertEquals(persistedApplicationUser.getId(), updatedApplicationUser.getId());
+        assertEquals(persistedApplicationUser.getNickname(), updatedApplicationUser.getNickname());
+        assertNotEquals(
+                persistedApplicationUser.getBiography(), updatedApplicationUser.getBiography());
+        assertNotEquals(
+                persistedApplicationUser.getPassword(), updatedApplicationUser.getPassword());
+    }
+
+    @Test
+    @WithMockUser
+    void Test011_GivenANonExistentUserWhenUpdatingThenExceptionIsThrown() {
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(userUpdateDTO));
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void
+    Test012_GivenAUserAndAUserUpdateDTOWithTakenNicknameWhenUpdatingUserThenExceptionIsThrown() {
+        userService.createUser(userCreateDTO);
+        userService.createUser(
+                UserCreateDTO.builder()
+                        .nickname(updatedNickname)
+                        .email("another@email.com")
+                        .password("password")
+                        .confirmationToken("token002")
+                        .build());
+
+        assertThrows(
+                UserWithThatNicknameExistsException.class,
+                () -> userService.updateUser(userUpdateDTO));
     }
 }

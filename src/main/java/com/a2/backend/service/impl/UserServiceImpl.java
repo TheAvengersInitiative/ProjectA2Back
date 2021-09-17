@@ -6,16 +6,18 @@ import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.UserCreateDTO;
+import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import com.a2.backend.utils.SecurityUtils;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,7 +38,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByNickname(userCreateDTO.getNickname()).isPresent())
             throw new UserWithThatNicknameExistsException(
                     String.format(
-                            "There is an existing user the nickname %s",
+                            "There is an existing user with the nickname %s",
                             userCreateDTO.getNickname()));
         if (userRepository.findByEmail(userCreateDTO.getEmail()).isPresent())
             throw new UserWithThatEmailExistsException(
@@ -56,12 +58,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser() {
+        User loggedUser = getLoggedUser();
+        projectService.deleteProjectsFromUser(loggedUser);
+        userRepository.deleteById(loggedUser.getId());
+    }
+
+    @Override
+    public User updateUser(UserUpdateDTO userUpdateDTO) {
+        User loggedUser = getLoggedUser();
+
+        if (userRepository.findByNickname(userUpdateDTO.getNickname()).isPresent()
+                && !loggedUser.getNickname().equals(userUpdateDTO.getNickname())) {
+            throw new UserWithThatNicknameExistsException(
+                    String.format(
+                            "There is an existing user with the nickname %s",
+                            userUpdateDTO.getNickname()));
+        }
+
+        loggedUser.setNickname(userUpdateDTO.getNickname());
+        loggedUser.setBiography(userUpdateDTO.getBiography());
+        loggedUser.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
+        return userRepository.save(loggedUser);
+    }
+
+    private User getLoggedUser() {
         String email = SecurityUtils.getCurrentUserLogin().get();
         Optional<User> loggedUser = userRepository.findByEmail(email);
         if (loggedUser.isEmpty())
             throw new UserNotFoundException(String.format("No user found for email: %s", email));
-        projectService.deleteProjectsFromUser(loggedUser.get());
-        userRepository.deleteById(loggedUser.get().getId());
+        return loggedUser.get();
     }
 
     @Override
