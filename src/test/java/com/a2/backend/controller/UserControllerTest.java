@@ -1,10 +1,9 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserCreateDTO;
+import com.a2.backend.model.UserUpdateDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
@@ -29,7 +31,10 @@ class UserControllerTest {
 
     @Autowired TestRestTemplate restTemplate;
 
-    @Autowired MockMvc mvc;
+    @Autowired
+    MockMvc mvc;
+    @Autowired
+    ObjectMapper objectMapper;
 
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
@@ -40,17 +45,18 @@ class UserControllerTest {
     private final String password = "password";
     private final String confirmationToken = "token001";
 
+    UserCreateDTO userCreateDTO =
+            UserCreateDTO.builder()
+                    .nickname(nickname)
+                    .email(email)
+                    .biography(biography)
+                    .password(password)
+                    .confirmationToken(confirmationToken)
+                    .build();
+
     @Test
     void
-            Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
-
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
+    Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -70,15 +76,8 @@ class UserControllerTest {
     @Test
     void
             Test002_GivenAUserCreateDTOWithInvalidNicknameWhenCreatingUserThenBadStatusResponseIsReturned() {
-        String invalidNickname = "not a valid nickname as it is way too long";
 
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(invalidNickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
+        userCreateDTO.setNickname("not a valid nickname as it is way too long");
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -90,15 +89,8 @@ class UserControllerTest {
     @Test
     void
             Test003_GivenAUserCreateDTOWithInvalidEmailWhenCreatingUserThenBadStatusResponseIsReturned() {
-        String invalidEmail = "this is not a real email";
 
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(invalidEmail)
-                        .biography(biography)
-                        .password(password)
-                        .build();
+        userCreateDTO.setEmail("this is not a real email");
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -110,15 +102,8 @@ class UserControllerTest {
     @Test
     void
             Test004_GivenAUserCreateDTOWithInvalidPasswordWhenCreatingUserThenBadStatusResponseIsReturned() {
-        String invalidPassword = "short";
 
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(invalidPassword)
-                        .build();
+        userCreateDTO.setPassword("short");
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -131,8 +116,7 @@ class UserControllerTest {
     void
             Test005_GivenAUserCreateDTOWithNoBiographyWhenCreatingUserThenStatusIsCreatedAndBiographyIsNull() {
 
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder().nickname(nickname).email(email).password(password).build();
+        userCreateDTO.setBiography(null);
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -147,14 +131,6 @@ class UserControllerTest {
     @Test
     void
             Test006_GivenAUserCreateDTOWithExistingNicknameWhenCreatingUserThenExceptionIsHandledAndBadRequestIsReturned() {
-
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -179,20 +155,13 @@ class UserControllerTest {
                 restTemplate.exchange(baseUrl, HttpMethod.POST, anotherRequest, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, anotherGetResponse.getStatusCode());
         assertEquals(
-                "There is an existing user the nickname " + nickname, anotherGetResponse.getBody());
+                "There is an existing user with the nickname " + nickname,
+                anotherGetResponse.getBody());
     }
 
     @Test
     void
             Test007_GivenAUserCreateDTOWithExistingEmailWhenCreatingUserThenExceptionIsHandledAndBadRequestIsReturned() {
-
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -224,27 +193,20 @@ class UserControllerTest {
     @WithMockUser(username = "some@gmail.com")
     void Test008_GivenAnExistingUserWhenDeletedThenANewUserWithSameNicknameAndEmailCanBeCreated()
             throws Exception {
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
-        assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
-        assertNotNull(getResponse.getBody());
+        assertNotNull(postResponse.getBody());
 
         mvc.perform(MockMvcRequestBuilders.delete(baseUrl).accept(MediaType.ALL))
                 .andExpect(status().isOk());
 
-        val anotherGetResponse =
+        val anotherPostResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
-        assertEquals(HttpStatus.CREATED, anotherGetResponse.getStatusCode());
+        assertEquals(HttpStatus.CREATED, anotherPostResponse.getStatusCode());
     }
 
     @Test
@@ -264,14 +226,7 @@ class UserControllerTest {
 
     @Test
     void Test010_GivenAValidTokenAndUserWhenConfirmingUserThenStatusOKisReturned() {
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .confirmationToken(confirmationToken)
-                        .build();
+
         String validConfirmationToken = "token001";
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
@@ -298,5 +253,151 @@ class UserControllerTest {
         val activatedUser = getResponse.getBody();
         assertNotNull(activatedUser);
         assertTrue(activatedUser.isActive());
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test011_GivenAValidUserUpdateDTOAndAnExistingUserWhenUpdatingThenAUserWithPreviousNicknameCanBeCreated()
+            throws Exception {
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        UserUpdateDTO userUpdateDTO =
+                UserUpdateDTO.builder()
+                        .nickname("updated nickname")
+                        .biography("updated biography")
+                        .password("updated password")
+                        .build();
+
+        mvc.perform(
+                        MockMvcRequestBuilders.put(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(userUpdateDTO))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        userCreateDTO.setEmail("new@email.com");
+        HttpEntity<UserCreateDTO> anotherRequest = new HttpEntity<>(userCreateDTO);
+
+        val updatedPostResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, anotherRequest, User.class);
+        assertEquals(HttpStatus.CREATED, updatedPostResponse.getStatusCode());
+        assertNotNull(updatedPostResponse.getBody());
+
+        assertEquals(nickname, updatedPostResponse.getBody().getNickname());
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test012_GivenAUserUpdateDTOWithInvalidNicknameWhenUpdatingUserThenBadStatusResponseIsReturned()
+            throws Exception {
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        String invalidNickname = "not a valid nickname as it is way too long";
+        UserUpdateDTO userUpdateDTO =
+                UserUpdateDTO.builder().nickname(invalidNickname).password(password).build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(userUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals("Nickname must be between 3 and 24 characters", errorMessage);
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test013_GivenAUserUpdateDTOWithInvalidPasswordWhenUpdatingUserThenBadStatusResponseIsReturned()
+            throws Exception {
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        String invalidPassword = "short";
+        UserUpdateDTO userUpdateDTO =
+                UserUpdateDTO.builder().nickname(nickname).password(invalidPassword).build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(userUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals("Password must be between 8 and 32 characters", errorMessage);
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test014_GivenAUserUpdateDTOWithExistingNicknameWhenUpdatingUserThenExceptionIsHandledAndBadRequestIsReturned()
+            throws Exception {
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        String anotherNickname = "nickname1";
+        String anotherEmail = "another@gmail.com";
+        String anotherBiography = "another bio";
+        String anotherPassword = "anotherPassword";
+
+        UserCreateDTO UserCreateDTO1 =
+                UserCreateDTO.builder()
+                        .nickname(anotherNickname)
+                        .email(anotherEmail)
+                        .biography(anotherBiography)
+                        .password(anotherPassword)
+                        .build();
+
+        HttpEntity<UserCreateDTO> anotherRequest = new HttpEntity<>(UserCreateDTO1);
+
+        val anotherPostResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, anotherRequest, User.class);
+        assertEquals(HttpStatus.CREATED, anotherPostResponse.getStatusCode());
+
+        UserUpdateDTO userUpdateDTO =
+                UserUpdateDTO.builder()
+                        .nickname(anotherNickname)
+                        .biography(biography)
+                        .password(password)
+                        .build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(userUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals(
+                "There is an existing user with the nickname " + anotherNickname, errorMessage);
     }
 }
