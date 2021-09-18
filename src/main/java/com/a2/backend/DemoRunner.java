@@ -24,13 +24,15 @@ import java.util.stream.Collectors;
 public class DemoRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DemoRunner.class);
 
-    @Autowired private Environment env;
+    @Autowired
+    private Environment env;
     @Autowired
     private ProjectRepository projectRepository;
     @Autowired
     private UserRepository userRepository;
 
-    public DemoRunner() {}
+    public DemoRunner() {
+    }
 
     @Override
     public void run(String... args) {
@@ -68,20 +70,24 @@ public class DemoRunner implements CommandLineRunner {
                         .email("agustin.ayerza@ing.austral.edu.ar")
                         .password("password")
                         .confirmationToken("token001")
+                        .isActive(true)
                         .build();
         User rodrigo =
                 User.builder()
                         .nickname("ropa1998")
                         .email("rodrigo.pazos@ing.austral.edu.ar")
-                        .biography("Backend software engineer, passionate about design and clean code. Working with Java, Python and Scala. ")
+                        .biography(
+                                "Backend software engineer, passionate about design and clean code. Working with Java, Python and Scala. ")
                         .password("password")
                         .confirmationToken("token002")
+                        .isActive(true)
                         .build();
         User fabrizio =
                 User.builder()
                         .nickname("FabriDS23")
                         .email("fabrizio.disanto@ing.austral.edu.ar")
-                        .biography("Software Engineer student, currently working as a full-stack developer. ")
+                        .biography(
+                                "Software Engineer student, currently working as a full-stack developer. ")
                         .password("password")
                         .confirmationToken("token003")
                         .build();
