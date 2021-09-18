@@ -3,10 +3,9 @@ package com.a2.backend;
 import com.a2.backend.annotation.Generated;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
+import com.a2.backend.entity.User;
 import com.a2.backend.repository.ProjectRepository;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.a2.backend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +14,25 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component("DemoRunner")
 @Transactional
 @Generated
 public class DemoRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DemoRunner.class);
 
-    @Autowired private Environment env;
-    @Autowired private ProjectRepository projectRepository;
+    @Autowired
+    private Environment env;
+    @Autowired
+    private ProjectRepository projectRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public DemoRunner() {}
+    public DemoRunner() {
+    }
 
     @Override
     public void run(String... args) {
@@ -38,6 +46,7 @@ public class DemoRunner implements CommandLineRunner {
     }
 
     private void createDemoData() {
+        loadUsers();
         loadProjects();
         logger.info("Created demo data");
     }
@@ -46,8 +55,45 @@ public class DemoRunner implements CommandLineRunner {
         this.env = env;
     }
 
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public void setProjectRepository(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
+    }
+
+    private void loadUsers() {
+        User agustin =
+                User.builder()
+                        .nickname("Peltevis")
+                        .email("agustin.ayerza@ing.austral.edu.ar")
+                        .password("password")
+                        .confirmationToken("token001")
+                        .isActive(true)
+                        .build();
+        User rodrigo =
+                User.builder()
+                        .nickname("ropa1998")
+                        .email("rodrigo.pazos@ing.austral.edu.ar")
+                        .biography(
+                                "Backend software engineer, passionate about design and clean code. Working with Java, Python and Scala. ")
+                        .password("password")
+                        .confirmationToken("token002")
+                        .isActive(true)
+                        .build();
+        User fabrizio =
+                User.builder()
+                        .nickname("FabriDS23")
+                        .email("fabrizio.disanto@ing.austral.edu.ar")
+                        .biography(
+                                "Software Engineer student, currently working as a full-stack developer. ")
+                        .password("password")
+                        .confirmationToken("token003")
+                        .build();
+        userRepository.save(agustin);
+        userRepository.save(rodrigo);
+        userRepository.save(fabrizio);
     }
 
     private void loadProjects() {
@@ -63,6 +109,7 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("C++").build(),
                                         Tag.builder().name("GNU").build(),
                                         Tag.builder().name("Linux").build()))
+                        .owner(userRepository.findByNickname("Peltevis").get())
                         .build();
         Project tensorFlow =
                 Project.builder()
@@ -76,6 +123,7 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("ML").build(),
                                         Tag.builder().name("CUDA").build(),
                                         Tag.builder().name("C").build()))
+                        .owner(userRepository.findByNickname("ropa1998").get())
                         .build();
         Project node =
                 Project.builder()
@@ -88,6 +136,7 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("JavaScript").build(),
                                         Tag.builder().name("V8").build(),
                                         Tag.builder().name("Node").build()))
+                        .owner(userRepository.findByNickname("FabriDS23").get())
                         .build();
         projectRepository.save(linux);
         projectRepository.save(tensorFlow);
