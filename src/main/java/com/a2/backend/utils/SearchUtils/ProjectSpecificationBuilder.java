@@ -13,8 +13,8 @@ public class ProjectSpecificationBuilder {
         params = new ArrayList<SearchCriteria>();
     }
 
-    public ProjectSpecificationBuilder with(String key, String value) {
-        params.add(new SearchCriteria(key, value));
+    public ProjectSpecificationBuilder with(String key, String operation, String value) {
+        params.add(new SearchCriteria(key, operation, value));
         return this;
     }
 
@@ -29,7 +29,7 @@ public class ProjectSpecificationBuilder {
         Specification result = specs.get(0);
 
         for (int i = 1; i < params.size(); i++) {
-            result = Specification.where(result).or(specs.get(i));
+            result = Specification.where(result).and(specs.get(i));
         }
         return result;
     }

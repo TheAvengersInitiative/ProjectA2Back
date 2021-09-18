@@ -372,4 +372,14 @@ class ProjectServiceImplTest {
         assertEquals("tag1", updatedProject.getTags().get(0).getName());
         assertEquals("tag4", updatedProject.getTags().get(1).getName());
     }
+
+    @Test
+    void Test015_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        List<Project> searchedProjects = projectService.searchProjecsByFilter("title:title");
+        assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
+        System.out.println(searchedProjects.get(0).getLinks());
+    }
 }

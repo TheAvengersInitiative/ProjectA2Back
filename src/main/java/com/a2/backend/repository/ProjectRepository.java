@@ -2,7 +2,6 @@ package com.a2.backend.repository;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
-import com.a2.backend.utils.SearchUtils.ProjectSpecification;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +22,4 @@ public interface ProjectRepository
     List<Project> findProjectsByTagName(String tagName);
 
     Page<Project> findByTitleContainingIgnoreCase(String pattern, Pageable pageable);
-
-    List<Project> findAll(ProjectSpecification specification);
 }

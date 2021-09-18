@@ -193,7 +193,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    public void givenLast_whenGettingListOfUsers_thenCorrect() {
+    public void Test007_GivenTitleFilterSearchisSuccesfull() {
         userRepository.save(owner);
 
         assertTrue(projectRepository.findAll().isEmpty());
@@ -205,7 +205,8 @@ class ProjectRepositoryTest {
 
         projectRepository.save(project);
 
-        ProjectSpecification spec = new ProjectSpecification(new SearchCriteria("title", "New"));
+        ProjectSpecification spec =
+                new ProjectSpecification(new SearchCriteria("title", ":", "New"));
 
         List<Project> results = projectRepository.findAll(spec);
 
