@@ -193,9 +193,8 @@ class ProjectRepositoryTest {
         assertTrue(projectsWithTag3.contains(project3));
     }
 
-    @Test
-    void
-            Test007_ProjectRepositoryWhenGivenLanguageNameShouldReturnAllProjectsThatHaveThatLanguage() {
+    @Test void Test007_ProjectRepositoryWhenGivenLanguageNameShouldReturnAllProjectsThatHaveThatLanguage() {
+
         userRepository.save(owner);
 
         Tag tag1 = Tag.builder().name("tag1").build();
@@ -215,7 +214,6 @@ class ProjectRepositoryTest {
                         .tags(Arrays.asList(tag1, tag2))
                         .languages(Arrays.asList(language1, language2))
                         .build();
-
         Project project2 =
                 Project.builder()
                         .title("Project2")
@@ -245,5 +243,13 @@ class ProjectRepositoryTest {
         assertEquals(2, projectsWithLanguage1.size());
         assertTrue(projectsWithLanguage1.contains(project1));
         assertTrue(projectsWithLanguage1.contains(project3));
+    }
+
+    public void Test007_GivenTitleFilterSearchisSuccesfull() {
+        ProjectSpecification spec =
+                new ProjectSpecification(new SearchCriteria("title", ":", "New"));
+        List<Project> projects = projectRepository.findAll(spec);
+        assertEquals(1,projects.size());
+
     }
 }

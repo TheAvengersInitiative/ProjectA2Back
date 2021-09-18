@@ -488,5 +488,6 @@ class ProjectServiceImplTest {
                 languageService.findLanguagesByNames(projectToCreateWithRepeatedTag.getLanguages()),
                 project.getLanguages());
         assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
+
     }
 }
