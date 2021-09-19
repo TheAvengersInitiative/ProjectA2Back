@@ -252,4 +252,27 @@ class ProjectRepositoryTest {
         assertEquals(1,projects.size());
 
     }
+
+    @Test
+    public void Test008_GivenTitleFilterSearchisSuccesfull() {
+        userRepository.save(owner);
+        Project project =
+                Project.builder()
+                        .title(title)
+                        .description(description)
+                        .owner(owner)
+                        .links(Arrays.asList("link1", "link2"))
+                        .build();
+        assertTrue(projectRepository.findAll().isEmpty());
+        assertNull(project.getId());
+        assertEquals(project.getTitle(), title);
+        assertEquals(project.getDescription(), description);
+        assertEquals(project.getOwner(), owner);
+
+        projectRepository.save(project);
+
+        List<Project> results = projectRepository.findProjectsByLink("link");
+
+        assertEquals(project, results.get(0));
+    }
 }

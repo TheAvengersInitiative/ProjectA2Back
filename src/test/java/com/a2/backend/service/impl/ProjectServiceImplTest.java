@@ -488,6 +488,50 @@ class ProjectServiceImplTest {
                 languageService.findLanguagesByNames(projectToCreateWithRepeatedTag.getLanguages()),
                 project.getLanguages());
         assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
+    }
 
+    void Test015_ProjectServiceWhenReceivesValidTitleShouldBeFound() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        List<Project> searchedProjects = projectService.searchProjecsByFilter("title:title");
+        assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
+    }
+
+    @Test
+    void Test016_ProjectServiceWhenReceivesValidlinkShouldBeFound() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        List<Project> searchedProjects = projectService.searchProjecsByFilter("link:link1");
+        assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
+    }
+
+    @Test
+    void Test017_ProjectServiceWhenReceivesValidTagShouldBeFound() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        List<Project> searchedProjects = projectService.searchProjecsByFilter("tag:link1");
+        assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
+    }
+
+    @Test
+    void Test017_ProjectServiceWhenReceivesValidCreateProjectDTOShouldfindProject() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        List<Project> searchedProjects = projectService.searchProjecsByFilter("tag:tag");
+        assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
+    }
+
+    @Test
+    void Test018_ProjectServiceWhenReceivesValidCreateProjectDTOShuldreturnOnlyOne() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        List<Project> searchedProjects =
+                projectService.searchProjecsByFilter("tag:tag,title:Pro,link:link");
+        assertEquals(searchedProjects.size(), 1);
     }
 }
