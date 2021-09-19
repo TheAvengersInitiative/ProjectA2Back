@@ -11,9 +11,7 @@ import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import com.a2.backend.utils.SearchUtils.ProjectSpecificationBuilder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.transaction.Transactional;
@@ -132,14 +130,42 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<Project> searchProjecsByFilter(String search) {
+        Boolean title = false;
+        ArrayList<Project> result = new ArrayList<>();
+        ArrayList<String> links = new ArrayList<>();
+        ArrayList<String> tags = new ArrayList<>();
         ProjectSpecificationBuilder builder = new ProjectSpecificationBuilder();
         Pattern pattern = Pattern.compile("(\\w+?)(:)(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
         while (matcher.find()) {
-            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+            if (matcher.group(1).equals("link")) {
+                links.add(matcher.group(3));
+            }
+            if (matcher.group(1).equals("tag")) {
+                tags.add(matcher.group(3));
+            }
+            if (matcher.group(1).equals("title")) {
+                builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+                title = true;
+            }
+        }
+        Specification<Project> spec = builder.build();
+        if (title) result.addAll(projectRepository.findAll(spec));
+        for (String link : links) {
+            result.addAll(projectRepository.findProjectsByLink(link));
+        }
+        for (String tag : tags) {
+            result.addAll(projectRepository.findProjectsByTagName(tag));
+        }
+        for (int i = 0; i < result.size(); i++) {
+            for (int j = 0; j < result.size(); j++) {
+                if (result.get(i).getId().equals(result.get(j).getId())) {
+                    result.remove(i);
+                    break;
+                }
+            }
         }
 
-        Specification<Project> spec = builder.build();
-        return projectRepository.findAll(spec);
+        return result;
     }
 }
