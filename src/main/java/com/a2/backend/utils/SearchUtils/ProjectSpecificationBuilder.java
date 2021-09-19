@@ -29,7 +29,7 @@ public class ProjectSpecificationBuilder {
         Specification result = specs.get(0);
 
         for (int i = 1; i < params.size(); i++) {
-            result = Specification.where(result).and(specs.get(i));
+            result = Specification.where(result).or(specs.get(i));
         }
         return result;
     }

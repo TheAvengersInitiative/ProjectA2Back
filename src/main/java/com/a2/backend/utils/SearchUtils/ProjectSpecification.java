@@ -9,13 +9,12 @@ public class ProjectSpecification implements Specification<Project> {
     private SearchCriteria criteria;
 
     public ProjectSpecification(SearchCriteria criteria) {
-
+        this.criteria = criteria;
     }
 
     @Override
     public Predicate toPredicate(
             Root<Project> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-
         return builder.like(root.<String>get(criteria.getKey()), "%" + criteria.getValue() + "%");
     }
 }
