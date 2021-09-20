@@ -2,6 +2,7 @@ package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.User;
+import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.service.UserService;
@@ -36,8 +37,9 @@ public class UserController {
     }
 
     @PutMapping("/{email}")
-    public ResponseEntity<User> recoverPassword(@PathVariable String email, String newPassword) {
-        val userTobeUpdated = userService.recoverPassword(email, newPassword);
+    public ResponseEntity<User> recoverPassword(
+            @PathVariable String email, @RequestBody PasswordRecoveryDTO passwordRecoveryDTO) {
+        val userTobeUpdated = userService.recoverPassword(email, passwordRecoveryDTO);
         return ResponseEntity.status(HttpStatus.OK).body(userTobeUpdated);
     }
 

@@ -1,6 +1,7 @@
 package com.a2.backend.service;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import java.util.UUID;
@@ -11,7 +12,7 @@ public interface UserService {
 
     User confirmUser(String token, UUID userid);
 
-    User recoverPassword(String email, String newPassword);
+    User recoverPassword(String email, PasswordRecoveryDTO passwordRecoveryDTO);
 
     void deleteUser();
 

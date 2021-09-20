@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -399,5 +400,61 @@ class UserControllerTest {
 
         assertEquals(
                 "There is an existing user with the nickname " + anotherNickname, errorMessage);
+    }
+
+    @Test
+    void GivenAvalidUserWhenWantToRecoverPasswordThenReturnStatusOk() {
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
+                        .nickname(nickname)
+                        .email(email)
+                        .biography(biography)
+                        .password(password)
+                        .confirmationToken(confirmationToken)
+                        .build();
+        PasswordRecoveryDTO passwordRecoveryDTO =
+                PasswordRecoveryDTO.builder()
+                        .passwordRecoveryToken("")
+                        .newPassword("NewPassword001")
+                        .build();
+        String validConfirmationToken = "token001";
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+        HttpEntity<PasswordRecoveryDTO> requestPasswordRecovery =
+                new HttpEntity<>(passwordRecoveryDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        User userToBeUpdated = postResponse.getBody();
+
+        val getResponse =
+                restTemplate.exchange(
+                        String.format(
+                                "%s/%s/%s/%s",
+                                baseUrl,
+                                confirmationUrl,
+                                userToBeUpdated.getId(),
+                                validConfirmationToken),
+                        HttpMethod.GET,
+                        null,
+                        User.class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        passwordRecoveryDTO.setPasswordRecoveryToken(userToBeUpdated.getPasswordRecoveryToken());
+
+        User activatedUserToBeUpdated = getResponse.getBody();
+        System.out.println(userToBeUpdated.getPassword());
+
+        val putResponse =
+                restTemplate.exchange(
+                        String.format("%s/%s", baseUrl, activatedUserToBeUpdated.getEmail()),
+                        HttpMethod.PUT,
+                        requestPasswordRecovery,
+                        User.class);
+        assertEquals(HttpStatus.OK, putResponse.getStatusCode());
+
+        User updatedUser = putResponse.getBody();
+
+        System.out.println(updatedUser.getPassword());
     }
 }

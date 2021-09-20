@@ -5,11 +5,13 @@ import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
+import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(UserCreateDTO userCreateDTO) {
+        String randomStringUtils = RandomStringUtils.getAlphaNumericString(10);
         if (userRepository.findByNickname(userCreateDTO.getNickname()).isPresent())
             throw new UserWithThatNicknameExistsException(
                     String.format(
@@ -51,6 +54,7 @@ public class UserServiceImpl implements UserService {
                         .biography(userCreateDTO.getBiography())
                         .password(passwordEncoder.encode(userCreateDTO.getPassword()))
                         .confirmationToken(userCreateDTO.getConfirmationToken())
+                        .passwordRecoveryToken(randomStringUtils)
                         .build();
         return userRepository.save(user);
     }
@@ -108,14 +112,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User recoverPassword(String email, String newPassword) {
+    public User recoverPassword(String email, PasswordRecoveryDTO passwordRecoveryDTO) {
         val userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             return null;
         }
+        if (!userOptional
+                .get()
+                .getPasswordRecoveryToken()
+                .equals(passwordRecoveryDTO.getPasswordRecoveryToken())) {
+            throw new TokenConfirmationFailedException(
+                    String.format(
+                            "Invalid Token %s", passwordRecoveryDTO.getPasswordRecoveryToken()));
+        }
+        if (!userOptional.get().isActive()) {
+            return null;
+        }
+        if (passwordRecoveryDTO.getNewPassword().length() < 8
+                || passwordRecoveryDTO.getNewPassword().length() > 32) {
+            return null;
+        }
         val userToUpdatePassword = userOptional.get();
 
-        userToUpdatePassword.setPassword(newPassword);
+        userToUpdatePassword.setPassword(
+                passwordEncoder.encode(passwordRecoveryDTO.getNewPassword()));
 
         return userRepository.save(userToUpdatePassword);
     }
