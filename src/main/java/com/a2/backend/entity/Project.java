@@ -1,5 +1,6 @@
 package com.a2.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -41,5 +42,5 @@ public class Project implements Serializable {
     @Size(min = 1, max = 5)
     private List<String> tags;
 
-    private String owner = "";
+    @JsonIgnore private String owner = "";
 }

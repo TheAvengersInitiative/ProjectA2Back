@@ -35,7 +35,6 @@ public class ProjectServiceImpl implements ProjectService {
                             .description(projectCreateDTO.getDescription())
                             .links(Arrays.asList(projectCreateDTO.getLinks().clone()))
                             .tags(Arrays.asList(projectCreateDTO.getTags().clone()))
-                            .owner(projectCreateDTO.getOwner())
                             .build();
             return projectRepository.save(project);
         }
@@ -59,6 +58,11 @@ public class ProjectServiceImpl implements ProjectService {
                     String.format(
                             "The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
+        if(projectRepository.findByTitle(projectUpdateDTO.getTitle()).isPresent())
+            throw new ProjectWithThatTitleExistsException(
+                    String.format(
+                            "There is an existing project named %s", projectUpdateDTO.getTitle()));
+
         val updatedProject = projectToModifyOptional.get();
         updatedProject.setTitle(projectUpdateDTO.getTitle());
         updatedProject.setLinks(new LinkedList<>(Arrays.asList(projectUpdateDTO.getLinks())));

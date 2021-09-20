@@ -13,10 +13,11 @@ import lombok.*;
 @AllArgsConstructor
 public class ProjectUpdateDTO {
 
-    @NonNull
+    @NotNull
     @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
     private String title;
 
+    @NotNull
     @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters")
     private String description;
 
