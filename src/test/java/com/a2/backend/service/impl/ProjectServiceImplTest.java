@@ -43,7 +43,6 @@ class ProjectServiceImplTest {
                     .description(description)
                     .links(links)
                     .tags(tags)
-                    .owner(owner)
                     .build();
     ProjectUpdateDTO projectUpdateDTO =
             ProjectUpdateDTO.builder()
@@ -87,31 +86,11 @@ class ProjectServiceImplTest {
                         .description(description2)
                         .links(links)
                         .tags(tags)
-                        .owner(owner2)
                         .build();
 
         assertThrows(
                 ProjectWithThatTitleExistsException.class,
-                () -> {
-                    projectService.createProject(projectToCreateWithRepeatedTitle);
-                });
-    }
-
-    @Test
-    void
-            Test003_ProjectServiceWhenReceiveCreateProjectDTOWithNullTitleShouldThrowNullPointerException() {
-
-        assertThrows(
-                NullPointerException.class,
-                () -> {
-                    ProjectCreateDTO projectToCreate =
-                            ProjectCreateDTO.builder()
-                                    .description(description)
-                                    .links(links)
-                                    .tags(tags)
-                                    .owner(owner)
-                                    .build();
-                });
+                () -> projectService.createProject(projectToCreateWithRepeatedTitle));
     }
 
     @Test
@@ -162,9 +141,7 @@ class ProjectServiceImplTest {
 
         assertThrows(
                 ProjectNotFoundException.class,
-                () -> {
-                    projectService.updateProject(projectUpdateDTO, nonexistentID);
-                });
+                () -> projectService.updateProject(projectUpdateDTO, nonexistentID));
     }
 
     /**
@@ -206,9 +183,7 @@ class ProjectServiceImplTest {
         // Then
         assertThrows(
                 ProjectNotFoundException.class,
-                () -> {
-                    projectService.deleteProject(project.getId());
-                });
+                () -> projectService.deleteProject(project.getId()));
     }
 
     @Test
@@ -218,7 +193,6 @@ class ProjectServiceImplTest {
         val projectToBeDisplayed = projectService.getProjectDetails(project.getId());
 
         assertEquals(project.getId(), projectToBeDisplayed.getId());
-        assertEquals(projectToCreate.getOwner(), projectToBeDisplayed.getOwner());
         assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(Arrays.asList(projectToCreate.getTags()), projectToBeDisplayed.getTags());

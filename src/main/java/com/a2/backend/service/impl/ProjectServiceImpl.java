@@ -35,7 +35,6 @@ public class ProjectServiceImpl implements ProjectService {
                             .description(projectCreateDTO.getDescription())
                             .links(Arrays.asList(projectCreateDTO.getLinks().clone()))
                             .tags(Arrays.asList(projectCreateDTO.getTags().clone()))
-                            .owner(projectCreateDTO.getOwner())
                             .build();
             return projectRepository.save(project);
         }
