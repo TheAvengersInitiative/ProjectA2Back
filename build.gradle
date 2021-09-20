@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.a2'
-version = 'v0.1.0-HF.1'
+version = 'v0.1.0-HF.2'
 sourceCompatibility = '11'
 
 repositories {
