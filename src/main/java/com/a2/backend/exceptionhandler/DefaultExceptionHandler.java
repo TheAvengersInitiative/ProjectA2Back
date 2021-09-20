@@ -1,6 +1,8 @@
 package com.a2.backend.exceptionhandler;
 
 import com.a2.backend.exception.*;
+import java.util.Arrays;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -48,7 +50,15 @@ public class DefaultExceptionHandler {
     @ResponseBody
     public String validationError(MethodArgumentNotValidException ex) {
         return ex.getBindingResult().getFieldErrors().stream()
-                .map(s -> s.getField() + ": " + s.getDefaultMessage())
+                .map(
+                        f -> {
+                            String msg =
+                                    Arrays.asList(Objects.requireNonNull(f.getCodes()))
+                                                    .contains("Pattern")
+                                            ? "Invalid pattern for field"
+                                            : f.getDefaultMessage();
+                            return f.getField() + ": " + msg;
+                        })
                 .reduce("", (a, s) -> a + s + '\n');
     }
 

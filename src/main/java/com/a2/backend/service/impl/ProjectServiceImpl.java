@@ -45,13 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public Project createProject(ProjectCreateDTO projectCreateDTO) {
         val existingProjectWithTitle = projectRepository.findByTitle(projectCreateDTO.getTitle());
-        if (existingProjectWithTitle.isEmpty()
-                || !existingProjectWithTitle
-                        .get()
-                        .getOwner()
-                        .getId()
-                        .equals(projectCreateDTO.getOwner().getId())) {
-
+        if (existingProjectWithTitle.isEmpty()) {
             List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
             List<Language> languages =
                     languageService.findOrCreateLanguage(projectCreateDTO.getLanguages());
@@ -63,7 +57,7 @@ public class ProjectServiceImpl implements ProjectService {
                             .links(projectCreateDTO.getLinks())
                             .tags(tags)
                             .languages(languages)
-                            .owner(projectCreateDTO.getOwner())
+                            .owner(projectCreateDTO.getOwner()) // todo: get owner from request
                             .build();
             return projectRepository.save(project);
         }
@@ -87,6 +81,10 @@ public class ProjectServiceImpl implements ProjectService {
                     String.format(
                             "The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
+        if (projectRepository.findByTitle(projectUpdateDTO.getTitle()).isPresent())
+            throw new ProjectWithThatTitleExistsException(
+                    String.format(
+                            "There is an existing project named %s", projectUpdateDTO.getTitle()));
 
         List<Tag> removedTags =
                 tagService.getRemovedTags(

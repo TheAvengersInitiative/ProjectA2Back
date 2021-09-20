@@ -15,10 +15,7 @@ import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -149,24 +146,6 @@ class ProjectServiceImplTest {
     }
 
     @Test
-    void
-            Test003_ProjectServiceWhenReceiveCreateProjectDTOWithNullTitleShouldThrowNullPointerException() {
-
-        assertThrows(
-                NullPointerException.class,
-                () -> {
-                    ProjectCreateDTO projectToCreate =
-                            ProjectCreateDTO.builder()
-                                    .description(description)
-                                    .links(links)
-                                    .tags(tags)
-                                    .languages(languages)
-                                    .owner(owner)
-                                    .build();
-                });
-    }
-
-    @Test
     void Test004_ProjectListWithNoSavedProjectsShouldBeEmpty() {
         assertTrue(projectService.getAllProjects().isEmpty());
     }
@@ -283,51 +262,6 @@ class ProjectServiceImplTest {
                 languageService.findLanguagesByNames(projectToCreate.getLanguages()),
                 projectToBeDisplayed.getLanguages());
         assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
-    }
-
-    @Test
-    void
-            Test011_GivenACreateProjectDTOWithExistingTitleButDifferentOwnerWhenCreatingProjectThenItIsCreated() {
-        userRepository.save(owner);
-
-        projectService.createProject(projectToCreate);
-
-        String title2 = "Project title";
-        String description2 = "Testing no exception for existing title but different owner";
-        User owner2 =
-                User.builder()
-                        .nickname("nickname2")
-                        .email("another@email.com")
-                        .biography("another bio")
-                        .password("anotherPassword")
-                        .build();
-        userRepository.save(owner2);
-        List<String> links2 = Arrays.asList("link3", "link4");
-        List<String> tags2 = Arrays.asList("tag3", "tag4");
-        List<String> languages2 = Arrays.asList("Java", "C");
-
-        ProjectCreateDTO projectToCreateWithRepeatedTitle =
-                ProjectCreateDTO.builder()
-                        .title(title2)
-                        .description(description2)
-                        .links(links2)
-                        .tags(tags2)
-                        .languages(languages2)
-                        .owner(owner2)
-                        .build();
-
-        projectService.createProject(projectToCreateWithRepeatedTitle);
-
-        val projects = projectService.getAllProjects();
-
-        assertFalse(projects.isEmpty());
-        assertEquals(2, projects.size());
-
-        val project = projects.get(0);
-        val project2 = projects.get(1);
-
-        assertEquals(project.getTitle(), project2.getTitle());
-        assertNotEquals(project.getOwner(), project2.getOwner());
     }
 
     @Test

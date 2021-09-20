@@ -1,7 +1,6 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
@@ -50,7 +49,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -77,7 +76,7 @@ class ProjectControllerTest {
 
         String title = "a";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -105,7 +104,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Short";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -133,7 +132,7 @@ class ProjectControllerTest {
 
         String title = "a";
         String description = "Short";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -169,7 +168,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -211,7 +210,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -260,7 +259,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -311,15 +310,15 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
         String titleforUpdate = "New Project Title";
         String descriptionforUpdate = "New Project description";
         List<String> linksForUpdate = new ArrayList<>();
-        linksForUpdate.add("link1");
-        linksForUpdate.add("link2");
+        linksForUpdate.add("http://google.com");
+        linksForUpdate.add("http://test.com");
         List<String> tagsForUpdate = new ArrayList<>();
         tagsForUpdate.add("tag1");
         tagsForUpdate.add("tag2");
@@ -374,7 +373,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -418,7 +417,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "description";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -453,7 +452,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -480,7 +479,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("This is not a valid tag for a project", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -534,7 +533,14 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2", "link3", "link4", "link5", "link6");
+        List<String> links =
+                Arrays.asList(
+                        "http://link1.com",
+                        "http://link2.com",
+                        "http://link3.com",
+                        "http://link4.com",
+                        "http://link5.com",
+                        "http://link6.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
 
@@ -558,10 +564,14 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2", "link3");
-        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
-        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
-        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
+        List<String> links =
+                Arrays.asList("http://link1.com", "http://link2.com", "http://link3.com");
+        List<String> secondLinks =
+                Arrays.asList("http://link4.com", "http://link5.com", "http://link6.com");
+        List<String> thirdLinks =
+                Arrays.asList("http://link7.com", "http://link8.com", "http://link9.com");
+        List<String> fourthLinks =
+                Arrays.asList("http://link10.com", "http://link11.com", "http://link12.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> secondTags = Arrays.asList("tag3", "tag4");
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
@@ -640,10 +650,14 @@ class ProjectControllerTest {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2", "link3");
-        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
-        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
-        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
+        List<String> links =
+                Arrays.asList("http://link1.com", "http://link2.com", "http://link3.com");
+        List<String> secondLinks =
+                Arrays.asList("http://link4.com", "http://link5.com", "http://link6.com");
+        List<String> thirdLinks =
+                Arrays.asList("http://link7.com", "http://link8.com", "http://link9.com");
+        List<String> fourthLinks =
+                Arrays.asList("http://link10.com", "http://link11.com", "http://link12.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> secondTags = Arrays.asList("tag3", "tag4");
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
@@ -739,7 +753,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://google.com", "http://link.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Not Valid Language", "C");
 
@@ -767,7 +781,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C", "Python", "PHP");
 
@@ -796,7 +810,7 @@ class ProjectControllerTest {
 
         String title = "Project title";
         String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2");
+        List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = List.of();
 
@@ -816,5 +830,143 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals(
                 "languages: Number of languages must be between 1 and 3\n", getResponse.getBody());
+    }
+
+    @Test
+    void
+            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLinkShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("http://link1.com", "link");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = List.of("C");
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("links[1]: Invalid pattern for field\n", getResponse.getBody());
+    }
+
+    @Test
+    void
+            Test022_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedLinkShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("http://link1.com", "http://link1.com");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = List.of("C");
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("links: must only contain unique elements\n", getResponse.getBody());
+    }
+
+    @Test
+    void
+            Test023_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedTagsShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("http://link1.com");
+        List<String> tags = Arrays.asList("t", "t");
+        List<String> languages = List.of("C");
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("tags: must only contain unique elements\n", getResponse.getBody());
+    }
+
+    @Test
+    void Test024_ProjectControllerWhenAskedForTagsShouldReturnAllTags() {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links =
+                Arrays.asList("http://link1.com", "http://link2.com", "http://link3.com");
+        List<String> secondLinks =
+                Arrays.asList("http://link4.com", "http://link5.com", "http://link6.com");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> secondTags = Arrays.asList("tag3", "tag4");
+        List<String> languages = Arrays.asList("Java", "C");
+        List<String> secondLanguages = Arrays.asList("Java", "Python");
+
+        ProjectCreateDTO firstProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Start Project")
+                        .description(description)
+                        .links(secondLinks)
+                        .tags(secondTags)
+                        .languages(secondLanguages)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+
+        val postFirstResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
+        val postSecondResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+
+        val getResponse =
+                restTemplate.exchange("/project/tags", HttpMethod.GET, null, String[].class);
+
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        String[] t = getResponse.getBody();
+        String[] expectedTags = {"tag1", "tag2", "tag3", "tag4"};
+        assertEquals(4, t.length);
+        assertArrayEquals(expectedTags, t);
     }
 }

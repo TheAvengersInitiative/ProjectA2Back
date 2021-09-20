@@ -92,7 +92,7 @@ class UserControllerTest {
     void
             Test002_GivenAUserCreateDTOWithInvalidNicknameWhenCreatingUserThenBadStatusResponseIsReturned() {
 
-        userCreateDTO.setNickname("not a valid nickname as it is way too long");
+        userCreateDTO.setNickname("notAValidNicknameAsItIsWayTooLong");
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -285,7 +285,7 @@ class UserControllerTest {
 
         UserUpdateDTO userUpdateDTO =
                 UserUpdateDTO.builder()
-                        .nickname("updated nickname")
+                        .nickname("updatedNickname")
                         .biography("updated biography")
                         .password("updated password")
                         .build();
@@ -319,7 +319,7 @@ class UserControllerTest {
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
-        String invalidNickname = "not a valid nickname as it is way too long";
+        String invalidNickname = "notAValidNicknameAsItIsWayTooLong";
         UserUpdateDTO userUpdateDTO =
                 UserUpdateDTO.builder().nickname(invalidNickname).password(password).build();
 
@@ -619,5 +619,18 @@ class UserControllerTest {
                         .getContentAsString();
 
         assertEquals("tags: Tag names must be unique\n", errorMessage);
+    }
+
+    @Test
+    void
+            Test021_GivenAUserCreateDTOWithNicknameContainingSpacesWhenCreatingUserThenBadStatusResponseIsReturned() {
+
+        userCreateDTO.setNickname("new user");
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("nickname: Invalid pattern for field\n", getResponse.getBody());
     }
 }
