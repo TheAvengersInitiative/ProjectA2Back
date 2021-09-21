@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserNotFoundException;
@@ -10,6 +12,7 @@ import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,20 +20,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Arrays;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserServiceImplTest {
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
 
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private ProjectService projectService;
 
     String nickname = "nickname";
     String email = "some@email.com";
@@ -59,7 +56,7 @@ class UserServiceImplTest {
 
     @Test
     void
-    Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
+            Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
         User persistedApplicationUser = userService.createUser(userCreateDTO);
         assertEquals(nickname, persistedApplicationUser.getNickname());
         assertEquals(email, persistedApplicationUser.getEmail());
@@ -147,6 +144,7 @@ class UserServiceImplTest {
                         .owner(user)
                         .tags(Arrays.asList("tag1", "tag2"))
                         .links(Arrays.asList("link1", "link2"))
+                        .languages(Arrays.asList("Java", "C"))
                         .build());
 
         assertEquals(1, projectService.getAllProjects().size());
@@ -178,7 +176,7 @@ class UserServiceImplTest {
 
     @Test
     void
-    Test009_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
+            Test009_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
         User user = userService.createUser(userCreateDTO);
         String validToken = "token001";
 
@@ -214,7 +212,7 @@ class UserServiceImplTest {
     @Test
     @WithMockUser(username = "some@email.com")
     void
-    Test010_GivenAUserAndAUserUpdateDTOWithSameNicknameAsBeforeWhenUpdatingUserThenItIsUpdated() {
+            Test010_GivenAUserAndAUserUpdateDTOWithSameNicknameAsBeforeWhenUpdatingUserThenItIsUpdated() {
 
         User persistedApplicationUser = userService.createUser(userCreateDTO);
 
@@ -244,7 +242,7 @@ class UserServiceImplTest {
     @Test
     @WithMockUser(username = "some@email.com")
     void
-    Test012_GivenAUserAndAUserUpdateDTOWithTakenNicknameWhenUpdatingUserThenExceptionIsThrown() {
+            Test012_GivenAUserAndAUserUpdateDTOWithTakenNicknameWhenUpdatingUserThenExceptionIsThrown() {
         userService.createUser(userCreateDTO);
         userService.createUser(
                 UserCreateDTO.builder()

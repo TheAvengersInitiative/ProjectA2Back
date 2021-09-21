@@ -1,11 +1,15 @@
 package com.a2.backend;
 
 import com.a2.backend.annotation.Generated;
+import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,25 +18,17 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component("DemoRunner")
 @Transactional
 @Generated
 public class DemoRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DemoRunner.class);
 
-    @Autowired
-    private Environment env;
-    @Autowired
-    private ProjectRepository projectRepository;
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private Environment env;
+    @Autowired private ProjectRepository projectRepository;
+    @Autowired private UserRepository userRepository;
 
-    public DemoRunner() {
-    }
+    public DemoRunner() {}
 
     @Override
     public void run(String... args) {
@@ -110,6 +106,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("GNU").build(),
                                         Tag.builder().name("Linux").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
+                        .languages(
+                                listOf(
+                                        Language.builder().name("C").build(),
+                                        Language.builder().name("C++").build()))
                         .build();
         Project tensorFlow =
                 Project.builder()
@@ -124,6 +124,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("CUDA").build(),
                                         Tag.builder().name("C").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
+                        .languages(
+                                listOf(
+                                        Language.builder().name("Python").build(),
+                                        Language.builder().name("ML").build()))
                         .build();
         Project node =
                 Project.builder()
@@ -137,6 +141,11 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("V8").build(),
                                         Tag.builder().name("Node").build()))
                         .owner(userRepository.findByNickname("FabriDS23").get())
+                        .languages(
+                                listOf(
+                                        Language.builder().name("JavaScript").build(),
+                                        Language.builder().name("Node").build(),
+                                        Language.builder().name("V8").build()))
                         .build();
         projectRepository.save(linux);
         projectRepository.save(tensorFlow);

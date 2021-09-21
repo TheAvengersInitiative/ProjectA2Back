@@ -34,6 +34,10 @@ public class Project implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Tag> tags;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Language> languages;
+
     @ManyToOne(cascade = {CascadeType.MERGE})
     private User owner;
 }

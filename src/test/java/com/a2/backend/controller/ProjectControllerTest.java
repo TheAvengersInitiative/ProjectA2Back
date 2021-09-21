@@ -50,6 +50,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -57,6 +58,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -75,6 +77,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -82,6 +85,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -101,6 +105,7 @@ class ProjectControllerTest {
         String description = "Short";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -108,6 +113,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -127,6 +133,7 @@ class ProjectControllerTest {
         String description = "Short";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -134,6 +141,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -159,6 +167,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -166,6 +175,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -200,6 +210,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -207,6 +218,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -249,6 +261,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -256,6 +269,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -300,6 +314,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         String titleforUpdate = "New Project Title";
         String descriptionforUpdate = "New Project description";
@@ -309,6 +324,7 @@ class ProjectControllerTest {
         List<String> tagsForUpdate = new ArrayList<>();
         tagsForUpdate.add("tag1");
         tagsForUpdate.add("tag2");
+        List<String> languagesForUpdate = Arrays.asList("Python", "PHP");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -316,6 +332,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -325,6 +342,7 @@ class ProjectControllerTest {
                         .description(descriptionforUpdate)
                         .links(linksForUpdate)
                         .tags(tagsForUpdate)
+                        .languages(languagesForUpdate)
                         .build();
 
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
@@ -358,6 +376,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -365,6 +384,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -398,6 +418,7 @@ class ProjectControllerTest {
         String description = "description";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -405,6 +426,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -432,6 +454,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -439,6 +462,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -457,6 +481,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2");
         List<String> tags = Arrays.asList("This is not a valid tag for a project", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -464,6 +489,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -482,6 +508,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = List.of();
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -489,6 +516,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -507,6 +535,7 @@ class ProjectControllerTest {
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3", "link4", "link5", "link6");
         List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -514,6 +543,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
         HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
@@ -535,6 +565,10 @@ class ProjectControllerTest {
         List<String> secondTags = Arrays.asList("tag3", "tag4");
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
         List<String> fourthTags = Arrays.asList("tag7", "tag8");
+        List<String> languages = Arrays.asList("Java", "C");
+        List<String> secondLanguages = Arrays.asList("Java", "Python");
+        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
+        List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -542,6 +576,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
@@ -550,6 +585,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(secondLinks)
                         .tags(secondTags)
+                        .languages(secondLanguages)
                         .owner(owner)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
@@ -558,6 +594,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(thirdLinks)
                         .tags(thirdTags)
+                        .languages(thirdLanguages)
                         .owner(owner)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
@@ -566,6 +603,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(fourthLinks)
                         .tags(fourthTags)
+                        .languages(fourthLlanguages)
                         .owner(owner)
                         .build();
 
@@ -609,6 +647,10 @@ class ProjectControllerTest {
         List<String> secondTags = Arrays.asList("tag3", "tag4");
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
         List<String> fourthTags = Arrays.asList("tag7", "tag8");
+        List<String> languages = Arrays.asList("Java", "C");
+        List<String> secondLanguages = Arrays.asList("Java", "Python");
+        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
+        List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -616,6 +658,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
@@ -624,6 +667,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(secondLinks)
                         .tags(secondTags)
+                        .languages(secondLanguages)
                         .owner(owner)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
@@ -632,6 +676,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(thirdLinks)
                         .tags(thirdTags)
+                        .languages(thirdLanguages)
                         .owner(owner)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
@@ -640,6 +685,7 @@ class ProjectControllerTest {
                         .description(description)
                         .links(fourthLinks)
                         .tags(fourthTags)
+                        .languages(fourthLlanguages)
                         .owner(owner)
                         .build();
 
@@ -667,5 +713,105 @@ class ProjectControllerTest {
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
         assertEquals(0, projects.length);
+    }
+
+    @Test
+    void Test018_WhenGettingValidLanguagesNameListShouldBeReturned() {
+        String validLanguageNames =
+                "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
+        List<String> validLanguageList =
+                new ArrayList<>(Arrays.asList(validLanguageNames.split(", ")));
+
+        val getResponse =
+                restTemplate.exchange("/project/languages", HttpMethod.GET, null, String[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        String[] languages = getResponse.getBody();
+
+        assertNotNull(languages);
+        assertEquals(validLanguageList, Arrays.asList(languages));
+    }
+
+    @Test
+    void
+            Test019_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLanguageShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Not Valid Language", "C");
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("Language Not Valid Language is not valid", getResponse.getBody());
+    }
+
+    @Test
+    void
+            Test020_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanThreeLanguagesShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C", "Python", "PHP");
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("Number of languages must be between 1 and 3", getResponse.getBody());
+    }
+
+    @Test
+    void
+            Test020_ProjectControllerWhenReceiveCreateProjectDTOWithNoLanguagesShouldReturnStatusBadRequest() {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = List.of();
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assertEquals("Number of languages must be between 1 and 3", getResponse.getBody());
     }
 }

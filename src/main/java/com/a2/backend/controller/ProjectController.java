@@ -62,4 +62,10 @@ public class ProjectController {
         val projectDetails = projectService.getProjectDetails(id);
         return ResponseEntity.status(HttpStatus.OK).body(projectDetails);
     }
+
+    @GetMapping("/languages")
+    public ResponseEntity<List<String>> getValidLanguages() {
+        val validLanguages = projectService.getValidLanguageNames();
+        return ResponseEntity.status(HttpStatus.OK).body(validLanguages);
+    }
 }

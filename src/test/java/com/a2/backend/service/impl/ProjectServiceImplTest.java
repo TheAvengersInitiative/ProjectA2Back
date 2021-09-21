@@ -2,6 +2,7 @@ package com.a2.backend.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
@@ -11,8 +12,10 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
+import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +35,8 @@ class ProjectServiceImplTest {
 
     @Autowired private TagService tagService;
 
+    @Autowired private LanguageService languageService;
+
     @Autowired private ProjectRepository projectRepository;
 
     @Autowired private UserRepository userRepository;
@@ -40,6 +45,8 @@ class ProjectServiceImplTest {
     String description = "Testing exception for existing title";
     List<String> links = Arrays.asList("link1", "link2");
     List<String> tags = Arrays.asList("tag1", "tag2");
+    List<String> languages = Arrays.asList("Java", "C");
+
     User owner =
             User.builder()
                     .nickname("nickname")
@@ -50,6 +57,7 @@ class ProjectServiceImplTest {
 
     List<String> linksUpdate = Arrays.asList("link1", "link4");
     List<String> tagsUpdate = Arrays.asList("tag1", "tag4");
+    List<String> languagesUpdate = Arrays.asList("Java", "Ruby");
 
     ProjectCreateDTO projectToCreate =
             ProjectCreateDTO.builder()
@@ -57,6 +65,7 @@ class ProjectServiceImplTest {
                     .description(description)
                     .links(links)
                     .tags(tags)
+                    .languages(languages)
                     .owner(owner)
                     .build();
     ProjectUpdateDTO projectUpdateDTO =
@@ -64,6 +73,7 @@ class ProjectServiceImplTest {
                     .title("new title")
                     .links(linksUpdate)
                     .tags(tagsUpdate)
+                    .languages(languagesUpdate)
                     .description("new description")
                     .build();
 
@@ -85,6 +95,9 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getTitle(), project.getTitle());
         assertEquals(projectToCreate.getDescription(), project.getDescription());
         assertEquals(tagService.findTagsByNames(projectToCreate.getTags()), project.getTags());
+        assertEquals(
+                languageService.findLanguagesByNames(projectToCreate.getLanguages()),
+                project.getLanguages());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
     }
 
@@ -103,6 +116,7 @@ class ProjectServiceImplTest {
                         .description(description2)
                         .links(links)
                         .tags(tags)
+                        .languages(languages)
                         .owner(owner)
                         .build();
 
@@ -123,6 +137,7 @@ class ProjectServiceImplTest {
                                     .description(description)
                                     .links(links)
                                     .tags(tags)
+                                    .languages(languages)
                                     .owner(owner)
                                     .build();
                 });
@@ -151,6 +166,9 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getDescription(), singleProject.getDescription());
         assertEquals(
                 tagService.findTagsByNames(projectToCreate.getTags()), singleProject.getTags());
+        assertEquals(
+                languageService.findLanguagesByNames(projectToCreate.getLanguages()),
+                singleProject.getLanguages());
         assertEquals(projectToCreate.getLinks(), singleProject.getLinks());
     }
 
@@ -238,6 +256,9 @@ class ProjectServiceImplTest {
         assertEquals(
                 tagService.findTagsByNames(projectToCreate.getTags()),
                 projectToBeDisplayed.getTags());
+        assertEquals(
+                languageService.findLanguagesByNames(projectToCreate.getLanguages()),
+                projectToBeDisplayed.getLanguages());
         assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
     }
 
@@ -260,6 +281,7 @@ class ProjectServiceImplTest {
         userRepository.save(owner2);
         List<String> links2 = Arrays.asList("link3", "link4");
         List<String> tags2 = Arrays.asList("tag3", "tag4");
+        List<String> languages2 = Arrays.asList("Java", "C");
 
         ProjectCreateDTO projectToCreateWithRepeatedTitle =
                 ProjectCreateDTO.builder()
@@ -267,6 +289,7 @@ class ProjectServiceImplTest {
                         .description(description2)
                         .links(links2)
                         .tags(tags2)
+                        .languages(languages2)
                         .owner(owner2)
                         .build();
 
@@ -294,6 +317,7 @@ class ProjectServiceImplTest {
                         .description(description)
                         .links(Arrays.asList("link3", "link4"))
                         .tags(Arrays.asList("tag5", "tag7"))
+                        .languages(Arrays.asList("Java", "C"))
                         .owner(owner)
                         .build();
 
@@ -303,6 +327,7 @@ class ProjectServiceImplTest {
                         .description(description)
                         .links(linksUpdate)
                         .tags(tagsUpdate)
+                        .languages(Arrays.asList("Python", "PHP"))
                         .owner(owner)
                         .build();
         // Given
@@ -326,6 +351,7 @@ class ProjectServiceImplTest {
 
         String title2 = "A Non Existent Project title";
         List<String> tags2 = Arrays.asList("tag1", "tag4");
+        List<String> languages2 = Arrays.asList("JavaScript", "Python");
 
         ProjectCreateDTO projectToCreateWithRepeatedTag =
                 ProjectCreateDTO.builder()
@@ -333,6 +359,7 @@ class ProjectServiceImplTest {
                         .description(description)
                         .links(links)
                         .tags(tags2)
+                        .languages(languages2)
                         .owner(owner)
                         .build();
 
@@ -371,5 +398,79 @@ class ProjectServiceImplTest {
         assertEquals(2, updatedTags.size());
         assertEquals("tag1", updatedProject.getTags().get(0).getName());
         assertEquals("tag4", updatedProject.getTags().get(1).getName());
+    }
+
+    @Test
+    void Test015_ProjectServiceShouldReturnListWithAllLanguageValidNames() {
+        String validLanguageNames =
+                "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
+        List<String> validLanguageList =
+                new ArrayList<>(Arrays.asList(validLanguageNames.split(", ")));
+
+        assertEquals(validLanguageList, projectService.getValidLanguageNames());
+    }
+
+    @Test
+    void
+            Test014_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProjectAndDeleteUnusedLanguages() {
+        userRepository.save(owner);
+
+        Project createdProject = projectService.createProject(projectToCreate);
+
+        List<Language> languages = languageService.getAllLanguages();
+        assertEquals(2, languages.size());
+        assertEquals("Java", createdProject.getLanguages().get(0).getName());
+        assertEquals("C", createdProject.getLanguages().get(1).getName());
+
+        Project updatedProject =
+                projectService.updateProject(projectUpdateDTO, createdProject.getId());
+
+        assertEquals(createdProject.getId(), updatedProject.getId());
+        assertEquals(projectUpdateDTO.getTitle(), updatedProject.getTitle());
+        assertEquals(projectUpdateDTO.getDescription(), updatedProject.getDescription());
+        assertEquals(tagService.findTagsByNames(tagsUpdate), updatedProject.getTags());
+        assertEquals(
+                languageService.findLanguagesByNames(languagesUpdate),
+                updatedProject.getLanguages());
+        assertEquals(projectUpdateDTO.getLinks(), updatedProject.getLinks());
+
+        List<Language> updatedLanguages = languageService.getAllLanguages();
+        assertEquals(2, updatedLanguages.size());
+        assertEquals("Java", updatedProject.getLanguages().get(0).getName());
+        assertEquals("Ruby", updatedProject.getLanguages().get(1).getName());
+    }
+
+    @Test
+    void
+            Test016_GivenExistingLanguagesAndAValidProjectCreateDTOWhenCreatingProjectThenItIsCreated() {
+        userRepository.save(owner);
+
+        projectService.createProject(projectToCreate);
+
+        String title2 = "A Non Existent Project title";
+        List<String> tags2 = Arrays.asList("tag5", "tag6");
+        List<String> languages2 = Arrays.asList("Java", "Python");
+
+        ProjectCreateDTO projectToCreateWithRepeatedTag =
+                ProjectCreateDTO.builder()
+                        .title(title2)
+                        .description(description)
+                        .links(links)
+                        .tags(tags2)
+                        .languages(languages2)
+                        .owner(owner)
+                        .build();
+
+        val project = projectService.createProject(projectToCreateWithRepeatedTag);
+
+        assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
+        assertEquals(projectToCreateWithRepeatedTag.getDescription(), project.getDescription());
+        assertEquals(
+                tagService.findTagsByNames(projectToCreateWithRepeatedTag.getTags()),
+                project.getTags());
+        assertEquals(
+                languageService.findLanguagesByNames(projectToCreateWithRepeatedTag.getLanguages()),
+                project.getLanguages());
+        assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
     }
 }

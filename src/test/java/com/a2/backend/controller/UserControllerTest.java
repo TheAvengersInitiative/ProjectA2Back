@@ -1,5 +1,8 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
@@ -20,22 +23,16 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @AutoConfigureMockMvc
 class UserControllerTest {
 
-    @Autowired
-    TestRestTemplate restTemplate;
+    @Autowired TestRestTemplate restTemplate;
 
-    @Autowired
-    MockMvc mvc;
-    @Autowired
-    ObjectMapper objectMapper;
+    @Autowired MockMvc mvc;
+    @Autowired ObjectMapper objectMapper;
 
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
@@ -57,7 +54,7 @@ class UserControllerTest {
 
     @Test
     void
-    Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
+            Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -259,8 +256,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test011_GivenAValidUserUpdateDTOAndAnExistingUserWhenUpdatingThenAUserWithPreviousNicknameCanBeCreated()
-            throws Exception {
+            Test011_GivenAValidUserUpdateDTOAndAnExistingUserWhenUpdatingThenAUserWithPreviousNicknameCanBeCreated()
+                    throws Exception {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -295,8 +292,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test012_GivenAUserUpdateDTOWithInvalidNicknameWhenUpdatingUserThenBadStatusResponseIsReturned()
-            throws Exception {
+            Test012_GivenAUserUpdateDTOWithInvalidNicknameWhenUpdatingUserThenBadStatusResponseIsReturned()
+                    throws Exception {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -324,8 +321,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test013_GivenAUserUpdateDTOWithInvalidPasswordWhenUpdatingUserThenBadStatusResponseIsReturned()
-            throws Exception {
+            Test013_GivenAUserUpdateDTOWithInvalidPasswordWhenUpdatingUserThenBadStatusResponseIsReturned()
+                    throws Exception {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -353,8 +350,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test014_GivenAUserUpdateDTOWithExistingNicknameWhenUpdatingUserThenExceptionIsHandledAndBadRequestIsReturned()
-            throws Exception {
+            Test014_GivenAUserUpdateDTOWithExistingNicknameWhenUpdatingUserThenExceptionIsHandledAndBadRequestIsReturned()
+                    throws Exception {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
