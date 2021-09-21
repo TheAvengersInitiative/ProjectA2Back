@@ -522,9 +522,8 @@ class ProjectControllerTest {
     }
 
     @Test
-    void Test016_ProjectControllerSuccesfulSearch() {
+    void Test018_ProjectControllerSuccesfulMultiFilterSearch() {
         userRepository.save(owner);
-
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3");
@@ -589,15 +588,20 @@ class ProjectControllerTest {
 
         val getResponse =
                 restTemplate.exchange(
-                        "/project/search?name=pro&page=0", HttpMethod.GET, null, Project[].class);
-
+                        "/project/search?value=title:Project,tag:tag,link:link",
+                        HttpMethod.GET,
+                        null,
+                        Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
+        for (int i = 0; i < projects.length; i++) {
+            System.out.println(projects[i]);
+        }
         assertEquals(4, projects.length);
     }
 
     @Test
-    void Test017_ProjectControllerSuccesfulEmptySearch() {
+    void Test019_ProjectControllerSuccesfulEmptyMultiFilterSearch() {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -663,9 +667,164 @@ class ProjectControllerTest {
 
         val getResponse =
                 restTemplate.exchange(
-                        "/project/search?name=pro&page=1", HttpMethod.GET, null, Project[].class);
+                        "/project/search?value=title:NonExistent",
+                        HttpMethod.GET,
+                        null,
+                        Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
         assertEquals(0, projects.length);
+    }
+
+    @Test
+    void Test020_ProjectControllerSuccesfulEmptyMultiFilterSearch() {
+        userRepository.save(owner);
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2", "link3");
+        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
+        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
+        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> secondTags = Arrays.asList("tag3", "tag4");
+        List<String> thirdTags = Arrays.asList("tag5", "tag6");
+        List<String> fourthTags = Arrays.asList("tag7", "tag8");
+
+        ProjectCreateDTO firstProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Start Project")
+                        .description(description)
+                        .links(secondLinks)
+                        .tags(secondTags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO thirdProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project2 Title")
+                        .description(description)
+                        .links(thirdLinks)
+                        .tags(thirdTags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO fourthProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project3 Title")
+                        .description(description)
+                        .links(fourthLinks)
+                        .tags(fourthTags)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+
+        val postFirstResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
+        val postSecondResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+        val postThirdResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        val postFourthResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+
+        val getResponse =
+                restTemplate.exchange(
+                        "/project/search?value=link:link6,tag:tag1",
+                        HttpMethod.GET,
+                        null,
+                        Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        Project[] projects = getResponse.getBody();
+        assertEquals(2, projects.length);
+    }
+
+    @Test
+    void Test021_ProjectControllerSuccesfulmultiFilterSearch() {
+        userRepository.save(owner);
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2", "link3");
+        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
+        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
+        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> secondTags = Arrays.asList("tag3", "tag4");
+        List<String> thirdTags = Arrays.asList("tag5", "tag6");
+        List<String> fourthTags = Arrays.asList("tag7", "tag8");
+
+        ProjectCreateDTO firstProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Start Project")
+                        .description(description)
+                        .links(secondLinks)
+                        .tags(secondTags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO thirdProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project2 Title")
+                        .description(description)
+                        .links(thirdLinks)
+                        .tags(thirdTags)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO fourthProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project3 Title")
+                        .description(description)
+                        .links(fourthLinks)
+                        .tags(fourthTags)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+
+        val postFirstResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
+        val postSecondResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+        val postThirdResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        val postFourthResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+
+        val getResponse =
+                restTemplate.exchange(
+                        "/project/search?value=link:link6,tag:tag1,title:3",
+                        HttpMethod.GET,
+                        null,
+                        Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        Project[] projects = getResponse.getBody();
+        assertEquals(3, projects.length);
     }
 }

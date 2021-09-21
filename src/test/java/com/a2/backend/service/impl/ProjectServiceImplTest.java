@@ -396,7 +396,7 @@ class ProjectServiceImplTest {
         userRepository.save(owner);
         assertTrue(projectService.getAllProjects().isEmpty());
         Project projectCreated = projectService.createProject(projectToCreate);
-        List<Project> searchedProjects = projectService.searchProjecsByFilter("tag:link1");
+        List<Project> searchedProjects = projectService.searchProjecsByFilter("tag:tag1");
         assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
     }
 
