@@ -313,7 +313,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test013_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenReturnNull() {
+    void Test013_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenThrowPasswordRecoveryException() {
         User user = userService.createUser(userCreateDTO);
         User userToBeUpdated = userService.confirmUser(confirmationToken, user.getId());
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
