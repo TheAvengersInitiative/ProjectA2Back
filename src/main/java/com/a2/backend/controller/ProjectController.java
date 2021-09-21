@@ -37,14 +37,10 @@ public class ProjectController {
 
     @GetMapping("/search")
     public ResponseEntity<List<Project>> getProjectsByNameSearch(
-            @RequestParam(name = "name") String pattern,
-            @RequestParam(name = "page") Integer pageNo) {
-        val projects = projectService.getProjectsByTitleSearch(pattern, pageNo);
-
+            @RequestParam(name = "value") String pattern) {
+        val projects = projectService.searchProjecsByFilter(pattern);
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<UUID> deleteProject(@PathVariable UUID id) {

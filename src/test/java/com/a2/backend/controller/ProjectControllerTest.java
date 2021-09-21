@@ -552,9 +552,8 @@ class ProjectControllerTest {
     }
 
     @Test
-    void Test016_ProjectControllerSuccesfulSearch() {
+    void Test018_ProjectControllerSuccesfulMultiFilterSearch() {
         userRepository.save(owner);
-
         String title = "Project title";
         String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("link1", "link2", "link3");
@@ -627,15 +626,20 @@ class ProjectControllerTest {
 
         val getResponse =
                 restTemplate.exchange(
-                        "/project/search?name=pro&page=0", HttpMethod.GET, null, Project[].class);
-
+                        "/project/search?value=title:Project,tag:tag,link:link",
+                        HttpMethod.GET,
+                        null,
+                        Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
+        for (int i = 0; i < projects.length; i++) {
+            System.out.println(projects[i]);
+        }
         assertEquals(4, projects.length);
     }
 
     @Test
-    void Test017_ProjectControllerSuccesfulEmptySearch() {
+    void Test019_ProjectControllerSuccesfulEmptyMultiFilterSearch() {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -709,7 +713,10 @@ class ProjectControllerTest {
 
         val getResponse =
                 restTemplate.exchange(
-                        "/project/search?name=pro&page=1", HttpMethod.GET, null, Project[].class);
+                        "/project/search?value=title:NonExistent",
+                        HttpMethod.GET,
+                        null,
+                        Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
         assertEquals(0, projects.length);
@@ -743,6 +750,7 @@ class ProjectControllerTest {
         List<String> languages = Arrays.asList("Not Valid Language", "C");
 
         ProjectCreateDTO projectToCreate =
+
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
@@ -799,6 +807,7 @@ class ProjectControllerTest {
         List<String> languages = List.of();
 
         ProjectCreateDTO projectToCreate =
+
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
@@ -813,5 +822,6 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Number of languages must be between 1 and 3", getResponse.getBody());
+
     }
 }
