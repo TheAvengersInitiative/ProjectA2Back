@@ -6,9 +6,11 @@ import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
 import com.a2.backend.model.PasswordRecoveryDTO;
+import com.a2.backend.model.PasswordRecoveryInitDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
+import com.a2.backend.service.MailService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
@@ -26,17 +28,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final ProjectService projectService;
+    private final MailService mailService;
 
     @Autowired private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, ProjectService projectService) {
+    public UserServiceImpl(
+            UserRepository userRepository, ProjectService projectService, MailService mailService) {
         this.userRepository = userRepository;
         this.projectService = projectService;
+        this.mailService = mailService;
     }
 
     @Override
     public User createUser(UserCreateDTO userCreateDTO) {
-        String randomStringUtils = RandomStringUtils.getAlphaNumericString(10);
         if (userRepository.findByNickname(userCreateDTO.getNickname()).isPresent())
             throw new UserWithThatNicknameExistsException(
                     String.format(
@@ -47,6 +51,7 @@ public class UserServiceImpl implements UserService {
                     String.format(
                             "There is an existing user with the email %s",
                             userCreateDTO.getEmail()));
+        String randomStringUtils = RandomStringUtils.getAlphaNumericString(10);
         User user =
                 User.builder()
                         .nickname(userCreateDTO.getNickname())
@@ -112,8 +117,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User recoverPassword(String email, PasswordRecoveryDTO passwordRecoveryDTO) {
-        val userOptional = userRepository.findByEmail(email);
+    public User recoverPassword(PasswordRecoveryDTO passwordRecoveryDTO) {
+        val userOptional = userRepository.findByEmail(passwordRecoveryDTO.getEmail());
         if (userOptional.isEmpty()) {
             return null;
         }
@@ -136,7 +141,15 @@ public class UserServiceImpl implements UserService {
 
         userToUpdatePassword.setPassword(
                 passwordEncoder.encode(passwordRecoveryDTO.getNewPassword()));
+        String randomStringUtils = RandomStringUtils.getAlphaNumericString(10);
+        userToUpdatePassword.setPasswordRecoveryToken(randomStringUtils);
 
         return userRepository.save(userToUpdatePassword);
+    }
+
+    @Override
+    public void sendPasswordRecoveryMail(PasswordRecoveryInitDTO passwordRecoveryInitDTO) {
+        val userOptional = userRepository.findByEmail(passwordRecoveryInitDTO.getEmail());
+        userOptional.ifPresent(mailService::sendForgotPasswordMail);
     }
 }

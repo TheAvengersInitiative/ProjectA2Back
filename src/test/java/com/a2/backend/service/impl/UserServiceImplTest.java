@@ -7,10 +7,7 @@ import com.a2.backend.exception.TokenConfirmationFailedException;
 import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.exception.UserWithThatEmailExistsException;
 import com.a2.backend.exception.UserWithThatNicknameExistsException;
-import com.a2.backend.model.PasswordRecoveryDTO;
-import com.a2.backend.model.ProjectCreateDTO;
-import com.a2.backend.model.UserCreateDTO;
-import com.a2.backend.model.UserUpdateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
@@ -47,8 +44,11 @@ class UserServiceImplTest {
             PasswordRecoveryDTO.builder()
                     .passwordRecoveryToken(passwordRecoveryToken)
                     .newPassword(newPassword)
+                    .email(email)
                     .build();
 
+    PasswordRecoveryInitDTO passwordRecoveryInitDTO =
+            PasswordRecoveryInitDTO.builder().email(email).build();
     UserCreateDTO userCreateDTO =
             UserCreateDTO.builder()
                     .nickname(nickname)
@@ -280,8 +280,7 @@ class UserServiceImplTest {
 
         User userToBeUpdated = userService.confirmUser("token001", user.getId());
 
-        User passwordUpdatedUser =
-                userService.recoverPassword(userToBeUpdated.getEmail(), passwordRecoveryDTO);
+        User passwordUpdatedUser = userService.recoverPassword(passwordRecoveryDTO);
 
         assertNotEquals(userToBeUpdated.getPassword(), passwordUpdatedUser.getPassword());
 
@@ -293,15 +292,15 @@ class UserServiceImplTest {
         User user = userService.createUser(userCreateDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
 
-        User passwordUpdatedUser =
-                userService.recoverPassword(user.getEmail(), passwordRecoveryDTO);
+        User passwordUpdatedUser = userService.recoverPassword(passwordRecoveryDTO);
 
         assertEquals(null, passwordUpdatedUser);
     }
 
     @Test
     void Test011_GivenAnInvalidEmailWhenWantToRecoverPasswordThenReturnNull() {
-        User passwordUpdatedUser = userService.recoverPassword("uselessMail", passwordRecoveryDTO);
+        passwordRecoveryDTO.setEmail("adihajkd");
+        User passwordUpdatedUser = userService.recoverPassword(passwordRecoveryDTO);
         assertEquals(null, passwordUpdatedUser);
     }
 
@@ -312,18 +311,17 @@ class UserServiceImplTest {
         User activatedUser = userService.confirmUser(confirmationToken, user.getId());
         assertThrows(
                 TokenConfirmationFailedException.class,
-                () -> userService.recoverPassword(activatedUser.getEmail(), passwordRecoveryDTO));
+                () -> userService.recoverPassword(passwordRecoveryDTO));
     }
 
     @Test
-    void Test013_GivenAninvalidPasswordLengthWhenWantToRecoverPasswordThenReturnNull() {
+    void Test013_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenReturnNull() {
         User user = userService.createUser(userCreateDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
         passwordRecoveryDTO.setNewPassword("test001");
         User userToBeUpdated = userService.confirmUser("token001", user.getId());
-
-        User passwordUpdatedUser =
-                userService.recoverPassword(userToBeUpdated.getEmail(), passwordRecoveryDTO);
+        passwordRecoveryDTO.setEmail(userToBeUpdated.getEmail());
+        User passwordUpdatedUser = userService.recoverPassword(passwordRecoveryDTO);
 
         assertEquals(null, passwordUpdatedUser);
     }

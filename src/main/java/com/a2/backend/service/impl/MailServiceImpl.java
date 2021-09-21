@@ -20,17 +20,24 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendConfirmationMail(User user, String confirmationToken) {
+    public void sendConfirmationMail(User user) {
         this.sendEmail(
                 user.getEmail(),
                 "Account confirmation",
                 "Hello in order to confirm your account press this link: "
                         + "http://localhost:3000/user/confirm?token="
-                        + confirmationToken);
+                        + user.getConfirmationToken());
     }
 
     @Override
-    public void sendForgotPasswordMail(String mail) {}
+    public void sendForgotPasswordMail(User user) {
+        this.sendEmail(
+                user.getEmail(),
+                "Password Recovery",
+                "Hello in order to confirm your account press this link: "
+                        + "http://localhost:3000/user/recover/forgot-password?token="
+                        + user.getPasswordRecoveryToken());
+    }
 
     private void sendEmail(String mailTO, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();

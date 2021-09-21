@@ -31,7 +31,7 @@ public class User {
 
     @JsonIgnore String confirmationToken;
 
-    String passwordRecoveryToken;
+    @JsonIgnore String passwordRecoveryToken;
 
     @Builder.Default boolean isActive = false;
 }
