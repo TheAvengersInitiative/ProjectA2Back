@@ -7,6 +7,9 @@ import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,25 +18,17 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component("DemoRunner")
 @Transactional
 @Generated
 public class DemoRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DemoRunner.class);
 
-    @Autowired
-    private Environment env;
-    @Autowired
-    private ProjectRepository projectRepository;
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private Environment env;
+    @Autowired private ProjectRepository projectRepository;
+    @Autowired private UserRepository userRepository;
 
-    public DemoRunner() {
-    }
+    public DemoRunner() {}
 
     @Override
     public void run(String... args) {
