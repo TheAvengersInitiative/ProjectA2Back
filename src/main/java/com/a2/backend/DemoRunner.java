@@ -1,6 +1,7 @@
 package com.a2.backend;
 
 import com.a2.backend.annotation.Generated;
+import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
@@ -110,6 +111,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("GNU").build(),
                                         Tag.builder().name("Linux").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
+                        .languages(
+                                listOf(
+                                        Language.builder().name("C").build(),
+                                        Language.builder().name("C++").build()))
                         .build();
         Project tensorFlow =
                 Project.builder()
@@ -124,6 +129,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("CUDA").build(),
                                         Tag.builder().name("C").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
+                        .languages(
+                                listOf(
+                                        Language.builder().name("Python").build(),
+                                        Language.builder().name("ML").build()))
                         .build();
         Project node =
                 Project.builder()
@@ -137,6 +146,11 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("V8").build(),
                                         Tag.builder().name("Node").build()))
                         .owner(userRepository.findByNickname("FabriDS23").get())
+                        .languages(
+                                listOf(
+                                        Language.builder().name("JavaScript").build(),
+                                        Language.builder().name("Node").build(),
+                                        Language.builder().name("V8").build()))
                         .build();
         projectRepository.save(linux);
         projectRepository.save(tensorFlow);

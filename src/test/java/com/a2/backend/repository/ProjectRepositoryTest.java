@@ -3,6 +3,7 @@ package com.a2.backend.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.BackendApplication;
+import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
@@ -188,5 +189,59 @@ class ProjectRepositoryTest {
         assertEquals(2, projectsWithTag3.size());
         assertTrue(projectsWithTag3.contains(project2));
         assertTrue(projectsWithTag3.contains(project3));
+    }
+
+    @Test
+    void
+            Test007_ProjectRepositoryWhenGivenLanguageNameShouldReturnAllProjectsThatHaveThatLanguage() {
+        userRepository.save(owner);
+
+        Tag tag1 = Tag.builder().name("tag1").build();
+        Tag tag2 = Tag.builder().name("tag2").build();
+        Tag tag3 = Tag.builder().name("tag3").build();
+
+        Language language1 = Language.builder().name("Java").build();
+        Language language2 = Language.builder().name("C").build();
+        Language language3 = Language.builder().name("Python").build();
+
+        Project project1 =
+                Project.builder()
+                        .title("Project1")
+                        .description("My description")
+                        .owner(owner)
+                        .links(Arrays.asList("link1", "link2"))
+                        .tags(Arrays.asList(tag1, tag2))
+                        .languages(Arrays.asList(language1, language2))
+                        .build();
+
+        Project project2 =
+                Project.builder()
+                        .title("Project2")
+                        .description("My description")
+                        .owner(owner)
+                        .links(Arrays.asList("link1", "link2"))
+                        .tags(Arrays.asList(tag1, tag3))
+                        .languages(Arrays.asList(language3, language2))
+                        .build();
+
+        Project project3 =
+                Project.builder()
+                        .title("Project3")
+                        .description("My description")
+                        .owner(owner)
+                        .links(Arrays.asList("link1", "link2"))
+                        .tags(Arrays.asList(tag1, tag3))
+                        .languages(Arrays.asList(language1, language3))
+                        .build();
+
+        projectRepository.save(project1);
+        projectRepository.save(project2);
+        projectRepository.save(project3);
+
+        List<Project> projectsWithLanguage1 = projectRepository.findProjectsByLanguageName("Java");
+
+        assertEquals(2, projectsWithLanguage1.size());
+        assertTrue(projectsWithLanguage1.contains(project1));
+        assertTrue(projectsWithLanguage1.contains(project3));
     }
 }
