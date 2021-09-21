@@ -1,10 +1,7 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
-import com.a2.backend.exception.TokenConfirmationFailedException;
-import com.a2.backend.exception.UserNotFoundException;
-import com.a2.backend.exception.UserWithThatEmailExistsException;
-import com.a2.backend.exception.UserWithThatNicknameExistsException;
+import com.a2.backend.exception.*;
 import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.PasswordRecoveryInitDTO;
 import com.a2.backend.model.UserCreateDTO;
@@ -51,7 +48,7 @@ public class UserServiceImpl implements UserService {
                     String.format(
                             "There is an existing user with the email %s",
                             userCreateDTO.getEmail()));
-        String randomStringUtils = RandomStringUtils.getAlphaNumericString(10);
+        String randomStringUtils = RandomStringUtils.getAlphaNumericString(32);
         User user =
                 User.builder()
                         .nickname(userCreateDTO.getNickname())
@@ -120,7 +117,10 @@ public class UserServiceImpl implements UserService {
     public User recoverPassword(PasswordRecoveryDTO passwordRecoveryDTO) {
         val userOptional = userRepository.findByEmail(passwordRecoveryDTO.getEmail());
         if (userOptional.isEmpty()) {
-            return null;
+            throw new InvalidPasswordRecoveryException("Invalid PasswordRecovery");
+        }
+        if (!userOptional.get().isActive()) {
+            throw new InvalidPasswordRecoveryException("Invalid PasswordRecovery");
         }
         if (!userOptional
                 .get()
@@ -130,18 +130,16 @@ public class UserServiceImpl implements UserService {
                     String.format(
                             "Invalid Token %s", passwordRecoveryDTO.getPasswordRecoveryToken()));
         }
-        if (!userOptional.get().isActive()) {
-            return null;
-        }
+
         if (passwordRecoveryDTO.getNewPassword().length() < 8
                 || passwordRecoveryDTO.getNewPassword().length() > 32) {
-            return null;
+            throw new PasswordRecoveryFailedException("Invalid Body");
         }
         val userToUpdatePassword = userOptional.get();
 
         userToUpdatePassword.setPassword(
                 passwordEncoder.encode(passwordRecoveryDTO.getNewPassword()));
-        String randomStringUtils = RandomStringUtils.getAlphaNumericString(10);
+        String randomStringUtils = RandomStringUtils.getAlphaNumericString(32);
         userToUpdatePassword.setPasswordRecoveryToken(randomStringUtils);
 
         return userRepository.save(userToUpdatePassword);

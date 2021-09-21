@@ -3,14 +3,10 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.User;
-import com.a2.backend.exception.TokenConfirmationFailedException;
-import com.a2.backend.exception.UserNotFoundException;
-import com.a2.backend.exception.UserWithThatEmailExistsException;
-import com.a2.backend.exception.UserWithThatNicknameExistsException;
+import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import com.a2.backend.utils.RandomStringUtils;
 import java.util.Arrays;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
@@ -176,7 +172,6 @@ class UserServiceImplTest {
         User activatedUser = userService.confirmUser(confirmationToken1, user.getId());
 
         assertTrue(activatedUser.isActive());
-        System.out.println("this is the password: " + activatedUser.getPassword());
     }
 
     @Test
@@ -288,20 +283,23 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test010_GivenAnInactiveUserWhenWantToRecoverPassWordThenReturnNull() {
+    void
+            Test010_GivenAnInactiveUserWhenWantToRecoverPassWordThenThrowInvalidPasswordRecoveryException() {
         User user = userService.createUser(userCreateDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
 
-        User passwordUpdatedUser = userService.recoverPassword(passwordRecoveryDTO);
-
-        assertEquals(null, passwordUpdatedUser);
+        assertThrows(
+                InvalidPasswordRecoveryException.class,
+                () -> userService.recoverPassword(passwordRecoveryDTO));
     }
 
     @Test
-    void Test011_GivenAnInvalidEmailWhenWantToRecoverPasswordThenReturnNull() {
+    void
+            Test011_GivenAnInvalidEmailWhenWantToRecoverPasswordThenThrowInvalidPasswordRecoveryException() {
         passwordRecoveryDTO.setEmail("adihajkd");
-        User passwordUpdatedUser = userService.recoverPassword(passwordRecoveryDTO);
-        assertEquals(null, passwordUpdatedUser);
+        assertThrows(
+                InvalidPasswordRecoveryException.class,
+                () -> userService.recoverPassword(passwordRecoveryDTO));
     }
 
     @Test
@@ -317,18 +315,13 @@ class UserServiceImplTest {
     @Test
     void Test013_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenReturnNull() {
         User user = userService.createUser(userCreateDTO);
+        User userToBeUpdated = userService.confirmUser(confirmationToken, user.getId());
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
         passwordRecoveryDTO.setNewPassword("test001");
-        User userToBeUpdated = userService.confirmUser("token001", user.getId());
         passwordRecoveryDTO.setEmail(userToBeUpdated.getEmail());
-        User passwordUpdatedUser = userService.recoverPassword(passwordRecoveryDTO);
 
-        assertEquals(null, passwordUpdatedUser);
-    }
-
-    @Test
-    void Test014_GivenAnIntWhenWantARandomStringThenCreatesTheRandomString() {
-        String randomStringTest = RandomStringUtils.getAlphaNumericString(10);
-        System.out.println(randomStringTest);
+        assertThrows(
+                PasswordRecoveryFailedException.class,
+                () -> userService.recoverPassword(passwordRecoveryDTO));
     }
 }

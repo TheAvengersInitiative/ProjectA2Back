@@ -60,6 +60,20 @@ public class DefaultExceptionHandler {
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(PasswordRecoveryFailedException.class)
+    public ResponseEntity<?> PasswordRecoveryFailedException(
+            PasswordRecoveryFailedException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidPasswordRecoveryException.class)
+    public ResponseEntity<?> InvalidPasswordRecoveryException(
+            InvalidPasswordRecoveryException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.OK);
+    }
+
     @ExceptionHandler(LanguageNotValidException.class)
     protected ResponseEntity<?> handleLanguageNotValid(LanguageNotValidException exception) {
         logger.info(exception.getMessage());
