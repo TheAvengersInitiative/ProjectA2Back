@@ -1,15 +1,16 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
-import com.a2.backend.exception.TokenConfirmationFailedException;
-import com.a2.backend.exception.UserNotFoundException;
-import com.a2.backend.exception.UserWithThatEmailExistsException;
-import com.a2.backend.exception.UserWithThatNicknameExistsException;
+import com.a2.backend.exception.*;
+import com.a2.backend.model.PasswordRecoveryDTO;
+import com.a2.backend.model.PasswordRecoveryInitDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
+import com.a2.backend.service.MailService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,12 +25,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final ProjectService projectService;
+    private final MailService mailService;
 
     @Autowired private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, ProjectService projectService) {
+    public UserServiceImpl(
+            UserRepository userRepository, ProjectService projectService, MailService mailService) {
         this.userRepository = userRepository;
         this.projectService = projectService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -44,6 +48,7 @@ public class UserServiceImpl implements UserService {
                     String.format(
                             "There is an existing user with the email %s",
                             userCreateDTO.getEmail()));
+        String randomStringUtils = RandomStringUtils.getAlphaNumericString(32);
         User user =
                 User.builder()
                         .nickname(userCreateDTO.getNickname())
@@ -51,6 +56,7 @@ public class UserServiceImpl implements UserService {
                         .biography(userCreateDTO.getBiography())
                         .password(passwordEncoder.encode(userCreateDTO.getPassword()))
                         .confirmationToken(userCreateDTO.getConfirmationToken())
+                        .passwordRecoveryToken(randomStringUtils)
                         .build();
         return userRepository.save(user);
     }
@@ -105,5 +111,43 @@ public class UserServiceImpl implements UserService {
         }
         user.setActive(true);
         return userRepository.save(user);
+    }
+
+    @Override
+    public User recoverPassword(PasswordRecoveryDTO passwordRecoveryDTO) {
+        val userOptional = userRepository.findByEmail(passwordRecoveryDTO.getEmail());
+        if (userOptional.isEmpty()) {
+            throw new InvalidPasswordRecoveryException("Invalid PasswordRecovery");
+        }
+        if (!userOptional.get().isActive()) {
+            throw new InvalidPasswordRecoveryException("Invalid PasswordRecovery");
+        }
+        if (!userOptional
+                .get()
+                .getPasswordRecoveryToken()
+                .equals(passwordRecoveryDTO.getPasswordRecoveryToken())) {
+            throw new TokenConfirmationFailedException(
+                    String.format(
+                            "Invalid Token %s", passwordRecoveryDTO.getPasswordRecoveryToken()));
+        }
+
+        if (passwordRecoveryDTO.getNewPassword().length() < 8
+                || passwordRecoveryDTO.getNewPassword().length() > 32) {
+            throw new PasswordRecoveryFailedException("Invalid Body");
+        }
+        val userToUpdatePassword = userOptional.get();
+
+        userToUpdatePassword.setPassword(
+                passwordEncoder.encode(passwordRecoveryDTO.getNewPassword()));
+        String randomStringUtils = RandomStringUtils.getAlphaNumericString(32);
+        userToUpdatePassword.setPasswordRecoveryToken(randomStringUtils);
+
+        return userRepository.save(userToUpdatePassword);
+    }
+
+    @Override
+    public void sendPasswordRecoveryMail(PasswordRecoveryInitDTO passwordRecoveryInitDTO) {
+        val userOptional = userRepository.findByEmail(passwordRecoveryInitDTO.getEmail());
+        userOptional.ifPresent(mailService::sendForgotPasswordMail);
     }
 }

@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
+import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -33,15 +35,19 @@ class UserControllerTest {
 
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper objectMapper;
+    @Autowired UserRepository userRepository;
 
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
+    private final String recoverUrl = "recover";
+    private final String requestUrl = "request";
 
     private final String nickname = "nickname";
     private final String email = "some@gmail.com";
     private final String biography = "bio";
     private final String password = "password";
     private final String confirmationToken = "token001";
+    private final String recoveryToken = "RecoveryToken";
 
     UserCreateDTO userCreateDTO =
             UserCreateDTO.builder()
@@ -50,6 +56,12 @@ class UserControllerTest {
                     .biography(biography)
                     .password(password)
                     .confirmationToken(confirmationToken)
+                    .build();
+    PasswordRecoveryDTO passwordRecoveryDTO =
+            PasswordRecoveryDTO.builder()
+                    .email(email)
+                    .passwordRecoveryToken(recoveryToken)
+                    .newPassword("NewPassword001")
                     .build();
 
     @Test
@@ -397,5 +409,51 @@ class UserControllerTest {
 
         assertEquals(
                 "There is an existing user with the nickname " + anotherNickname, errorMessage);
+    }
+
+    @Test
+    void GivenAValidUserWhenWantToRecoverPasswordThenReturnStatusOk() {
+        String validConfirmationToken = "token001";
+        HttpEntity<UserCreateDTO> userRequest = new HttpEntity<>(userCreateDTO);
+        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, userRequest, User.class);
+        assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
+        // agarras response id, llamas al user service
+        val recoverPasswordToken =
+                userRepository
+                        .findById(getResponse.getBody().getId())
+                        .get()
+                        .getPasswordRecoveryToken();
+
+        User userToActivate = getResponse.getBody();
+        val getActivateResponse =
+                restTemplate.exchange(
+                        String.format(
+                                "%s/%s/%s/%s",
+                                baseUrl,
+                                confirmationUrl,
+                                userToActivate.getId(),
+                                validConfirmationToken),
+                        HttpMethod.GET,
+                        null,
+                        User.class);
+        assertEquals(HttpStatus.OK, getActivateResponse.getStatusCode());
+        passwordRecoveryDTO.setPasswordRecoveryToken(recoverPasswordToken);
+        HttpEntity<PasswordRecoveryDTO> passwordRecoveryRequest =
+                new HttpEntity<>(passwordRecoveryDTO);
+
+        val postResponse =
+                restTemplate.exchange(
+                        String.format("%s/%s/%s", baseUrl, recoverUrl, requestUrl),
+                        HttpMethod.POST,
+                        passwordRecoveryRequest,
+                        User.class);
+        assertEquals(HttpStatus.OK, postResponse.getStatusCode());
+
+        getActivateResponse
+                .getBody()
+                .setPasswordRecoveryToken(passwordRecoveryDTO.getPasswordRecoveryToken());
+        val activatedUser = getActivateResponse.getBody();
+
+        assertNotEquals(activatedUser.getPassword(), postResponse.getBody().getPassword());
     }
 }

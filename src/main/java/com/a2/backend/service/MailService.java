@@ -4,7 +4,7 @@ import com.a2.backend.entity.User;
 
 public interface MailService {
 
-    public void sendConfirmationMail(User user, String confirmationToken);
+    public void sendConfirmationMail(User user);
 
-    public void sendForgotPasswordMail(String mail);
+    public void sendForgotPasswordMail(User user);
 }
