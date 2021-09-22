@@ -1,5 +1,8 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.PreferencesUpdateDTO;
@@ -7,6 +10,7 @@ import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +26,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -72,7 +71,7 @@ class UserControllerTest {
 
     @Test
     void
-    Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
+            Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -466,8 +465,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test016_GivenAValidPreferencesUpdateDTOAndAnExistingUserWhenUpdatingPreferencesThenTheyAreUpdated()
-            throws Exception {
+            Test016_GivenAValidPreferencesUpdateDTOAndAnExistingUserWhenUpdatingPreferencesThenTheyAreUpdated()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -499,8 +498,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test017_GivenAPreferencesUpdateDTOWithTooManyLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
-            throws Exception {
+            Test017_GivenAPreferencesUpdateDTOWithTooManyLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -530,8 +529,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test018_GivenAPreferencesUpdateDTOWithTooManyTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
-            throws Exception {
+            Test018_GivenAPreferencesUpdateDTOWithTooManyTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -561,8 +560,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test019_GivenAPreferencesUpdateDTOWithRepeatedLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
-            throws Exception {
+            Test019_GivenAPreferencesUpdateDTOWithRepeatedLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
@@ -592,8 +591,8 @@ class UserControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test020_GivenAPreferencesUpdateDTOWithRepeatedTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
-            throws Exception {
+            Test020_GivenAPreferencesUpdateDTOWithRepeatedTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
+                    throws Exception {
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);

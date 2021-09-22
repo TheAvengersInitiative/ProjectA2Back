@@ -14,6 +14,9 @@ import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import com.a2.backend.utils.SearchUtils.ProjectSpecificationBuilder;
 import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.transaction.Transactional;
@@ -24,11 +27,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -54,10 +52,10 @@ public class ProjectServiceImpl implements ProjectService {
         val existingProjectWithTitle = projectRepository.findByTitle(projectCreateDTO.getTitle());
         if (existingProjectWithTitle.isEmpty()
                 || !existingProjectWithTitle
-                .get()
-                .getOwner()
-                .getId()
-                .equals(projectCreateDTO.getOwner().getId())) {
+                        .get()
+                        .getOwner()
+                        .getId()
+                        .equals(projectCreateDTO.getOwner().getId())) {
 
             List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
             List<Language> languages =
