@@ -1,7 +1,5 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
@@ -15,16 +13,19 @@ import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -53,6 +54,8 @@ class ProjectServiceImplTest {
                     .email("some@email.com")
                     .biography("bio")
                     .password("password")
+                    .preferredLanguages(List.of("Java", "C"))
+                    .preferredTags(List.of("tag1", "tag3"))
                     .build();
 
     List<String> linksUpdate = Arrays.asList("link1", "link4");
@@ -99,6 +102,19 @@ class ProjectServiceImplTest {
                 languageService.findLanguagesByNames(projectToCreate.getLanguages()),
                 project.getLanguages());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
+
+        // The whole owner is the same but when the project is persisted the persisted owner is
+        // merged and thus .equals() returns false.
+        // The same happens with preferred tags and languages collections.
+        assertEquals(owner.getId(), project.getOwner().getId());
+        assertEquals(owner.getNickname(), project.getOwner().getNickname());
+        assertEquals(owner.getEmail(), project.getOwner().getEmail());
+        assertEquals(owner.getPassword(), project.getOwner().getPassword());
+        assertEquals(owner.getBiography(), project.getOwner().getBiography());
+        assertTrue(
+                owner.getPreferredLanguages()
+                        .containsAll(project.getOwner().getPreferredLanguages()));
+        assertTrue(owner.getPreferredTags().containsAll(project.getOwner().getPreferredTags()));
     }
 
     @Test
@@ -250,7 +266,7 @@ class ProjectServiceImplTest {
         val projectToBeDisplayed = projectService.getProjectDetails(project.getId());
 
         assertEquals(project.getId(), projectToBeDisplayed.getId());
-        assertEquals(projectToCreate.getOwner(), projectToBeDisplayed.getOwner());
+        assertEquals(projectToCreate.getOwner().getId(), projectToBeDisplayed.getOwner().getId());
         assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(
