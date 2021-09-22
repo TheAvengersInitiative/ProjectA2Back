@@ -193,7 +193,9 @@ class ProjectRepositoryTest {
         assertTrue(projectsWithTag3.contains(project3));
     }
 
-    @Test void Test007_ProjectRepositoryWhenGivenLanguageNameShouldReturnAllProjectsThatHaveThatLanguage() {
+    @Test
+    void
+            Test007_ProjectRepositoryWhenGivenLanguageNameShouldReturnAllProjectsThatHaveThatLanguage() {
 
         userRepository.save(owner);
 
@@ -249,8 +251,7 @@ class ProjectRepositoryTest {
         ProjectSpecification spec =
                 new ProjectSpecification(new SearchCriteria("title", ":", "New"));
         List<Project> projects = projectRepository.findAll(spec);
-        assertEquals(1,projects.size());
-
+        assertEquals(1, projects.size());
     }
 
     @Test

@@ -632,9 +632,7 @@ class ProjectControllerTest {
                         Project[].class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
         Project[] projects = getResponse.getBody();
-        for (int i = 0; i < projects.length; i++) {
-            System.out.println(projects[i]);
-        }
+        for (int i = 0; i < projects.length; i++) {}
         assertEquals(4, projects.length);
     }
 
@@ -750,7 +748,6 @@ class ProjectControllerTest {
         List<String> languages = Arrays.asList("Not Valid Language", "C");
 
         ProjectCreateDTO projectToCreate =
-
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
@@ -807,7 +804,6 @@ class ProjectControllerTest {
         List<String> languages = List.of();
 
         ProjectCreateDTO projectToCreate =
-
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
@@ -822,6 +818,89 @@ class ProjectControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("Number of languages must be between 1 and 3", getResponse.getBody());
+    }
 
+    @Test
+    void Test021_ProjectControllerSuccesfulMultiFilterSearch() {
+        userRepository.save(owner);
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2", "link3");
+        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
+        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
+        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> secondTags = Arrays.asList("tag3", "tag4");
+        List<String> thirdTags = Arrays.asList("tag5", "tag6");
+        List<String> fourthTags = Arrays.asList("tag7", "tag8");
+        List<String> languages = Arrays.asList("Java", "C");
+        List<String> secondLanguages = Arrays.asList("Java", "Python");
+        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
+        List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
+
+        ProjectCreateDTO firstProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Start Project")
+                        .description(description)
+                        .links(secondLinks)
+                        .tags(secondTags)
+                        .languages(secondLanguages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO thirdProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project2 Title")
+                        .description(description)
+                        .links(thirdLinks)
+                        .tags(thirdTags)
+                        .languages(thirdLanguages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO fourthProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project3 Title")
+                        .description(description)
+                        .links(fourthLinks)
+                        .tags(fourthTags)
+                        .languages(fourthLlanguages)
+                        .owner(owner)
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+
+        val postFirstResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
+        val postSecondResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+        val postThirdResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        val postFourthResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+
+        val getResponse =
+                restTemplate.exchange(
+                        "/project/search?value=title:3,language:Script",
+                        HttpMethod.GET,
+                        null,
+                        Project[].class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        Project[] projects = getResponse.getBody();
+        for (int i = 0; i < projects.length; i++) {}
+        assertEquals(2, projects.length);
     }
 }
