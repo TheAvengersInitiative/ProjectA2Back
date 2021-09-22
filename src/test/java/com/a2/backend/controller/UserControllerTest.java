@@ -1,10 +1,8 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.model.PasswordRecoveryDTO;
+import com.a2.backend.model.PreferencesUpdateDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
@@ -24,6 +22,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -64,9 +67,12 @@ class UserControllerTest {
                     .newPassword("NewPassword001")
                     .build();
 
+    List<String> tags = List.of("tag1", "tag2");
+    List<String> languages = List.of("Java", "C");
+
     @Test
     void
-            Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
+    Test001_GivenAValidUserCreateDTOWhenRequestingPostThenReturnStatusCreatedAndPersistedUserAreReturned() {
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -412,7 +418,7 @@ class UserControllerTest {
     }
 
     @Test
-    void GivenAValidUserWhenWantToRecoverPasswordThenReturnStatusOk() {
+    void Test015_GivenAValidUserWhenWantToRecoverPasswordThenReturnStatusOk() {
         String validConfirmationToken = "token001";
         HttpEntity<UserCreateDTO> userRequest = new HttpEntity<>(userCreateDTO);
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, userRequest, User.class);
@@ -455,5 +461,162 @@ class UserControllerTest {
         val activatedUser = getActivateResponse.getBody();
 
         assertNotEquals(activatedUser.getPassword(), postResponse.getBody().getPassword());
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test016_GivenAValidPreferencesUpdateDTOAndAnExistingUserWhenUpdatingPreferencesThenTheyAreUpdated()
+            throws Exception {
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        PreferencesUpdateDTO preferencesUpdateDTO =
+                PreferencesUpdateDTO.builder().tags(tags).languages(languages).build();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(String.format("%s/preferences", baseUrl))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        preferencesUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        User userWithPreferences = objectMapper.readValue(contentAsString, User.class);
+
+        assertNotNull(userWithPreferences.getId());
+        assertEquals(languages, userWithPreferences.getPreferredLanguages());
+        assertEquals(tags, userWithPreferences.getPreferredTags());
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test017_GivenAPreferencesUpdateDTOWithTooManyLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
+            throws Exception {
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        List<String> tooManyLanguages = List.of("Java", "C", "C++", "Rust");
+
+        PreferencesUpdateDTO preferencesUpdateDTO =
+                PreferencesUpdateDTO.builder().tags(tags).languages(tooManyLanguages).build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(String.format("%s/preferences", baseUrl))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        preferencesUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals("Maximum number of languages is 3", errorMessage);
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test018_GivenAPreferencesUpdateDTOWithTooManyTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
+            throws Exception {
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        List<String> tooManyTags = List.of("tag1", "tag2", "tag3", "tag4", "tag5");
+
+        PreferencesUpdateDTO preferencesUpdateDTO =
+                PreferencesUpdateDTO.builder().tags(tooManyTags).languages(languages).build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(String.format("%s/preferences", baseUrl))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        preferencesUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals("Maximum number of tags is 4", errorMessage);
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test019_GivenAPreferencesUpdateDTOWithRepeatedLanguagesWhenUpdatingPreferencesThenBadRequestIsReturned()
+            throws Exception {
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        List<String> repeatedLanguages = List.of("Java", "Java", "C");
+
+        PreferencesUpdateDTO preferencesUpdateDTO =
+                PreferencesUpdateDTO.builder().tags(tags).languages(repeatedLanguages).build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(String.format("%s/preferences", baseUrl))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        preferencesUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals("Languages must be unique", errorMessage);
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+    Test020_GivenAPreferencesUpdateDTOWithRepeatedTagsWhenUpdatingPreferencesThenBadRequestIsReturned()
+            throws Exception {
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        List<String> repeatedTags = List.of("tag1", "tag2", "tag2", "tag3");
+
+        PreferencesUpdateDTO preferencesUpdateDTO =
+                PreferencesUpdateDTO.builder().tags(repeatedTags).languages(languages).build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(String.format("%s/preferences", baseUrl))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        preferencesUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals("Tag names must be unique", errorMessage);
     }
 }

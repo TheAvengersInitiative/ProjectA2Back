@@ -1,9 +1,13 @@
 package com.a2.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.UUID;
-import javax.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import javax.persistence.*;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -28,6 +32,14 @@ public class User {
     String biography;
 
     String password; // Hashed
+
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<String> preferredTags;
+
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<String> preferredLanguages;
 
     @JsonIgnore String confirmationToken;
 

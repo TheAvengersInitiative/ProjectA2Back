@@ -3,8 +3,10 @@ package com.a2.backend.service;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.PasswordRecoveryInitDTO;
+import com.a2.backend.model.PreferencesUpdateDTO;
 import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
+
 import java.util.UUID;
 
 public interface UserService {
@@ -20,4 +22,6 @@ public interface UserService {
     User updateUser(UserUpdateDTO userUpdateDTO);
 
     void sendPasswordRecoveryMail(PasswordRecoveryInitDTO passwordRecoveryInitDTO);
+
+    User updatePreferences(PreferencesUpdateDTO preferencesUpdateDTO);
 }

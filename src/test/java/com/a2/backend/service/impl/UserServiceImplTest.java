@@ -1,13 +1,10 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import java.util.Arrays;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -64,9 +65,12 @@ class UserServiceImplTest {
                     .password(updatedPassword)
                     .build();
 
+    List<String> tags = List.of("tag1", "tag2");
+    List<String> languages = List.of("Java", "C");
+
     @Test
     void
-            Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
+    Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
         User persistedApplicationUser = userService.createUser(userCreateDTO);
         assertEquals(nickname, persistedApplicationUser.getNickname());
         assertEquals(email, persistedApplicationUser.getEmail());
@@ -222,7 +226,7 @@ class UserServiceImplTest {
     @Test
     @WithMockUser(username = "some@email.com")
     void
-            Test010_GivenAUserAndAUserUpdateDTOWithSameNicknameAsBeforeWhenUpdatingUserThenItIsUpdated() {
+            Test011_GivenAUserAndAUserUpdateDTOWithSameNicknameAsBeforeWhenUpdatingUserThenItIsUpdated() {
 
         User persistedApplicationUser = userService.createUser(userCreateDTO);
 
@@ -245,14 +249,14 @@ class UserServiceImplTest {
 
     @Test
     @WithMockUser
-    void Test011_GivenANonExistentUserWhenUpdatingThenExceptionIsThrown() {
+    void Test012_GivenANonExistentUserWhenUpdatingThenExceptionIsThrown() {
         assertThrows(UserNotFoundException.class, () -> userService.updateUser(userUpdateDTO));
     }
 
     @Test
     @WithMockUser(username = "some@email.com")
     void
-            Test012_GivenAUserAndAUserUpdateDTOWithTakenNicknameWhenUpdatingUserThenExceptionIsThrown() {
+            Test013_GivenAUserAndAUserUpdateDTOWithTakenNicknameWhenUpdatingUserThenExceptionIsThrown() {
         userService.createUser(userCreateDTO);
         userService.createUser(
                 UserCreateDTO.builder()
@@ -269,7 +273,7 @@ class UserServiceImplTest {
 
     @Test
     void
-            Test009_GivenaValidEmailandValidNewPasswordWhenWantToRecoverPasswordThenChangeTheOldPasswordForNewOne() {
+            Test014_GivenaValidEmailandValidNewPasswordWhenWantToRecoverPasswordThenChangeTheOldPasswordForNewOne() {
         User user = userService.createUser(userCreateDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
 
@@ -284,7 +288,7 @@ class UserServiceImplTest {
 
     @Test
     void
-            Test010_GivenAnInactiveUserWhenWantToRecoverPassWordThenThrowInvalidPasswordRecoveryException() {
+            Test015_GivenAnInactiveUserWhenWantToRecoverPassWordThenThrowInvalidPasswordRecoveryException() {
         User user = userService.createUser(userCreateDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
 
@@ -295,7 +299,7 @@ class UserServiceImplTest {
 
     @Test
     void
-            Test011_GivenAnInvalidEmailWhenWantToRecoverPasswordThenThrowInvalidPasswordRecoveryException() {
+            Test016_GivenAnInvalidEmailWhenWantToRecoverPasswordThenThrowInvalidPasswordRecoveryException() {
         passwordRecoveryDTO.setEmail("adihajkd");
         assertThrows(
                 InvalidPasswordRecoveryException.class,
@@ -303,7 +307,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test012_GivenAnInvalidPasswordRecoveryTokenWhenWantToRecoverPasswordThenThrowException() {
+    void Test017_GivenAnInvalidPasswordRecoveryTokenWhenWantToRecoverPasswordThenThrowException() {
         User user = userService.createUser(userCreateDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken("passwordRecoveryToken002");
         User activatedUser = userService.confirmUser(confirmationToken, user.getId());
@@ -313,7 +317,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test013_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenThrowPasswordRecoveryException() {
+    void Test018_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenThrowPasswordRecoveryException() {
         User user = userService.createUser(userCreateDTO);
         User userToBeUpdated = userService.confirmUser(confirmationToken, user.getId());
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
@@ -323,5 +327,36 @@ class UserServiceImplTest {
         assertThrows(
                 PasswordRecoveryFailedException.class,
                 () -> userService.recoverPassword(passwordRecoveryDTO));
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void
+    Test019_GivenAUserAndAValidPreferencesUpdateDTOWhenUpdatingPreferencesThenTheyAreUpdated() {
+        userService.createUser(userCreateDTO);
+
+        PreferencesUpdateDTO preferencesUpdateDTO =
+                PreferencesUpdateDTO.builder().tags(tags).languages(languages).build();
+
+        User userWithPreferences = userService.updatePreferences(preferencesUpdateDTO);
+        assertNotNull(userWithPreferences.getId());
+        assertEquals(tags, userWithPreferences.getPreferredTags());
+        assertEquals(languages, userWithPreferences.getPreferredLanguages());
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void
+    Test020_GivenAUserAndAPreferencesUpdateDTOWithAnInvalidLanguageWhenUpdatingPreferencesThenExceptionIsThrown() {
+        userService.createUser(userCreateDTO);
+
+        List<String> invalidLanguages = List.of("Java", "C", "NotAValidLanguage");
+
+        PreferencesUpdateDTO preferencesUpdateDTO =
+                PreferencesUpdateDTO.builder().tags(tags).languages(invalidLanguages).build();
+
+        assertThrows(
+                LanguageNotValidException.class,
+                () -> userService.updatePreferences(preferencesUpdateDTO));
     }
 }
