@@ -8,7 +8,6 @@ import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import java.util.Arrays;
-import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -313,7 +312,8 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test013_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenThrowPasswordRecoveryException() {
+    void
+            Test013_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenThrowPasswordRecoveryException() {
         User user = userService.createUser(userCreateDTO);
         User userToBeUpdated = userService.confirmUser(confirmationToken, user.getId());
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());

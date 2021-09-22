@@ -156,6 +156,7 @@ public class ProjectServiceImpl implements ProjectService {
         ArrayList<Project> result = new ArrayList<>();
         ArrayList<String> links = new ArrayList<>();
         ArrayList<String> tags = new ArrayList<>();
+        ArrayList<String> languages = new ArrayList<>();
         ProjectSpecificationBuilder builder = new ProjectSpecificationBuilder();
         Pattern pattern = Pattern.compile("(\\w+?)(:)(\\w+?),");
         Matcher matcher = pattern.matcher(search + ",");
@@ -165,6 +166,9 @@ public class ProjectServiceImpl implements ProjectService {
             }
             if (matcher.group(1).equals("tag")) {
                 tags.add(matcher.group(3));
+            }
+            if (matcher.group(1).equals("language")) {
+                languages.add(matcher.group(3));
             }
             if (matcher.group(1).equals("title")) {
                 builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
@@ -178,6 +182,9 @@ public class ProjectServiceImpl implements ProjectService {
         }
         for (String tag : tags) {
             result.addAll(projectRepository.findProjectsByTagName(tag));
+        }
+        for (String language : languages) {
+            result.addAll(projectRepository.findProjectsByLanguageName(language));
         }
         for (int i = 0; i < result.size() - 1; i++) {
             for (int j = i + 1; j < result.size(); j++) {
