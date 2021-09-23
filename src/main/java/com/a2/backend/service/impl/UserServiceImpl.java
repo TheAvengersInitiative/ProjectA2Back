@@ -16,6 +16,7 @@ import com.a2.backend.utils.SecurityUtils;
 import java.util.*;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private final ProjectService projectService;
+
     private final MailService mailService;
 
     @Autowired private PasswordEncoder passwordEncoder;
@@ -36,7 +38,9 @@ public class UserServiceImpl implements UserService {
             new ArrayList<>(Arrays.asList(validLanguageNames.split(", ")));
 
     public UserServiceImpl(
-            UserRepository userRepository, ProjectService projectService, MailService mailService) {
+            UserRepository userRepository,
+            @Lazy ProjectService projectService,
+            MailService mailService) {
         this.userRepository = userRepository;
         this.projectService = projectService;
         this.mailService = mailService;
@@ -108,7 +112,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(loggedUser);
     }
 
-    private User getLoggedUser() {
+    @Override
+    public User getLoggedUser() {
         String email = SecurityUtils.getCurrentUserLogin().get();
         Optional<User> loggedUser = userRepository.findByEmail(email);
         if (loggedUser.isEmpty())

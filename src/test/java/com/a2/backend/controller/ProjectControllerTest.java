@@ -49,7 +49,7 @@ class ProjectControllerTest {
     User owner =
             User.builder()
                     .nickname("nickname")
-                    .email("some@email.com")
+                    .email("some@gmail.com")
                     .biography("bio")
                     .password("password")
                     .build();
@@ -73,7 +73,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String contentAsString =
@@ -93,7 +92,7 @@ class ProjectControllerTest {
         assertEquals(title, project.getTitle());
         assertEquals(description, project.getDescription());
         assertEquals(links, project.getLinks());
-        assertEquals(owner, project.getOwner());
+        assertEquals(owner.getId(), project.getOwner().getId());
     }
 
     @Test
@@ -116,7 +115,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -154,7 +152,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -191,7 +188,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -245,7 +241,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         mvc.perform(
@@ -301,7 +296,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         mvc.perform(
@@ -369,7 +363,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         mvc.perform(
@@ -448,7 +441,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         ProjectUpdateDTO projectUpdateDTO =
@@ -511,7 +503,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String contentAsString =
@@ -564,7 +555,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         mvc.perform(
@@ -611,7 +601,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -648,7 +637,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -685,7 +673,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -729,7 +716,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -777,7 +763,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -786,7 +771,6 @@ class ProjectControllerTest {
                         .links(secondLinks)
                         .tags(secondTags)
                         .languages(secondLanguages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -795,7 +779,6 @@ class ProjectControllerTest {
                         .links(thirdLinks)
                         .tags(thirdTags)
                         .languages(thirdLanguages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -804,7 +787,6 @@ class ProjectControllerTest {
                         .links(fourthLinks)
                         .tags(fourthTags)
                         .languages(fourthLlanguages)
-                        .owner(owner)
                         .build();
 
         mvc.perform(
@@ -886,7 +868,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -895,7 +876,6 @@ class ProjectControllerTest {
                         .links(secondLinks)
                         .tags(secondTags)
                         .languages(secondLanguages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -904,7 +884,6 @@ class ProjectControllerTest {
                         .links(thirdLinks)
                         .tags(thirdTags)
                         .languages(thirdLanguages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -913,7 +892,6 @@ class ProjectControllerTest {
                         .links(fourthLinks)
                         .tags(fourthTags)
                         .languages(fourthLlanguages)
-                        .owner(owner)
                         .build();
 
         mvc.perform(
@@ -1008,7 +986,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -1045,7 +1022,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =
@@ -1065,7 +1041,7 @@ class ProjectControllerTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test020_ProjectControllerWhenReceiveCreateProjectDTOWithNoLanguagesShouldReturnStatusBadRequest()
+            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithNoLanguagesShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
 
@@ -1082,7 +1058,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         String errorMessage =

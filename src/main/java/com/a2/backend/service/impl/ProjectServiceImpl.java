@@ -12,6 +12,7 @@ import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
+import com.a2.backend.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,19 +33,24 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final LanguageService languageService;
 
+    private final UserService userService;
+
     public ProjectServiceImpl(
             ProjectRepository projectRepository,
             TagService tagService,
-            LanguageService languageService) {
+            LanguageService languageService,
+            UserService userService) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
         this.languageService = languageService;
+        this.userService = userService;
     }
 
     @Override
     @Transactional
     public Project createProject(ProjectCreateDTO projectCreateDTO) {
         val existingProjectWithTitle = projectRepository.findByTitle(projectCreateDTO.getTitle());
+        User loggedUser = userService.getLoggedUser();
         if (existingProjectWithTitle.isEmpty()) {
             List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
             List<Language> languages =
@@ -57,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService {
                             .links(projectCreateDTO.getLinks())
                             .tags(tags)
                             .languages(languages)
-                            .owner(projectCreateDTO.getOwner()) // todo: get owner from request
+                            .owner(loggedUser)
                             .build();
             return projectRepository.save(project);
         }
