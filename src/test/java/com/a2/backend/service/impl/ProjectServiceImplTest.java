@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
@@ -13,19 +15,14 @@ import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
+import java.util.*;
 import lombok.val;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -58,8 +55,8 @@ class ProjectServiceImplTest {
                     .preferredTags(List.of("tag1", "tag3"))
                     .build();
 
-    List<String> linksUpdate = Arrays.asList("link1", "link4");
-    List<String> tagsUpdate = Arrays.asList("tag1", "tag4");
+    static List<String> linksUpdate = new ArrayList<>();
+    static List<String> tagsUpdate = new ArrayList<>();
     List<String> languagesUpdate = Arrays.asList("Java", "Ruby");
 
     ProjectCreateDTO projectToCreate =
@@ -79,6 +76,13 @@ class ProjectServiceImplTest {
                     .languages(languagesUpdate)
                     .description("new description")
                     .build();
+
+    @BeforeAll
+    static void setUp() {
+        linksUpdate.add("http://google.com");
+        tagsUpdate.add("tag1");
+        tagsUpdate.add("tag4");
+    }
 
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
@@ -139,24 +143,6 @@ class ProjectServiceImplTest {
         assertThrows(
                 ProjectWithThatTitleExistsException.class,
                 () -> projectService.createProject(projectToCreateWithRepeatedTitle));
-    }
-
-    @Test
-    void
-            Test003_ProjectServiceWhenReceiveCreateProjectDTOWithNullTitleShouldThrowNullPointerException() {
-
-        assertThrows(
-                NullPointerException.class,
-                () -> {
-                    ProjectCreateDTO projectToCreate =
-                            ProjectCreateDTO.builder()
-                                    .description(description)
-                                    .links(links)
-                                    .tags(tags)
-                                    .languages(languages)
-                                    .owner(owner)
-                                    .build();
-                });
     }
 
     @Test
@@ -276,51 +262,6 @@ class ProjectServiceImplTest {
                 languageService.findLanguagesByNames(projectToCreate.getLanguages()),
                 projectToBeDisplayed.getLanguages());
         assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
-    }
-
-    @Test
-    void
-            Test011_GivenACreateProjectDTOWithExistingTitleButDifferentOwnerWhenCreatingProjectThenItIsCreated() {
-        userRepository.save(owner);
-
-        projectService.createProject(projectToCreate);
-
-        String title2 = "Project title";
-        String description2 = "Testing no exception for existing title but different owner";
-        User owner2 =
-                User.builder()
-                        .nickname("nickname2")
-                        .email("another@email.com")
-                        .biography("another bio")
-                        .password("anotherPassword")
-                        .build();
-        userRepository.save(owner2);
-        List<String> links2 = Arrays.asList("link3", "link4");
-        List<String> tags2 = Arrays.asList("tag3", "tag4");
-        List<String> languages2 = Arrays.asList("Java", "C");
-
-        ProjectCreateDTO projectToCreateWithRepeatedTitle =
-                ProjectCreateDTO.builder()
-                        .title(title2)
-                        .description(description2)
-                        .links(links2)
-                        .tags(tags2)
-                        .languages(languages2)
-                        .owner(owner2)
-                        .build();
-
-        projectService.createProject(projectToCreateWithRepeatedTitle);
-
-        val projects = projectService.getAllProjects();
-
-        assertFalse(projects.isEmpty());
-        assertEquals(2, projects.size());
-
-        val project = projects.get(0);
-        val project2 = projects.get(1);
-
-        assertEquals(project.getTitle(), project2.getTitle());
-        assertNotEquals(project.getOwner(), project2.getOwner());
     }
 
     @Test

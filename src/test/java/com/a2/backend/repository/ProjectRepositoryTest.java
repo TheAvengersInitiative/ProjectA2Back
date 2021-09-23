@@ -7,8 +7,8 @@ import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
+import java.util.*;
 import java.util.Arrays;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,8 +41,16 @@ class ProjectRepositoryTest {
                     .biography("bio")
                     .password("password")
                     .build();
-
-    Project project = Project.builder().title(title).description(description).owner(owner).build();
+    List<Tag> tags = Collections.singletonList(Tag.builder().name("Start").build());
+    List<String> links = Collections.singletonList("http://link.com");
+    Project project =
+            Project.builder()
+                    .title(title)
+                    .description(description)
+                    .tags(tags)
+                    .links(links)
+                    .owner(owner)
+                    .build();
 
     @Test
     void Test001_ProjectRepositoryShouldSaveProjects() {
@@ -110,6 +118,8 @@ class ProjectRepositoryTest {
                 Project.builder()
                         .title("Project Title")
                         .description("description")
+                        .tags(tags)
+                        .links(links)
                         .owner(owner)
                         .build());
         assertEquals(2, projectRepository.findAll().size());
@@ -135,6 +145,8 @@ class ProjectRepositoryTest {
                 Project.builder()
                         .title("Project Title")
                         .description("description")
+                        .tags(tags)
+                        .links(links)
                         .owner(owner2)
                         .build());
         assertEquals(2, projectRepository.findAll().size());

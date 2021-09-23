@@ -1,5 +1,6 @@
 package com.a2.backend.model;
 
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.*;
 import org.springframework.lang.Nullable;
@@ -13,6 +14,7 @@ import org.springframework.lang.Nullable;
 public class UserUpdateDTO {
 
     @Size(min = 3, max = 24, message = "Nickname must be between 3 and 24 characters")
+    @Pattern(regexp = "[a-zA-Z0-9]+")
     String nickname;
 
     @Nullable

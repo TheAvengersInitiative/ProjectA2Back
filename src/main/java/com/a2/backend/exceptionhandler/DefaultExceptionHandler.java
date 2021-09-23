@@ -1,6 +1,8 @@
 package com.a2.backend.exceptionhandler;
 
 import com.a2.backend.exception.*;
+import java.util.Arrays;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class DefaultExceptionHandler {
@@ -42,10 +46,20 @@ public class DefaultExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> validationError(MethodArgumentNotValidException exception) {
-        logger.info(exception.getMessage());
-        return new ResponseEntity(
-                exception.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public String validationError(MethodArgumentNotValidException ex) {
+        return ex.getBindingResult().getFieldErrors().stream()
+                .map(
+                        f -> {
+                            String msg =
+                                    Arrays.asList(Objects.requireNonNull(f.getCodes()))
+                                                    .contains("Pattern")
+                                            ? "Invalid pattern for field"
+                                            : f.getDefaultMessage();
+                            return f.getField() + ": " + msg;
+                        })
+                .reduce("", (a, s) -> a + s + '\n');
     }
 
     @ExceptionHandler(UserNotFoundException.class)

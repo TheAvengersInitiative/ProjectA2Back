@@ -1,11 +1,14 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -13,10 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -70,7 +69,7 @@ class UserServiceImplTest {
 
     @Test
     void
-    Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
+            Test001_GivenAValidUserCreateDTOWhenCreatingUserThenThePersistedUserWithHashedPasswordIsReturned() {
         User persistedApplicationUser = userService.createUser(userCreateDTO);
         assertEquals(nickname, persistedApplicationUser.getNickname());
         assertEquals(email, persistedApplicationUser.getEmail());
@@ -317,7 +316,8 @@ class UserServiceImplTest {
     }
 
     @Test
-    void Test018_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenThrowPasswordRecoveryException() {
+    void
+            Test018_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenThrowPasswordRecoveryException() {
         User user = userService.createUser(userCreateDTO);
         User userToBeUpdated = userService.confirmUser(confirmationToken, user.getId());
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
@@ -332,7 +332,7 @@ class UserServiceImplTest {
     @Test
     @WithMockUser(username = "some@email.com")
     void
-    Test019_GivenAUserAndAValidPreferencesUpdateDTOWhenUpdatingPreferencesThenTheyAreUpdated() {
+            Test019_GivenAUserAndAValidPreferencesUpdateDTOWhenUpdatingPreferencesThenTheyAreUpdated() {
         userService.createUser(userCreateDTO);
 
         PreferencesUpdateDTO preferencesUpdateDTO =
@@ -347,7 +347,7 @@ class UserServiceImplTest {
     @Test
     @WithMockUser(username = "some@email.com")
     void
-    Test020_GivenAUserAndAPreferencesUpdateDTOWithAnInvalidLanguageWhenUpdatingPreferencesThenExceptionIsThrown() {
+            Test020_GivenAUserAndAPreferencesUpdateDTOWithAnInvalidLanguageWhenUpdatingPreferencesThenExceptionIsThrown() {
         userService.createUser(userCreateDTO);
 
         List<String> invalidLanguages = List.of("Java", "C", "NotAValidLanguage");
