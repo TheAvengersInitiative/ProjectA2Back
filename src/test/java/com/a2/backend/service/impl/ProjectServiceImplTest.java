@@ -270,7 +270,6 @@ class ProjectServiceImplTest {
         assertEquals(projectToCreate.getLinks(), projectToBeDisplayed.getLinks());
     }
 
-
     @Test
     @WithMockUser(username = "some@email.com")
     void Test012_GivenASingleExistingProjectWhenSearchedByTitleItShouldBeFound() {

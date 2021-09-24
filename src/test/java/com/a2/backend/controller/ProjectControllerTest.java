@@ -1,6 +1,7 @@
 package com.a2.backend.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
@@ -12,18 +13,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -127,7 +122,6 @@ class ProjectControllerTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-
 
         assert (Objects.requireNonNull(errorMessage).contains("title"));
     }
@@ -270,11 +264,10 @@ class ProjectControllerTest {
                                                 String.format(
                                                         "%s/%s", baseUrl, projects[0].getId()))
                                         .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk()) //no content
+                        .andExpect(status().isNoContent())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-
     }
 
     @Test
@@ -325,12 +318,10 @@ class ProjectControllerTest {
                                                 String.format(
                                                         "%s/%s", baseUrl, projects[0].getId()))
                                         .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk()) //no content
+                        .andExpect(status().isNoContent())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-
-
 
         String contentAsString3 =
                 mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.APPLICATION_JSON))
@@ -392,11 +383,10 @@ class ProjectControllerTest {
                                                 String.format(
                                                         "%s/%s", baseUrl, projects[0].getId()))
                                         .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk()) // no content
+                        .andExpect(status().isNoContent())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-
 
         String errorMessage =
                 mvc.perform(
@@ -521,7 +511,10 @@ class ProjectControllerTest {
         String contentAsString2 =
                 mvc.perform(
                                 MockMvcRequestBuilders.get(
-                                                String.format("%s/%s", baseUrl, Objects.requireNonNull(project.getId())))
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl,
+                                                        Objects.requireNonNull(project.getId())))
                                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
@@ -531,8 +524,7 @@ class ProjectControllerTest {
         Project projectDetails = objectMapper.readValue(contentAsString2, Project.class);
 
         assert projectDetails != null;
-        assertEquals(
-                projectToCreate.getOwner().getNickname(), projectDetails.getOwner().getNickname());
+        assertEquals(owner.getNickname(), projectDetails.getOwner().getNickname());
         assertEquals(projectToCreate.getTitle(), projectDetails.getTitle());
         assertEquals(projectToCreate.getDescription(), projectDetails.getDescription());
     }
@@ -614,7 +606,7 @@ class ProjectControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Tag name must be between 1 and 24 characters", errorMessage);
+        assert (Objects.requireNonNull(errorMessage).contains("tags"));
     }
 
     @Test
@@ -650,7 +642,7 @@ class ProjectControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Tag name must be between 1 and 24 characters", errorMessage);
+        assert (Objects.requireNonNull(errorMessage).contains("tags"));
     }
 
     @Test
@@ -686,7 +678,7 @@ class ProjectControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Number of links must be between 1 and 5", errorMessage);
+        assert (Objects.requireNonNull(errorMessage).contains("links"));
     }
 
     @Test
@@ -729,7 +721,7 @@ class ProjectControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        assertEquals("Number of links must be between 1 and 5", errorMessage);
+        assert (Objects.requireNonNull(errorMessage).contains("links"));
     }
 
     @Test
@@ -1075,8 +1067,10 @@ class ProjectControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLinkShouldReturnStatusBadRequest() {
+            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLinkShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -1092,19 +1086,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("links[1]: Invalid pattern for field\n", getResponse.getBody());
+        assertEquals("links[1]: Invalid pattern for field\n", errorMessage);
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test022_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedLinkShouldReturnStatusBadRequest() {
+            Test022_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedLinkShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -1120,19 +1122,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("links: must only contain unique elements\n", getResponse.getBody());
+        assertEquals("links: must only contain unique elements\n", errorMessage);
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test023_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedTagsShouldReturnStatusBadRequest() {
+            Test023_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedTagsShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -1148,18 +1158,25 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("tags: must only contain unique elements\n", getResponse.getBody());
+        assertEquals("tags: must only contain unique elements\n", errorMessage);
     }
 
     @Test
-    void Test024_ProjectControllerWhenAskedForTagsShouldReturnAllTags() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test024_ProjectControllerWhenAskedForTagsShouldReturnAllTags() throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -1180,7 +1197,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -1189,24 +1205,36 @@ class ProjectControllerTest {
                         .links(secondLinks)
                         .tags(secondTags)
                         .languages(secondLanguages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val getResponse =
-                restTemplate.exchange("/project/tags", HttpMethod.GET, null, String[].class);
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get("/project/tags")
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        String[] t = getResponse.getBody();
+        String[] t = objectMapper.readValue(contentAsString, String[].class);
         String[] expectedTags = {"tag1", "tag2", "tag3", "tag4"};
         assertEquals(4, t.length);
         assertArrayEquals(expectedTags, t);
