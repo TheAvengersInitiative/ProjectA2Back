@@ -7,13 +7,17 @@ import com.a2.backend.entity.User;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
+import com.a2.backend.repository.LanguageRepository;
 import com.a2.backend.repository.ProjectRepository;
+import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import com.a2.backend.service.UserService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
@@ -35,15 +39,22 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final UserService userService;
 
+    private final TagRepository tagRepository;
+    private final LanguageRepository languageRepository;
+
+
     public ProjectServiceImpl(
             ProjectRepository projectRepository,
             TagService tagService,
             LanguageService languageService,
-            UserService userService) {
+            UserService userService, LanguageRepository languageRepository,
+            TagRepository tagRepository) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
         this.languageService = languageService;
         this.userService = userService;
+        this.languageRepository = languageRepository;
+        this.tagRepository = tagRepository;
     }
 
     @Override
@@ -156,5 +167,97 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<String> getValidLanguageNames() {
         return languageService.getValidLanguages();
+    }
+
+    public List<Project> searchProjecsByFilter(ProjectSearchDTO projectSearchDTO) {
+        ArrayList<String> validLanguages = new ArrayList<>();
+        ArrayList<String> validTags = new ArrayList<>();
+        ArrayList<Project> result = new ArrayList<>();
+        boolean nullTitle = true;
+        boolean nullTags = true;
+        boolean nullLangs = true;
+        boolean featured = projectSearchDTO.isFeatured();
+        boolean nullPage = projectSearchDTO.getPage() == -1;
+        if (projectSearchDTO.getTitle() != null) {
+            nullTitle = false;
+            result.addAll(projectRepository.findByTitleContaining(projectSearchDTO.getTitle()));
+        }
+        if (projectSearchDTO.getLanguages() != null && !projectSearchDTO.getLanguages().isEmpty()) {
+            nullLangs = false;
+            List<String> languages = projectSearchDTO.getLanguages();
+            for (String language : languages) {
+                result.addAll(projectRepository.findProjectsByLanguageName(language));
+                validLanguages.addAll(languageRepository.findLanguageByName(language));
+            }
+        }
+        if (projectSearchDTO.getTags() != null && !projectSearchDTO.getTags().isEmpty()) {
+            nullTags = false;
+            List<String> tags = projectSearchDTO.getTags();
+            for (String tag : tags) {
+                result.addAll(projectRepository.findProjectsByTagName(tag));
+                validTags.addAll(tagRepository.findTagByName(tag));
+            }
+        }
+        for (int i = 0; i < result.size() - 1; i++) {
+            for (int j = i + 1; j < result.size(); j++) {
+                if (result.get(i).getId().equals(result.get(j).getId())) {
+                    result.remove(i);
+                    i--;
+                    break;
+                }
+            }
+        }
+        for (int i = 0; i < result.size(); i++) {
+            ArrayList<String> languageNames = new ArrayList<>();
+            ArrayList<String> tagNames = new ArrayList<>();
+            if (!nullLangs) {
+                for (int j = 0; j < result.get(i).getLanguages().size(); j++) {
+                    languageNames.add(result.get(i).getLanguages().get(j).getName());
+                }
+            }
+            if (!nullTags) {
+                for (int j = 0; j < result.get(i).getTags().size(); j++) {
+                    tagNames.add(result.get(i).getTags().get(j).getName());
+                }
+            }
+            if (!nullTitle) {
+                if (!result.get(i).getTitle().contains(projectSearchDTO.getTitle())) {
+                    result.remove(i);
+                    i--;
+                    continue;
+                }
+            }
+            if (featured) {
+                if (!result.get(i).isFeatured()) result.remove(i);
+            }
+            if (!nullLangs) {
+                if (Collections.disjoint(validLanguages, languageNames)) {
+                    result.remove(i);
+                    i--;
+                    continue;
+                }
+            }
+            if (!nullTags) {
+                if (Collections.disjoint(validTags, tagNames)) {
+                    result.remove(i);
+                    i--;
+                }
+            }
+        }
+
+        if (!nullPage) {
+            int page = projectSearchDTO.getPage();
+            if (result.size() > 8 * (page)) {
+                result.removeAll(result.subList(0, 8 * page));
+                for (int i = 0; i < result.size(); i++) {
+                    System.out.println(result.get(i).getTitle());
+                }
+            }
+            if (result.size() > 8) {
+                result.removeAll(result.subList(8, result.size()));
+            }
+        }
+
+        return result;
     }
 }

@@ -437,4 +437,12 @@ class ProjectServiceImplTest {
                 project.getLanguages());
         assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
     }
+    @Test
+    void Test016_ProjectServiceWhenReceivesValidlinkShouldBeFound() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        List<Project> searchedProjects = projectService.searchProjecsByFilter(projectSearchDTO);
+        assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
+    }
 }

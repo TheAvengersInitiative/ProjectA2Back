@@ -256,4 +256,25 @@ class ProjectRepositoryTest {
         assertTrue(projectsWithLanguage1.contains(project1));
         assertTrue(projectsWithLanguage1.contains(project3));
     }
+    @Test
+    public void Test008_GivenTitleFilterSearchisSuccesfull() {
+        userRepository.save(owner);
+        Project project =
+                Project.builder()
+                        .title(title)
+                        .description(description)
+                        .owner(owner)
+                        .links(Arrays.asList("link1", "link2"))
+                        .build();
+        assertTrue(projectRepository.findAll().isEmpty());
+        assertNull(project.getId());
+        assertEquals(project.getTitle(), title);
+        assertEquals(project.getDescription(), description);
+        assertEquals(project.getOwner(), owner);
+
+        projectRepository.save(project);
+
+        List<Project> results = projectRepository.findByTitleContaining("pro");
+        assertEquals(project, results.get(0));
+    }
 }
