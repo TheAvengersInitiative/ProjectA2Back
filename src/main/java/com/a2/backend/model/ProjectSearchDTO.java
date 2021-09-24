@@ -20,4 +20,6 @@ public class ProjectSearchDTO {
 
     @Size(min = 1, max = 3, message = "Number of languages must be between 1 and 3")
     private List<String> languages;
+
+    @Builder.Default private int page = -1;
 }

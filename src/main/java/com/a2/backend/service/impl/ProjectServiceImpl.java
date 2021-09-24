@@ -169,6 +169,7 @@ public class ProjectServiceImpl implements ProjectService {
         boolean nullTitle = true;
         boolean nullTags = true;
         boolean nullLangs = true;
+        boolean nullPage = projectSearchDTO.getPage() == -1;
         if (projectSearchDTO.getTitle() != null) {
             nullTitle = false;
             result.addAll(projectRepository.findByTitleContaining(projectSearchDTO.getTitle()));
@@ -232,6 +233,20 @@ public class ProjectServiceImpl implements ProjectService {
                 }
             }
         }
+
+        if (!nullPage) {
+            int page = projectSearchDTO.getPage();
+            if (result.size() > 8 * (page)) {
+                result.removeAll(result.subList(0, 8* page));
+                for (int i = 0; i < result.size(); i++) {
+                    System.out.println(result.get(i).getTitle());
+                }
+            }
+            if (result.size() > 8) {
+                result.removeAll(result.subList(8, result.size()));
+            }
+        }
+
         return result;
     }
 }
