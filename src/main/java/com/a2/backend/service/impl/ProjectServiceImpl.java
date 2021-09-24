@@ -153,7 +153,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (pagedResult.hasContent()) {
             return pagedResult.getContent();
         } else {
-            return new ArrayList<Project>();
+            return new ArrayList<>();
         }
     }
 
@@ -167,22 +167,26 @@ public class ProjectServiceImpl implements ProjectService {
         ArrayList<String> validTags = new ArrayList<>();
         ArrayList<Project> result = new ArrayList<>();
         boolean nullTitle = true;
+        boolean nullTags = true;
+        boolean nullLangs = true;
         if (projectSearchDTO.getTitle() != null) {
             nullTitle = false;
             result.addAll(projectRepository.findByTitleContaining(projectSearchDTO.getTitle()));
         }
         if (projectSearchDTO.getLanguages() != null && !projectSearchDTO.getLanguages().isEmpty()) {
+            nullLangs = false;
             List<String> languages = projectSearchDTO.getLanguages();
-            for (int i = 0; i < languages.size(); i++) {
-                result.addAll(projectRepository.findProjectsByLanguageName(languages.get(i)));
-                validLanguages.addAll(languageRepository.findLanguageByName(languages.get(i)));
+            for (String language : languages) {
+                result.addAll(projectRepository.findProjectsByLanguageName(language));
+                validLanguages.addAll(languageRepository.findLanguageByName(language));
             }
         }
         if (projectSearchDTO.getTags() != null && !projectSearchDTO.getTags().isEmpty()) {
+            nullTags = false;
             List<String> tags = projectSearchDTO.getTags();
-            for (int i = 0; i < tags.size(); i++) {
-                result.addAll(projectRepository.findProjectsByTagName(tags.get(i)));
-                validTags.addAll(tagRepository.findTagByName(tags.get(i)));
+            for (String tag : tags) {
+                result.addAll(projectRepository.findProjectsByTagName(tag));
+                validTags.addAll(tagRepository.findTagByName(tag));
             }
         }
         for (int i = 0; i < result.size() - 1; i++) {
@@ -197,11 +201,15 @@ public class ProjectServiceImpl implements ProjectService {
         for (int i = 0; i < result.size(); i++) {
             ArrayList<String> languageNames = new ArrayList<>();
             ArrayList<String> tagNames = new ArrayList<>();
-            for (int j = 0; j < result.get(i).getLanguages().size(); j++) {
-                languageNames.add(result.get(i).getLanguages().get(j).getName());
+            if (!nullLangs) {
+                for (int j = 0; j < result.get(i).getLanguages().size(); j++) {
+                    languageNames.add(result.get(i).getLanguages().get(j).getName());
+                }
             }
-            for (int j = 0; j < result.get(i).getTags().size(); j++) {
-                tagNames.add(result.get(i).getTags().get(j).getName());
+            if (!nullTags) {
+                for (int j = 0; j < result.get(i).getTags().size(); j++) {
+                    tagNames.add(result.get(i).getTags().get(j).getName());
+                }
             }
             if (!nullTitle) {
                 if (!result.get(i).getTitle().contains(projectSearchDTO.getTitle())) {
@@ -210,14 +218,18 @@ public class ProjectServiceImpl implements ProjectService {
                     continue;
                 }
             }
-            if (Collections.disjoint(validLanguages, languageNames)) {
-                result.remove(i);
-                i--;
-                continue;
+            if (!nullLangs) {
+                if (Collections.disjoint(validLanguages, languageNames)) {
+                    result.remove(i);
+                    i--;
+                    continue;
+                }
             }
-            if (Collections.disjoint(validTags, tagNames)) {
-                result.remove(i);
-                i--;
+            if (!nullTags) {
+                if (Collections.disjoint(validTags, tagNames)) {
+                    result.remove(i);
+                    i--;
+                }
             }
         }
         return result;
