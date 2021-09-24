@@ -29,5 +29,7 @@ public class ProjectCreateDTO {
     @Size(min = 1, max = 3, message = "Number of languages must be between 1 and 3")
     private List<String> languages;
 
+    @Builder.Default private boolean featured = false;
+
     @NonNull private User owner;
 }

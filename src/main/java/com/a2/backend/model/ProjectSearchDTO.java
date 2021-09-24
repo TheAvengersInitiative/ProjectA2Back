@@ -22,4 +22,6 @@ public class ProjectSearchDTO {
     private List<String> languages;
 
     @Builder.Default private int page = -1;
+
+    @Builder.Default private boolean featured = false;
 }

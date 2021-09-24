@@ -169,6 +169,7 @@ public class ProjectServiceImpl implements ProjectService {
         boolean nullTitle = true;
         boolean nullTags = true;
         boolean nullLangs = true;
+        boolean featured = projectSearchDTO.isFeatured();
         boolean nullPage = projectSearchDTO.getPage() == -1;
         if (projectSearchDTO.getTitle() != null) {
             nullTitle = false;
@@ -219,6 +220,9 @@ public class ProjectServiceImpl implements ProjectService {
                     continue;
                 }
             }
+            if (featured) {
+                if (!result.get(i).isFeatured()) result.remove(i);
+            }
             if (!nullLangs) {
                 if (Collections.disjoint(validLanguages, languageNames)) {
                     result.remove(i);
@@ -237,7 +241,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (!nullPage) {
             int page = projectSearchDTO.getPage();
             if (result.size() > 8 * (page)) {
-                result.removeAll(result.subList(0, 8* page));
+                result.removeAll(result.subList(0, 8 * page));
                 for (int i = 0; i < result.size(); i++) {
                     System.out.println(result.get(i).getTitle());
                 }
