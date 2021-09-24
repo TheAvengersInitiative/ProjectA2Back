@@ -2,19 +2,16 @@ package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.User;
-import com.a2.backend.model.PasswordRecoveryDTO;
-import com.a2.backend.model.PasswordRecoveryInitDTO;
-import com.a2.backend.model.PreferencesUpdateDTO;
-import com.a2.backend.model.UserCreateDTO;
-import com.a2.backend.model.UserUpdateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.service.UserService;
-import java.util.UUID;
-import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -30,6 +27,13 @@ public class UserController {
     public ResponseEntity<User> postNewUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         val createdUser = userService.createUser(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @GetMapping
+    public ResponseEntity<User> getLoggedUser() {
+        val loggedUser = userService.getLoggedUser();
+        return ResponseEntity.status(HttpStatus.OK).body(loggedUser);
     }
 
     @GetMapping("/confirm/{id}/{token}")

@@ -1,8 +1,5 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.a2.backend.entity.User;
 import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.PreferencesUpdateDTO;
@@ -10,7 +7,6 @@ import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +22,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -623,7 +624,7 @@ class UserControllerTest {
 
     @Test
     void
-            Test021_GivenAUserCreateDTOWithNicknameContainingSpacesWhenCreatingUserThenBadStatusResponseIsReturned() {
+    Test021_GivenAUserCreateDTOWithNicknameContainingSpacesWhenCreatingUserThenBadStatusResponseIsReturned() {
 
         userCreateDTO.setNickname("new user");
 
@@ -632,5 +633,47 @@ class UserControllerTest {
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
         assertEquals("nickname: Invalid pattern for field\n", getResponse.getBody());
+    }
+
+    @Test
+    @WithMockUser("some@gmail.com")
+    void Test022_GivenALoggedUserWhenGettingLoggedUserThenItIsReturned() throws Exception {
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        String contentAsString =
+                mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.ALL))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        User loggedUser = objectMapper.readValue(contentAsString, User.class);
+
+        assertEquals(nickname, loggedUser.getNickname());
+        assertEquals(email, loggedUser.getEmail());
+        assertEquals(biography, loggedUser.getBiography());
+        assertNotEquals(password, loggedUser.getPassword());
+    }
+
+    @Test
+    @WithMockUser("notReal@gmail.com")
+    void Test023_GivenANonExistentUserWhenGettingLoggedUserThenBadRequestIsReturned()
+            throws Exception {
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        String errorMessage =
+                mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.ALL))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals("No user found for email: notReal@gmail.com", errorMessage);
     }
 }
