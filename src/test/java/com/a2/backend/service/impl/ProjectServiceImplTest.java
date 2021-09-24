@@ -9,6 +9,7 @@ import com.a2.backend.entity.User;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
@@ -78,6 +79,8 @@ class ProjectServiceImplTest {
                     .languages(languagesUpdate)
                     .description("new description")
                     .build();
+    ProjectSearchDTO projectSearchDTO =
+            ProjectSearchDTO.builder().title(title).tags(tags).languages(languages).build();
 
     @Test
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
@@ -493,7 +496,7 @@ class ProjectServiceImplTest {
         userRepository.save(owner);
         assertTrue(projectService.getAllProjects().isEmpty());
         Project projectCreated = projectService.createProject(projectToCreate);
-        List<Project> searchedProjects = projectService.searchProjecsByFilter("title:title");
+        List<Project> searchedProjects = projectService.getProjectsByTitleSearch("tit", 0);
         assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
     }
 
@@ -502,35 +505,7 @@ class ProjectServiceImplTest {
         userRepository.save(owner);
         assertTrue(projectService.getAllProjects().isEmpty());
         Project projectCreated = projectService.createProject(projectToCreate);
-        List<Project> searchedProjects = projectService.searchProjecsByFilter("link:link1");
+        List<Project> searchedProjects = projectService.searchProjecsByFilter(projectSearchDTO);
         assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
-    }
-
-    @Test
-    void Test017_ProjectServiceWhenReceivesValidTagShouldBeFound() {
-        userRepository.save(owner);
-        assertTrue(projectService.getAllProjects().isEmpty());
-        Project projectCreated = projectService.createProject(projectToCreate);
-        List<Project> searchedProjects = projectService.searchProjecsByFilter("tag:tag1");
-        assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
-    }
-
-    @Test
-    void Test017_ProjectServiceWhenReceivesValidCreateProjectDTOShouldfindProject() {
-        userRepository.save(owner);
-        assertTrue(projectService.getAllProjects().isEmpty());
-        Project projectCreated = projectService.createProject(projectToCreate);
-        List<Project> searchedProjects = projectService.searchProjecsByFilter("tag:tag");
-        assertEquals(searchedProjects.get(0).getId(), projectCreated.getId());
-    }
-
-    @Test
-    void Test018_ProjectServiceWhenReceivesValidCreateProjectDTOShuldreturnOnlyOne() {
-        userRepository.save(owner);
-        assertTrue(projectService.getAllProjects().isEmpty());
-        Project projectCreated = projectService.createProject(projectToCreate);
-        List<Project> searchedProjects =
-                projectService.searchProjecsByFilter("tag:tag,title:Pro,link:link");
-        assertEquals(searchedProjects.size(), 1);
     }
 }

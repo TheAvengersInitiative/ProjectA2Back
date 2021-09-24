@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.UserRepository;
 import java.util.ArrayList;
@@ -552,175 +553,6 @@ class ProjectControllerTest {
     }
 
     @Test
-    void Test018_ProjectControllerSuccesfulMultiFilterSearch() {
-        userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2", "link3");
-        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
-        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
-        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> secondLanguages = Arrays.asList("Java", "Python");
-        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
-        List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
-
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .languages(languages)
-                        .owner(owner)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .languages(secondLanguages)
-                        .owner(owner)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .languages(thirdLanguages)
-                        .owner(owner)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .languages(fourthLlanguages)
-                        .owner(owner)
-                        .build();
-
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
-
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-
-        val getResponse =
-                restTemplate.exchange(
-                        "/project/search?value=title:Project,tag:tag,link:link",
-                        HttpMethod.GET,
-                        null,
-                        Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        Project[] projects = getResponse.getBody();
-        for (int i = 0; i < projects.length; i++) {}
-        assertEquals(4, projects.length);
-    }
-
-    @Test
-    void Test019_ProjectControllerSuccesfulEmptyMultiFilterSearch() {
-        userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("link1", "link2", "link3");
-        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
-        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
-        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> secondLanguages = Arrays.asList("Java", "Python");
-        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
-        List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
-
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .languages(languages)
-                        .owner(owner)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .languages(secondLanguages)
-                        .owner(owner)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .languages(thirdLanguages)
-                        .owner(owner)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .languages(fourthLlanguages)
-                        .owner(owner)
-                        .build();
-
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
-
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-
-        val getResponse =
-                restTemplate.exchange(
-                        "/project/search?value=title:NonExistent",
-                        HttpMethod.GET,
-                        null,
-                        Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        Project[] projects = getResponse.getBody();
-        assertEquals(0, projects.length);
-    }
-
-    @Test
     void Test018_WhenGettingValidLanguagesNameListShouldBeReturned() {
         String validLanguageNames =
                 "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
@@ -821,7 +653,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    void Test021_ProjectControllerSuccesfulMultiFilterSearch() {
+    void Test022_ProjectControllerSuccesfulMultiFilterSearch() {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -874,6 +706,13 @@ class ProjectControllerTest {
                         .owner(owner)
                         .build();
 
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .title(title)
+                        .tags(Arrays.asList("tag8"))
+                        .languages(Arrays.asList("TypeScript"))
+                        .build();
+
         HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
         HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
         HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
@@ -891,16 +730,187 @@ class ProjectControllerTest {
         val postFourthResponse =
                 restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
         assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        HttpEntity<ProjectSearchDTO> request = new HttpEntity<>(projectToSearch);
 
-        val getResponse =
-                restTemplate.exchange(
-                        "/project/search?value=title:3,language:Script",
-                        HttpMethod.GET,
-                        null,
-                        Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        Project[] projects = getResponse.getBody();
-        for (int i = 0; i < projects.length; i++) {}
+        val searchResponse =
+                restTemplate.exchange("/project/search", HttpMethod.POST, request, Project[].class);
+        assertEquals(HttpStatus.OK, searchResponse.getStatusCode());
+        Project[] projects = searchResponse.getBody();
+        assertEquals(0, projects.length);
+    }
+
+    @Test
+    void Test023_ProjectControllerSuccesfulMultiFilterSearch() {
+        userRepository.save(owner);
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2", "link3");
+        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
+        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
+        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> secondTags = Arrays.asList("tag3", "tag4");
+        List<String> thirdTags = Arrays.asList("tag5", "tag6");
+        List<String> fourthTags = Arrays.asList("tag7", "tag8");
+        List<String> languages = Arrays.asList("Java", "C");
+        List<String> secondLanguages = Arrays.asList("Java", "Python");
+        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
+        List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
+
+        ProjectCreateDTO firstProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Start Project")
+                        .description(description)
+                        .links(secondLinks)
+                        .tags(secondTags)
+                        .languages(secondLanguages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO thirdProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project2 Title")
+                        .description(description)
+                        .links(thirdLinks)
+                        .tags(thirdTags)
+                        .languages(thirdLanguages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO fourthProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project3 Title")
+                        .description(description)
+                        .links(fourthLinks)
+                        .tags(fourthTags)
+                        .languages(fourthlanguages)
+                        .owner(owner)
+                        .build();
+
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .title("Project")
+                        .tags(Arrays.asList("tag"))
+                        .languages(Arrays.asList("TypeScript"))
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+
+        val postFirstResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
+        val postSecondResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+        val postThirdResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        val postFourthResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        HttpEntity<ProjectSearchDTO> request = new HttpEntity<>(projectToSearch);
+
+        val searchResponse =
+                restTemplate.exchange("/project/search", HttpMethod.POST, request, Project[].class);
+        assertEquals(HttpStatus.OK, searchResponse.getStatusCode());
+        Project[] projects = searchResponse.getBody();
+
+        assertEquals(1, projects.length);
+    }
+
+    @Test
+    void Test024_ProjectControllerSuccesfulMultiFilterSearch() {
+        userRepository.save(owner);
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("link1", "link2", "link3");
+        List<String> secondLinks = Arrays.asList("link4", "link5", "link6");
+        List<String> thirdLinks = Arrays.asList("link7", "link8", "link9");
+        List<String> fourthLinks = Arrays.asList("link10", "link11", "link12");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> secondTags = Arrays.asList("tag3", "tag4");
+        List<String> thirdTags = Arrays.asList("tag5", "tag6");
+        List<String> fourthTags = Arrays.asList("tag7", "tag8");
+        List<String> languages = Arrays.asList("Java", "C");
+        List<String> secondLanguages = Arrays.asList("Java", "Python");
+        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
+        List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
+
+        ProjectCreateDTO firstProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .tags(tags)
+                        .languages(languages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Start Project")
+                        .description(description)
+                        .links(secondLinks)
+                        .tags(secondTags)
+                        .languages(secondLanguages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO thirdProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project2 Title")
+                        .description(description)
+                        .links(thirdLinks)
+                        .tags(thirdTags)
+                        .languages(thirdLanguages)
+                        .owner(owner)
+                        .build();
+        ProjectCreateDTO fourthProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project3 Title")
+                        .description(description)
+                        .links(fourthLinks)
+                        .tags(fourthTags)
+                        .languages(fourthlanguages)
+                        .owner(owner)
+                        .build();
+
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .tags(Arrays.asList("tag"))
+                        .languages(Arrays.asList("Script"))
+                        .build();
+
+        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+
+        val postFirstResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
+        val postSecondResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+        val postThirdResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        val postFourthResponse =
+                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
+        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        HttpEntity<ProjectSearchDTO> request = new HttpEntity<>(projectToSearch);
+
+        val searchResponse =
+                restTemplate.exchange("/project/search", HttpMethod.POST, request, Project[].class);
+        assertEquals(HttpStatus.OK, searchResponse.getStatusCode());
+        Project[] projects = searchResponse.getBody();
+
         assertEquals(2, projects.length);
     }
 }

@@ -27,6 +27,8 @@ public class Project implements Serializable {
 
     private String description;
 
+    @Builder.Default private boolean featured = false;
+
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> links;

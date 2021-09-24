@@ -21,6 +21,8 @@ public interface ProjectRepository
     @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t  WHERE t.name LIKE %?1%")
     List<Project> findProjectsByTagName(String tagName);
 
+    List<Project> findByTitleContaining(String title);
+
     Page<Project> findByTitleContainingIgnoreCase(String pattern, Pageable pageable);
 
     @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l  WHERE l.name LIKE %?1%")

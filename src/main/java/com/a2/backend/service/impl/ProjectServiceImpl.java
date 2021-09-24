@@ -7,32 +7,32 @@ import com.a2.backend.entity.User;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
+import com.a2.backend.repository.LanguageRepository;
 import com.a2.backend.repository.ProjectRepository;
+import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import com.a2.backend.utils.SearchUtils.ProjectSpecificationBuilder;
 import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
-
+    private final LanguageRepository languageRepository;
+    private final TagRepository tagRepository;
     private final TagService tagService;
 
     private final LanguageService languageService;
@@ -40,10 +40,14 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectServiceImpl(
             ProjectRepository projectRepository,
             TagService tagService,
-            LanguageService languageService) {
+            LanguageService languageService,
+            LanguageRepository languageRepository,
+            TagRepository tagRepository) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
         this.languageService = languageService;
+        this.languageRepository = languageRepository;
+        this.tagRepository = tagRepository;
     }
 
     @Override
@@ -158,40 +162,28 @@ public class ProjectServiceImpl implements ProjectService {
         return languageService.getValidLanguages();
     }
 
-    public List<Project> searchProjecsByFilter(String search) {
-        Boolean title = false;
+    public List<Project> searchProjecsByFilter(ProjectSearchDTO projectSearchDTO) {
+        ArrayList<String> validLanguages = new ArrayList<>();
+        ArrayList<String> validTags = new ArrayList<>();
         ArrayList<Project> result = new ArrayList<>();
-        ArrayList<String> links = new ArrayList<>();
-        ArrayList<String> tags = new ArrayList<>();
-        ArrayList<String> languages = new ArrayList<>();
-        ProjectSpecificationBuilder builder = new ProjectSpecificationBuilder();
-        Pattern pattern = Pattern.compile("(\\w+?)(:)(\\w+?),");
-        Matcher matcher = pattern.matcher(search + ",");
-        while (matcher.find()) {
-            if (matcher.group(1).equals("link")) {
-                links.add(matcher.group(3));
-            }
-            if (matcher.group(1).equals("tag")) {
-                tags.add(matcher.group(3));
-            }
-            if (matcher.group(1).equals("language")) {
-                languages.add(matcher.group(3));
-            }
-            if (matcher.group(1).equals("title")) {
-                builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-                title = true;
+        boolean nullTitle = true;
+        if (projectSearchDTO.getTitle() != null) {
+            nullTitle = false;
+            result.addAll(projectRepository.findByTitleContaining(projectSearchDTO.getTitle()));
+        }
+        if (projectSearchDTO.getLanguages() != null && !projectSearchDTO.getLanguages().isEmpty()) {
+            List<String> languages = projectSearchDTO.getLanguages();
+            for (int i = 0; i < languages.size(); i++) {
+                result.addAll(projectRepository.findProjectsByLanguageName(languages.get(i)));
+                validLanguages.addAll(languageRepository.findLanguageByName(languages.get(i)));
             }
         }
-        Specification<Project> spec = builder.build();
-        if (title) result.addAll(projectRepository.findAll(spec));
-        for (String link : links) {
-            result.addAll(projectRepository.findProjectsByLink(link));
-        }
-        for (String tag : tags) {
-            result.addAll(projectRepository.findProjectsByTagName(tag));
-        }
-        for (String language : languages) {
-            result.addAll(projectRepository.findProjectsByLanguageName(language));
+        if (projectSearchDTO.getTags() != null && !projectSearchDTO.getTags().isEmpty()) {
+            List<String> tags = projectSearchDTO.getTags();
+            for (int i = 0; i < tags.size(); i++) {
+                result.addAll(projectRepository.findProjectsByTagName(tags.get(i)));
+                validTags.addAll(tagRepository.findTagByName(tags.get(i)));
+            }
         }
         for (int i = 0; i < result.size() - 1; i++) {
             for (int j = i + 1; j < result.size(); j++) {
@@ -202,7 +194,32 @@ public class ProjectServiceImpl implements ProjectService {
                 }
             }
         }
-
+        for (int i = 0; i < result.size(); i++) {
+            ArrayList<String> languageNames = new ArrayList<>();
+            ArrayList<String> tagNames = new ArrayList<>();
+            for (int j = 0; j < result.get(i).getLanguages().size(); j++) {
+                languageNames.add(result.get(i).getLanguages().get(j).getName());
+            }
+            for (int j = 0; j < result.get(i).getTags().size(); j++) {
+                tagNames.add(result.get(i).getTags().get(j).getName());
+            }
+            if (!nullTitle) {
+                if (!result.get(i).getTitle().contains(projectSearchDTO.getTitle())) {
+                    result.remove(i);
+                    i--;
+                    continue;
+                }
+            }
+            if (Collections.disjoint(validLanguages, languageNames)) {
+                result.remove(i);
+                i--;
+                continue;
+            }
+            if (Collections.disjoint(validTags, tagNames)) {
+                result.remove(i);
+                i--;
+            }
+        }
         return result;
     }
 }

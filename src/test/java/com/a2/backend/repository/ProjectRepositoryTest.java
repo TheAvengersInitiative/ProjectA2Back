@@ -7,8 +7,6 @@ import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
-import com.a2.backend.utils.SearchUtils.ProjectSpecification;
-import com.a2.backend.utils.SearchUtils.SearchCriteria;
 import java.util.Arrays;
 import java.util.List;
 import lombok.val;
@@ -247,13 +245,6 @@ class ProjectRepositoryTest {
         assertTrue(projectsWithLanguage1.contains(project3));
     }
 
-    public void Test007_GivenTitleFilterSearchisSuccesfull() {
-        ProjectSpecification spec =
-                new ProjectSpecification(new SearchCriteria("title", ":", "New"));
-        List<Project> projects = projectRepository.findAll(spec);
-        assertEquals(1, projects.size());
-    }
-
     @Test
     public void Test008_GivenTitleFilterSearchisSuccesfull() {
         userRepository.save(owner);
@@ -272,8 +263,7 @@ class ProjectRepositoryTest {
 
         projectRepository.save(project);
 
-        List<Project> results = projectRepository.findProjectsByLink("link");
-
+        List<Project> results = projectRepository.findByTitleContaining("pro");
         assertEquals(project, results.get(0));
     }
 }

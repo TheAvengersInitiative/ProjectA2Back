@@ -2,6 +2,7 @@ package com.a2.backend.controller;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.service.ProjectService;
 import java.util.List;
@@ -35,10 +36,10 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<List<Project>> getProjectsByNameSearch(
-            @RequestParam(name = "value") String pattern) {
-        val projects = projectService.searchProjecsByFilter(pattern);
+            @Valid @RequestBody ProjectSearchDTO projectSearchDTO) {
+        val projects = projectService.searchProjecsByFilter(projectSearchDTO);
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
