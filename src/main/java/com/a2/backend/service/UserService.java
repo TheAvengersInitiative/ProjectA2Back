@@ -23,4 +23,6 @@ public interface UserService {
     void sendPasswordRecoveryMail(PasswordRecoveryInitDTO passwordRecoveryInitDTO);
 
     User updatePreferences(PreferencesUpdateDTO preferencesUpdateDTO);
+
+    User getLoggedUser();
 }

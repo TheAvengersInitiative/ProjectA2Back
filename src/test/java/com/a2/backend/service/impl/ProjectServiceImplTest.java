@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
@@ -66,7 +67,6 @@ class ProjectServiceImplTest {
                     .links(links)
                     .tags(tags)
                     .languages(languages)
-                    .owner(owner)
                     .build();
     ProjectUpdateDTO projectUpdateDTO =
             ProjectUpdateDTO.builder()
@@ -85,6 +85,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test001_ProjectServiceWhenReceivesValidCreateProjectDTOShouldCreateProject() {
         userRepository.save(owner);
 
@@ -122,6 +123,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test002_ProjectServiceWhenReceivesCreateProjectDTOWithExistingTitleShouldThrowException() {
         userRepository.save(owner);
 
@@ -137,7 +139,6 @@ class ProjectServiceImplTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         assertThrows(
@@ -151,6 +152,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test005_ProjectListWithSavedProjectsShouldContainProjects() {
         userRepository.save(owner);
 
@@ -175,6 +177,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test006_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
         userRepository.save(owner);
 
@@ -208,6 +211,7 @@ class ProjectServiceImplTest {
      * project with that id
      */
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test008_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProject() {
         userRepository.save(owner);
 
@@ -225,6 +229,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test009_GivenASingleExistingProjectWhenDeletedTwiceThenExceptionShouldBeThrown() {
         userRepository.save(owner);
 
@@ -244,6 +249,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test010_GivenValidProjectIDWhenAskedForProjectThenReturnProject() {
         userRepository.save(owner);
 
@@ -252,7 +258,7 @@ class ProjectServiceImplTest {
         val projectToBeDisplayed = projectService.getProjectDetails(project.getId());
 
         assertEquals(project.getId(), projectToBeDisplayed.getId());
-        assertEquals(projectToCreate.getOwner().getId(), projectToBeDisplayed.getOwner().getId());
+        assertEquals(project.getOwner().getId(), projectToBeDisplayed.getOwner().getId());
         assertEquals(projectToCreate.getTitle(), projectToBeDisplayed.getTitle());
         assertEquals(projectToCreate.getDescription(), projectToBeDisplayed.getDescription());
         assertEquals(
@@ -265,6 +271,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test012_GivenASingleExistingProjectWhenSearchedByTitleItShouldBeFound() {
         userRepository.save(owner);
 
@@ -275,7 +282,6 @@ class ProjectServiceImplTest {
                         .links(Arrays.asList("link3", "link4"))
                         .tags(Arrays.asList("tag5", "tag7"))
                         .languages(Arrays.asList("Java", "C"))
-                        .owner(owner)
                         .build();
 
         ProjectCreateDTO thirdProjectToCreate =
@@ -285,7 +291,6 @@ class ProjectServiceImplTest {
                         .links(linksUpdate)
                         .tags(tagsUpdate)
                         .languages(Arrays.asList("Python", "PHP"))
-                        .owner(owner)
                         .build();
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
@@ -301,6 +306,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void Test013_GivenExistingTagsAndAValidProjectCreateDTOWhenCreatingProjectThenItIsCreated() {
         userRepository.save(owner);
 
@@ -317,7 +323,6 @@ class ProjectServiceImplTest {
                         .links(links)
                         .tags(tags2)
                         .languages(languages2)
-                        .owner(owner)
                         .build();
 
         val project = projectService.createProject(projectToCreateWithRepeatedTag);
@@ -331,6 +336,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void
             Test014_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProjectAndDeleteUnusedTags() {
         userRepository.save(owner);
@@ -368,6 +374,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void
             Test014_ProjectServiceWhenReceivesValidProjectUpdateDTOAndIdShouldUpdateProjectAndDeleteUnusedLanguages() {
         userRepository.save(owner);
@@ -398,6 +405,7 @@ class ProjectServiceImplTest {
     }
 
     @Test
+    @WithMockUser(username = "some@email.com")
     void
             Test016_GivenExistingLanguagesAndAValidProjectCreateDTOWhenCreatingProjectThenItIsCreated() {
         userRepository.save(owner);
@@ -415,7 +423,6 @@ class ProjectServiceImplTest {
                         .links(links)
                         .tags(tags2)
                         .languages(languages2)
-                        .owner(owner)
                         .build();
 
         val project = projectService.createProject(projectToCreateWithRepeatedTag);

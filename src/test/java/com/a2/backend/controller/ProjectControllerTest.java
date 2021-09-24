@@ -1,35 +1,41 @@
 package com.a2.backend.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@AutoConfigureMockMvc
 class ProjectControllerTest {
 
     @Autowired private TestRestTemplate restTemplate;
+
+    @Autowired MockMvc mvc;
+
+    @Autowired ObjectMapper objectMapper;
 
     @Autowired private UserRepository userRepository;
 
@@ -38,13 +44,15 @@ class ProjectControllerTest {
     User owner =
             User.builder()
                     .nickname("nickname")
-                    .email("some@email.com")
+                    .email("some@gmail.com")
                     .biography("bio")
                     .password("password")
                     .build();
 
     @Test
-    void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated()
+            throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -60,18 +68,33 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
-        assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
+        Project project = objectMapper.readValue(contentAsString, Project.class);
+
+        assertNotNull(project.getId());
+        assertEquals(title, project.getTitle());
+        assertEquals(description, project.getDescription());
+        assertEquals(links, project.getLinks());
+        assertEquals(owner.getId(), project.getOwner().getId());
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest() {
+            Test002_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidTitleShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "a";
@@ -87,19 +110,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assert (Objects.requireNonNull(getResponse.getBody()).contains("title"));
+        assert (Objects.requireNonNull(errorMessage).contains("title"));
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest() {
+            Test003_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -115,19 +146,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assert (Objects.requireNonNull(getResponse.getBody()).contains("description"));
+        assert (Objects.requireNonNull(errorMessage).contains("description"));
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest() {
+            Test004_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidDescriptionAndTitleShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "a";
@@ -143,27 +182,44 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assert (Objects.requireNonNull(getResponse.getBody()).contains("description"));
-        assert getResponse.getBody().contains("title");
+        assert (Objects.requireNonNull(errorMessage).contains("description"));
+        assert errorMessage.contains("title");
     }
 
     @Test
-    void Test005_GivenNoExistingProjectsWhenGettingAllProjectsThenEmptyResponseIsReturned() {
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        assertNotNull(getResponse.getBody());
-        assertEquals(0, Objects.requireNonNull(getResponse.getBody()).length);
+    @WithMockUser(username = "some@gmail.com")
+    void Test005_GivenNoExistingProjectsWhenGettingAllProjectsThenEmptyResponseIsReturned()
+            throws Exception {
+
+        String contentAsString =
+                mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+
+        assertNotNull(projects);
+        assertEquals(0, projects.length);
     }
 
     @Test
-    void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -179,33 +235,45 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(projectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
-        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+        String contentAsString =
+                mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-
-        Project[] projects = getResponse.getBody();
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
         assert projects != null;
         assertEquals(1, projects.length);
 
-        val deleteResponse =
-                restTemplate.exchange(
-                        String.format("%s/%s", baseUrl, projects[0].getId()),
-                        HttpMethod.DELETE,
-                        null,
-                        UUID.class);
-        assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+        String contentAsString2 =
+                mvc.perform(
+                                MockMvcRequestBuilders.delete(
+                                                String.format(
+                                                        "%s/%s", baseUrl, projects[0].getId()))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNoContent())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
     }
 
     @Test
-    void Test007_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test007_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects()
+            throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -221,40 +289,56 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(projectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
-        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+        String contentAsString =
+                mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-
-        Project[] projects = getResponse.getBody();
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
         assert projects != null;
         assertEquals(1, projects.length);
 
-        val deleteResponse =
-                restTemplate.exchange(
-                        String.format("%s/%s", baseUrl, projects[0].getId()),
-                        HttpMethod.DELETE,
-                        null,
-                        UUID.class);
-        assertEquals(deleteResponse.getStatusCode(), HttpStatus.NO_CONTENT);
+        String contentAsString2 =
+                mvc.perform(
+                                MockMvcRequestBuilders.delete(
+                                                String.format(
+                                                        "%s/%s", baseUrl, projects[0].getId()))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNoContent())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse1 = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse1.getStatusCode());
-        Project[] projects1 = getResponse1.getBody();
+        String contentAsString3 =
+                mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        assert projects1 != null;
-        assertEquals(0, projects1.length);
+        Project[] emptyProjects = objectMapper.readValue(contentAsString3, Project[].class);
+
+        assert emptyProjects != null;
+        assertEquals(0, emptyProjects.length);
     }
 
     @Test
-    void Test008_GivenASingleExistingProjectWhenDeletedTwiceErrorShouldBeThrown() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test008_GivenASingleExistingProjectWhenDeletedTwiceErrorShouldBeThrown() throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -270,42 +354,58 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(projectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
-        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+        String contentAsString =
+                mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-
-        Project[] projects = getResponse.getBody();
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
         assert projects != null;
         assertEquals(1, projects.length);
 
-        ResponseEntity<UUID> deleteResponse =
-                restTemplate.exchange(
-                        String.format("%s/%s", baseUrl, projects[0].getId()),
-                        HttpMethod.DELETE,
-                        null,
-                        UUID.class);
-        assertEquals(deleteResponse.getStatusCode(), HttpStatus.NO_CONTENT);
+        String contentAsString2 =
+                mvc.perform(
+                                MockMvcRequestBuilders.delete(
+                                                String.format(
+                                                        "%s/%s", baseUrl, projects[0].getId()))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNoContent())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val deleteResponse1 =
-                restTemplate.exchange(
-                        String.format("%s/%s", baseUrl, projects[0].getId()),
-                        HttpMethod.DELETE,
-                        null,
-                        String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, deleteResponse1.getStatusCode());
-        assertEquals("No project found for id: " + projects[0].getId(), deleteResponse1.getBody());
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.delete(
+                                                String.format(
+                                                        "%s/%s", baseUrl, projects[0].getId()))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assertEquals("No project found for id: " + projects[0].getId(), errorMessage);
     }
 
     @Test
-    void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest()
+            throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -331,7 +431,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
         ProjectUpdateDTO projectUpdateDTO =
@@ -343,32 +442,42 @@ class ProjectControllerTest {
                         .languages(languagesForUpdate)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
-        HttpEntity<ProjectUpdateDTO> requestUpdate = new HttpEntity<>(projectUpdateDTO);
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
-        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
-        assertNotNull(postResponse.getBody());
+        Project project = objectMapper.readValue(contentAsString, Project.class);
 
-        val updatedResponse =
-                restTemplate.exchange(
-                        String.format("%s/%s", baseUrl, postResponse.getBody().getId()),
-                        HttpMethod.PUT,
-                        requestUpdate,
-                        Project.class);
-        assertEquals(HttpStatus.OK, updatedResponse.getStatusCode());
+        String updatedContentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format("%s/%s", baseUrl, project.getId()))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        Project project = updatedResponse.getBody();
-        assertNotNull(project);
+        Project updatedProject = objectMapper.readValue(updatedContentAsString, Project.class);
 
-        assert project != null;
-        assertEquals(projectUpdateDTO.getTitle(), project.getTitle());
-        assertEquals(projectUpdateDTO.getDescription(), project.getDescription());
+        assert updatedProject != null;
+        assertEquals(projectUpdateDTO.getTitle(), updatedProject.getTitle());
+        assertEquals(projectUpdateDTO.getDescription(), updatedProject.getDescription());
     }
 
     /** Given valid ID Should return */
     @Test
-    void Test010_ProjectControllerWhenReceivesValidIdShouldReturnHttpOkTest() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test010_ProjectControllerWhenReceivesValidIdShouldReturnHttpOkTest() throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -384,35 +493,45 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
-        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
-        assertNotNull(postResponse.getBody());
+        Project project = objectMapper.readValue(contentAsString, Project.class);
 
-        val getProjectDetailsResponse =
-                restTemplate.exchange(
-                        String.format(
-                                "%s/%s",
-                                baseUrl, Objects.requireNonNull(postResponse.getBody()).getId()),
-                        HttpMethod.GET,
-                        null,
-                        Project.class);
-        assertEquals(HttpStatus.OK, getProjectDetailsResponse.getStatusCode());
+        String contentAsString2 =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl,
+                                                        Objects.requireNonNull(project.getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        Project project = getProjectDetailsResponse.getBody();
+        Project projectDetails = objectMapper.readValue(contentAsString2, Project.class);
 
-        assert project != null;
-        assertEquals(projectToCreate.getOwner().getEmail(), project.getOwner().getEmail());
-        assertEquals(projectToCreate.getTitle(), project.getTitle());
-        assertEquals(projectToCreate.getDescription(), project.getDescription());
+        assert projectDetails != null;
+        assertEquals(owner.getNickname(), projectDetails.getOwner().getNickname());
+        assertEquals(projectToCreate.getTitle(), projectDetails.getTitle());
+        assertEquals(projectToCreate.getDescription(), projectDetails.getDescription());
     }
 
     @Test
-    void Test011_GivenAnExistingProjectWhenGettingAllProjectsThenItIsReturned() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test011_GivenAnExistingProjectWhenGettingAllProjectsThenItIsReturned() throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -428,17 +547,26 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(projectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, Project.class);
-        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+        String contentAsString =
+                mvc.perform(MockMvcRequestBuilders.get(baseUrl).accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.GET, null, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        Project[] projects = getResponse.getBody();
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+
         assert projects != null;
         assertEquals(1, projects.length);
         assertEquals(title, projects[0].getTitle());
@@ -446,8 +574,10 @@ class ProjectControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest() {
+            Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -463,18 +593,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assert (Objects.requireNonNull(errorMessage).contains("tags"));
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test013_ProjectControllerWhenReceiveCreateProjectDTOWithTagLargerThanTwentyfourCharactersShouldReturnStatusBadRequest() {
+            Test013_ProjectControllerWhenReceiveCreateProjectDTOWithTagLargerThanTwentyfourCharactersShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -490,18 +629,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assert (Objects.requireNonNull(errorMessage).contains("tags"));
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test014_ProjectControllerWhenReceiveCreateProjectDTOWithNoLinksShouldReturnStatusBadRequest() {
+            Test014_ProjectControllerWhenReceiveCreateProjectDTOWithNoLinksShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -517,18 +665,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+        assert (Objects.requireNonNull(errorMessage).contains("links"));
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test015_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanFiveLinksShouldReturnStatusBadRequest() {
+            Test015_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanFiveLinksShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -551,15 +708,25 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("links"));
     }
 
     @Test
-    void Test016_ProjectControllerSuccesfulSearch() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test016_ProjectControllerSuccesfulSearch() throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -588,7 +755,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -597,7 +763,6 @@ class ProjectControllerTest {
                         .links(secondLinks)
                         .tags(secondTags)
                         .languages(secondLanguages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -606,7 +771,6 @@ class ProjectControllerTest {
                         .links(thirdLinks)
                         .tags(thirdTags)
                         .languages(thirdLanguages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -615,38 +779,60 @@ class ProjectControllerTest {
                         .links(fourthLinks)
                         .tags(fourthTags)
                         .languages(fourthLlanguages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val getResponse =
-                restTemplate.exchange(
-                        "/project/search?name=pro&page=0", HttpMethod.GET, null, Project[].class);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        Project[] projects = getResponse.getBody();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get("/project/search?name=pro&page=0")
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
         assertEquals(4, projects.length);
     }
 
     @Test
-    void Test017_ProjectControllerSuccesfulEmptySearch() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test017_ProjectControllerSuccesfulEmptySearch() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -674,7 +860,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -683,7 +868,6 @@ class ProjectControllerTest {
                         .links(secondLinks)
                         .tags(secondTags)
                         .languages(secondLanguages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -692,7 +876,6 @@ class ProjectControllerTest {
                         .links(thirdLinks)
                         .tags(thirdTags)
                         .languages(thirdLanguages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -701,54 +884,85 @@ class ProjectControllerTest {
                         .links(fourthLinks)
                         .tags(fourthTags)
                         .languages(fourthLlanguages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val getResponse =
-                restTemplate.exchange(
-                        "/project/search?name=pro&page=1", HttpMethod.GET, null, Project[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        Project[] projects = getResponse.getBody();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get("/project/search?name=pro&page=1")
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
         assertEquals(0, projects.length);
     }
 
     @Test
-    void Test018_WhenGettingValidLanguagesNameListShouldBeReturned() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test018_WhenGettingValidLanguagesNameListShouldBeReturned() throws Exception {
         String validLanguageNames =
                 "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
         List<String> validLanguageList =
                 new ArrayList<>(Arrays.asList(validLanguageNames.split(", ")));
 
-        val getResponse =
-                restTemplate.exchange("/project/languages", HttpMethod.GET, null, String[].class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        String[] languages = getResponse.getBody();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get("/project/languages")
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        String[] languages = objectMapper.readValue(contentAsString, String[].class);
 
         assertNotNull(languages);
         assertEquals(validLanguageList, Arrays.asList(languages));
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test019_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLanguageShouldReturnStatusBadRequest() {
+            Test019_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLanguageShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -764,19 +978,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("Language Not Valid Language is not valid", getResponse.getBody());
+        assertEquals("Language Not Valid Language is not valid", errorMessage);
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test020_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanThreeLanguagesShouldReturnStatusBadRequest() {
+            Test020_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanThreeLanguagesShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -792,20 +1014,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals(
-                "languages: Number of languages must be between 1 and 3\n", getResponse.getBody());
+        assertEquals("languages: Number of languages must be between 1 and 3\n", errorMessage);
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test020_ProjectControllerWhenReceiveCreateProjectDTOWithNoLanguagesShouldReturnStatusBadRequest() {
+            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithNoLanguagesShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -821,20 +1050,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals(
-                "languages: Number of languages must be between 1 and 3\n", getResponse.getBody());
+        assertEquals("languages: Number of languages must be between 1 and 3\n", errorMessage);
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLinkShouldReturnStatusBadRequest() {
+            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLinkShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -850,19 +1086,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("links[1]: Invalid pattern for field\n", getResponse.getBody());
+        assertEquals("links[1]: Invalid pattern for field\n", errorMessage);
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test022_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedLinkShouldReturnStatusBadRequest() {
+            Test022_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedLinkShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -878,19 +1122,27 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("links: must only contain unique elements\n", getResponse.getBody());
+        assertEquals("links: must only contain unique elements\n", errorMessage);
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void
-            Test023_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedTagsShouldReturnStatusBadRequest() {
+            Test023_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedTagsShouldReturnStatusBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -906,18 +1158,25 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> request = new HttpEntity<>(projectToCreate);
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, getResponse.getStatusCode());
-        assertEquals("tags: must only contain unique elements\n", getResponse.getBody());
+        assertEquals("tags: must only contain unique elements\n", errorMessage);
     }
 
     @Test
-    void Test024_ProjectControllerWhenAskedForTagsShouldReturnAllTags() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test024_ProjectControllerWhenAskedForTagsShouldReturnAllTags() throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -938,7 +1197,6 @@ class ProjectControllerTest {
                         .links(links)
                         .tags(tags)
                         .languages(languages)
-                        .owner(owner)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -947,24 +1205,36 @@ class ProjectControllerTest {
                         .links(secondLinks)
                         .tags(secondTags)
                         .languages(secondLanguages)
-                        .owner(owner)
                         .build();
 
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val getResponse =
-                restTemplate.exchange("/project/tags", HttpMethod.GET, null, String[].class);
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get("/project/tags")
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-        String[] t = getResponse.getBody();
+        String[] t = objectMapper.readValue(contentAsString, String[].class);
         String[] expectedTags = {"tag1", "tag2", "tag3", "tag4"};
         assertEquals(4, t.length);
         assertArrayEquals(expectedTags, t);

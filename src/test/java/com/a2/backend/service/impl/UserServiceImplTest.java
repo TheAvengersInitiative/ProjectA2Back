@@ -154,7 +154,6 @@ class UserServiceImplTest {
                 ProjectCreateDTO.builder()
                         .title("Project Title")
                         .description("description")
-                        .owner(user)
                         .tags(Arrays.asList("tag1", "tag2"))
                         .links(Arrays.asList("link1", "link2"))
                         .languages(Arrays.asList("Java", "C"))
