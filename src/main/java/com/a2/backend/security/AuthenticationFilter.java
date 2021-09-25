@@ -3,7 +3,7 @@ package com.a2.backend.security;
 import static com.a2.backend.constants.SecurityConstants.EXPIRATION_TIME;
 import static com.a2.backend.constants.SecurityConstants.KEY;
 
-import com.a2.backend.entity.User;
+import com.a2.backend.model.LoginDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -34,7 +34,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             throws AuthenticationException {
         try {
 
-            User applicationUser = new ObjectMapper().readValue(req.getInputStream(), User.class);
+            LoginDTO applicationUser =
+                    new ObjectMapper().readValue(req.getInputStream(), LoginDTO.class);
 
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
