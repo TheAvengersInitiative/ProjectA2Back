@@ -279,7 +279,7 @@ class ProjectRepositoryTest {
 
         projectRepository.save(project);
 
-        List<Project> results = projectRepository.findByTitleContaining("pro");
+        List<Project> results = projectRepository.findByTitleContainingIgnoreCase("pro");
         assertEquals(project, results.get(0));
     }
 }
