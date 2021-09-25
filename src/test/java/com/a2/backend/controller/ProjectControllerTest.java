@@ -1603,7 +1603,7 @@ class ProjectControllerTest {
                         .title(title)
                         .description(description)
                         .tags(tags)
-                        .links()
+                        .links(links)
                         .languages(languages)
                         .featured(true)
                         .build();
