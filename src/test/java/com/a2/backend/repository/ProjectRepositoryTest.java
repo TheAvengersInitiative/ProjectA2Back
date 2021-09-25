@@ -258,6 +258,9 @@ class ProjectRepositoryTest {
     }
     @Test
     public void Test008_GivenTitleFilterSearchisSuccesfull() {
+        Tag tag1 = Tag.builder().name("tag1").build();
+        Tag tag2 = Tag.builder().name("tag2").build();
+        Tag tag3 = Tag.builder().name("tag3").build();
         userRepository.save(owner);
         Project project =
                 Project.builder()
@@ -265,6 +268,7 @@ class ProjectRepositoryTest {
                         .description(description)
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
+                        .tags(Arrays.asList(tag1, tag2))
                         .build();
         assertTrue(projectRepository.findAll().isEmpty());
         assertNull(project.getId());
