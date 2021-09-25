@@ -9,6 +9,7 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1247,7 +1248,8 @@ class ProjectControllerTest {
     }
 
     @Test
-    void Test022_ProjectControllerSuccesfulMultiFilterSearch() {
+    @WithMockUser(username = "some@gmail.com")
+    void Test022_ProjectControllerSuccesfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1304,6 +1306,32 @@ class ProjectControllerTest {
                         .languages(Arrays.asList("TypeScript"))
                         .build();
 
+        mvc.perform(
+                MockMvcRequestBuilders.post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        mvc.perform(
+                MockMvcRequestBuilders.post(baseUrl)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        String contentAsString =
+                mvc.perform(
+                        MockMvcRequestBuilders.get("/project/tags")
+                                .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
         HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
         HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
         HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
@@ -1331,6 +1359,7 @@ class ProjectControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void Test023_ProjectControllerSuccesfulMultiFilterSearch() {
         userRepository.save(owner);
         String title = "Project title";
@@ -1416,6 +1445,7 @@ class ProjectControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void Test024_ProjectControllerSuccesfulMultiFilterSearch() {
         userRepository.save(owner);
         String title = "Project title";
@@ -1499,88 +1529,9 @@ class ProjectControllerTest {
         assertEquals(2, projects.length);
     }
 
-    @Test
-    void Test025_ProjectControllerSuccesfulMultiFilterSearch() {
-        userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> secondLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> thirdLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> fourthLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> secondLanguages = Arrays.asList("Java", "Python");
-        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
-        List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
-
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .tags(tags)
-                        .links(links)
-                        .languages(languages)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .languages(fourthlanguages)
-                        .build();
-
-        ProjectSearchDTO projectToSearch =
-                ProjectSearchDTO.builder().languages(Arrays.asList("Script")).build();
-
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
-
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        HttpEntity<ProjectSearchDTO> request = new HttpEntity<>(projectToSearch);
-
-        val searchResponse =
-                restTemplate.exchange("/project/search", HttpMethod.POST, request, Project[].class);
-        assertEquals(HttpStatus.OK, searchResponse.getStatusCode());
-        Project[] projects = searchResponse.getBody();
-
-        assertEquals(2, projects.length);
-    }
 
     @Test
+    @WithMockUser(username = "some@gmail.com")
     void Test026_ProjectControllerSuccesfulMultiFilterSearchWithFeatured() {
         userRepository.save(owner);
         String title = "Project title";
