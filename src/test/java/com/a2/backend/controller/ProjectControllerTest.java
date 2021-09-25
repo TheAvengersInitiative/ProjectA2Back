@@ -1267,6 +1267,7 @@ class ProjectControllerTest {
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
+                        .links(links)
                         .description(description)
                         .tags(tags)
                         .languages(languages)
@@ -1352,6 +1353,7 @@ class ProjectControllerTest {
                         .title(title)
                         .description(description)
                         .tags(tags)
+                        .links(links)
                         .languages(languages)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
@@ -1436,6 +1438,7 @@ class ProjectControllerTest {
                         .title(title)
                         .description(description)
                         .tags(tags)
+                        .links(links)
                         .languages(languages)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
@@ -1519,6 +1522,7 @@ class ProjectControllerTest {
                         .title(title)
                         .description(description)
                         .tags(tags)
+                        .links(links)
                         .languages(languages)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
@@ -1599,6 +1603,7 @@ class ProjectControllerTest {
                         .title(title)
                         .description(description)
                         .tags(tags)
+                        .links()
                         .languages(languages)
                         .featured(true)
                         .build();
