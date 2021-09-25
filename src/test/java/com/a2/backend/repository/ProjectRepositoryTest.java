@@ -256,6 +256,7 @@ class ProjectRepositoryTest {
         assertTrue(projectsWithLanguage1.contains(project1));
         assertTrue(projectsWithLanguage1.contains(project3));
     }
+
     @Test
     public void Test008_GivenTitleFilterSearchisSuccesfull() {
         Tag tag1 = Tag.builder().name("tag1").build();

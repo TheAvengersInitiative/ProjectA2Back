@@ -9,23 +9,17 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -733,217 +727,6 @@ class ProjectControllerTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test016_ProjectControllerSuccesfulSearch() throws Exception {
-        userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links =
-                Arrays.asList("http://link1.com", "http://link2.com", "http://link3.com");
-        List<String> secondLinks =
-                Arrays.asList("http://link4.com", "http://link5.com", "http://link6.com");
-        List<String> thirdLinks =
-                Arrays.asList("http://link7.com", "http://link8.com", "http://link9.com");
-        List<String> fourthLinks =
-                Arrays.asList("http://link10.com", "http://link11.com", "http://link12.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> secondLanguages = Arrays.asList("Java", "Python");
-        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
-        List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
-
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .languages(languages)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .languages(fourthLlanguages)
-                        .build();
-
-        mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-
-        mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-
-        mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-
-        mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-
-        String contentAsString =
-                mvc.perform(
-                                MockMvcRequestBuilders.get("/project/search?name=pro&page=0")
-                                        .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
-
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(4, projects.length);
-    }
-
-    @Test
-    @WithMockUser(username = "some@gmail.com")
-    void Test017_ProjectControllerSuccesfulEmptySearch() throws Exception {
-        userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links =
-                Arrays.asList("http://link1.com", "http://link2.com", "http://link3.com");
-        List<String> secondLinks =
-                Arrays.asList("http://link4.com", "http://link5.com", "http://link6.com");
-        List<String> thirdLinks =
-                Arrays.asList("http://link7.com", "http://link8.com", "http://link9.com");
-        List<String> fourthLinks =
-                Arrays.asList("http://link10.com", "http://link11.com", "http://link12.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> secondLanguages = Arrays.asList("Java", "Python");
-        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
-        List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
-
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .languages(languages)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .languages(fourthLlanguages)
-                        .build();
-
-        mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-
-        mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-
-        mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-
-        mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn()
-                .getResponse();
-
-        String contentAsString =
-                mvc.perform(
-                                MockMvcRequestBuilders.get("/project/search?name=pro&page=1")
-                                        .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
-
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(0, projects.length);
-    }
-
-    @Test
-    @WithMockUser(username = "some@gmail.com")
     void Test018_WhenGettingValidLanguagesNameListShouldBeReturned() throws Exception {
         String validLanguageNames =
                 "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
@@ -1307,60 +1090,58 @@ class ProjectControllerTest {
                         .build();
 
         mvc.perform(
-                MockMvcRequestBuilders.post(baseUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(firstProjectToCreate))
-                        .accept(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse();
 
         mvc.perform(
-                MockMvcRequestBuilders.post(baseUrl)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(secondProjectToCreate))
-                        .accept(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse();
 
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.get("/project/tags")
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
 
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        HttpEntity<ProjectSearchDTO> request = new HttpEntity<>(projectToSearch);
-
-        val searchResponse =
-                restTemplate.exchange("/project/search", HttpMethod.POST, request, Project[].class);
-        assertEquals(HttpStatus.OK, searchResponse.getStatusCode());
-        Project[] projects = searchResponse.getBody();
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
         assertEquals(0, projects.length);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test023_ProjectControllerSuccesfulMultiFilterSearch() {
+    void Test023_ProjectControllerSuccesfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1417,36 +1198,59 @@ class ProjectControllerTest {
                         .languages(Arrays.asList("TypeScript"))
                         .build();
 
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        HttpEntity<ProjectSearchDTO> request = new HttpEntity<>(projectToSearch);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val searchResponse =
-                restTemplate.exchange("/project/search", HttpMethod.POST, request, Project[].class);
-        assertEquals(HttpStatus.OK, searchResponse.getStatusCode());
-        Project[] projects = searchResponse.getBody();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
         assertEquals(1, projects.length);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test024_ProjectControllerSuccesfulMultiFilterSearch() {
+    void Test024_ProjectControllerSuccesfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1502,37 +1306,59 @@ class ProjectControllerTest {
                         .languages(Arrays.asList("Script"))
                         .build();
 
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        HttpEntity<ProjectSearchDTO> request = new HttpEntity<>(projectToSearch);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val searchResponse =
-                restTemplate.exchange("/project/search", HttpMethod.POST, request, Project[].class);
-        assertEquals(HttpStatus.OK, searchResponse.getStatusCode());
-        Project[] projects = searchResponse.getBody();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
         assertEquals(2, projects.length);
     }
 
-
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test026_ProjectControllerSuccesfulMultiFilterSearchWithFeatured() {
+    void Test026_ProjectControllerSuccesfulMultiFilterSearchWithFeatured() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1590,30 +1416,53 @@ class ProjectControllerTest {
                         .languages(Arrays.asList("Script"))
                         .build();
 
-        HttpEntity<ProjectCreateDTO> createFourthProject = new HttpEntity<>(fourthProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createFirstProject = new HttpEntity<>(firstProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createSecondProject = new HttpEntity<>(secondProjectToCreate);
-        HttpEntity<ProjectCreateDTO> createThirdProject = new HttpEntity<>(thirdProjectToCreate);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val postFirstResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFirstProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postFirstResponse.getStatusCode());
-        val postSecondResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createSecondProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postSecondResponse.getStatusCode());
-        val postThirdResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createThirdProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        val postFourthResponse =
-                restTemplate.exchange(baseUrl, HttpMethod.POST, createFourthProject, Project.class);
-        assertEquals(HttpStatus.CREATED, postThirdResponse.getStatusCode());
-        HttpEntity<ProjectSearchDTO> request = new HttpEntity<>(projectToSearch);
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
-        val searchResponse =
-                restTemplate.exchange("/project/search", HttpMethod.POST, request, Project[].class);
-        assertEquals(HttpStatus.OK, searchResponse.getStatusCode());
-        Project[] projects = searchResponse.getBody();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
 
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
         assertEquals(1, projects.length);
     }
 }

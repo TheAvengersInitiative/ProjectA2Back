@@ -1,5 +1,8 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.model.PasswordRecoveryDTO;
 import com.a2.backend.model.PreferencesUpdateDTO;
@@ -7,6 +10,7 @@ import com.a2.backend.model.UserCreateDTO;
 import com.a2.backend.model.UserUpdateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +26,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -624,7 +623,7 @@ class UserControllerTest {
 
     @Test
     void
-    Test021_GivenAUserCreateDTOWithNicknameContainingSpacesWhenCreatingUserThenBadStatusResponseIsReturned() {
+            Test021_GivenAUserCreateDTOWithNicknameContainingSpacesWhenCreatingUserThenBadStatusResponseIsReturned() {
 
         userCreateDTO.setNickname("new user");
 

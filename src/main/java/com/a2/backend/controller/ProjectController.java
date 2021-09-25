@@ -44,9 +44,6 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
-
-
-
     @Secured({SecurityConstants.USER_ROLE})
     @PostMapping("/search")
     public ResponseEntity<List<Project>> getProjectsByNameSearch(

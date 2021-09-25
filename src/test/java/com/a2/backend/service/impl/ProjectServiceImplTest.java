@@ -272,41 +272,6 @@ class ProjectServiceImplTest {
 
     @Test
     @WithMockUser(username = "some@email.com")
-    void Test012_GivenASingleExistingProjectWhenSearchedByTitleItShouldBeFound() {
-        userRepository.save(owner);
-
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Project")
-                        .description(description)
-                        .links(Arrays.asList("link3", "link4"))
-                        .tags(Arrays.asList("tag5", "tag7"))
-                        .languages(Arrays.asList("Java", "C"))
-                        .build();
-
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("ProjectProject")
-                        .description(description)
-                        .links(linksUpdate)
-                        .tags(tagsUpdate)
-                        .languages(Arrays.asList("Python", "PHP"))
-                        .build();
-        // Given
-        assertTrue(projectService.getAllProjects().isEmpty());
-
-        projectService.createProject(projectToCreate);
-        projectService.createProject(secondProjectToCreate);
-        projectService.createProject(thirdProjectToCreate);
-        List<Project> projects = projectService.getProjectsByTitleSearch("Project", 0);
-        assertEquals(3, projects.size());
-
-        // Then
-
-    }
-
-    @Test
-    @WithMockUser(username = "some@email.com")
     void Test013_GivenExistingTagsAndAValidProjectCreateDTOWhenCreatingProjectThenItIsCreated() {
         userRepository.save(owner);
 
@@ -437,5 +402,4 @@ class ProjectServiceImplTest {
                 project.getLanguages());
         assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
     }
-
 }

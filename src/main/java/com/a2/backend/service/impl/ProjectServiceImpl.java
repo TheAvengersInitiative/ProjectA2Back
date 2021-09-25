@@ -22,10 +22,6 @@ import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
 import lombok.val;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -42,12 +38,12 @@ public class ProjectServiceImpl implements ProjectService {
     private final TagRepository tagRepository;
     private final LanguageRepository languageRepository;
 
-
     public ProjectServiceImpl(
             ProjectRepository projectRepository,
             TagService tagService,
             LanguageService languageService,
-            UserService userService, LanguageRepository languageRepository,
+            UserService userService,
+            LanguageRepository languageRepository,
             TagRepository tagRepository) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
@@ -149,19 +145,6 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public void deleteProjectsFromUser(User owner) {
         projectRepository.deleteByOwner(owner);
-    }
-
-    public List<Project> getProjectsByTitleSearch(String pattern, int pageNo) {
-        Pageable paging = PageRequest.of(pageNo, 8, Sort.by("title").ascending());
-
-        Page<Project> pagedResult =
-                projectRepository.findByTitleContainingIgnoreCase(pattern, paging);
-
-        if (pagedResult.hasContent()) {
-            return pagedResult.getContent();
-        } else {
-            return new ArrayList<Project>();
-        }
     }
 
     @Override
