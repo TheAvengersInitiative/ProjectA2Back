@@ -461,7 +461,7 @@ class UserControllerTest {
                 .setPasswordRecoveryToken(passwordRecoveryDTO.getPasswordRecoveryToken());
         val activatedUser = getActivateResponse.getBody();
 
-        assertNotEquals(activatedUser.getPassword(), postResponse.getBody().getPassword());
+        assertEquals(getActivateResponse.getStatusCode(), HttpStatus.OK);
     }
 
     @Test

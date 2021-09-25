@@ -15,10 +15,10 @@ public class ProjectSearchDTO {
     @Size(max = 100, message = "Title must be between 3 and 100 characters")
     private String title;
 
-    @Size(min = 1, max = 5, message = "Number of tags must be between 1 and 5")
+    @Size(max = 5, message = "Number of tags must be between 1 and 5")
     private List<@Size(min = 1, max = 24) String> tags;
 
-    @Size(min = 1, max = 3, message = "Number of languages must be between 1 and 3")
+    @Size(max = 3, message = "Number of languages must be between 1 and 3")
     private List<String> languages;
 
     @Builder.Default private int page = -1;
