@@ -50,8 +50,8 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                             .parseClaimsJws(token);
 
             if (user != null) {
-
-                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+                return new UsernamePasswordAuthenticationToken(
+                        user.getBody().getSubject(), null, new ArrayList<>());
             } else {
 
                 return null;

@@ -30,7 +30,7 @@ public class User {
 
     String biography;
 
-    String password; // Hashed
+    @JsonIgnore String password; // Hashed
 
     @ElementCollection
     @LazyCollection(LazyCollectionOption.FALSE)
