@@ -25,6 +25,8 @@ public class Project implements Serializable {
 
     private String title;
 
+    @Builder.Default private boolean featured = false;
+
     private String description;
 
     @ElementCollection

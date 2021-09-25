@@ -4,6 +4,7 @@ import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
@@ -44,12 +45,10 @@ public class ProjectController {
     }
 
     @Secured({SecurityConstants.USER_ROLE})
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<List<Project>> getProjectsByNameSearch(
-            @RequestParam(name = "name") String pattern,
-            @RequestParam(name = "page") Integer pageNo) {
-        val projects = projectService.getProjectsByTitleSearch(pattern, pageNo);
-
+            @Valid @RequestBody ProjectSearchDTO projectSearchDTO) {
+        val projects = projectService.searchProjecsByFilter(projectSearchDTO);
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
