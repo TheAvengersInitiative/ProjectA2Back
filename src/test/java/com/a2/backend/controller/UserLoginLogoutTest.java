@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.LoginDTO;
 import com.a2.backend.model.UserCreateDTO;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -69,9 +70,9 @@ public class UserLoginLogoutTest {
         val activatedUser = getResponse.getBody();
         assertTrue(activatedUser.isActive());
 
-        User loginUser = User.builder().email(email).password(password).build();
+        LoginDTO loginUser = LoginDTO.builder().email(email).password(password).build();
 
-        HttpEntity<User> loginRequest = new HttpEntity<>(loginUser);
+        HttpEntity<LoginDTO> loginRequest = new HttpEntity<>(loginUser);
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
         assertEquals(HttpStatus.OK, loginResponse.getStatusCode());
@@ -94,9 +95,9 @@ public class UserLoginLogoutTest {
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
-        User loginUser = User.builder().email(email).password(password).build();
+        LoginDTO loginUser = LoginDTO.builder().email(email).password(password).build();
 
-        HttpEntity<User> loginRequest = new HttpEntity<>(loginUser);
+        HttpEntity<LoginDTO> loginRequest = new HttpEntity<>(loginUser);
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
         assertEquals(HttpStatus.UNAUTHORIZED, loginResponse.getStatusCode());
@@ -119,9 +120,9 @@ public class UserLoginLogoutTest {
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
-        User loginUser = User.builder().email(email).password(password).build();
+        LoginDTO loginUser = LoginDTO.builder().email(email).password(password).build();
 
-        HttpEntity<User> loginRequest = new HttpEntity<>(loginUser);
+        HttpEntity<LoginDTO> loginRequest = new HttpEntity<>(loginUser);
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
         assertEquals(HttpStatus.UNAUTHORIZED, loginResponse.getStatusCode());
