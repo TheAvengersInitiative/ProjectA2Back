@@ -1,18 +1,13 @@
 package com.a2.backend.service;
 
 import com.a2.backend.entity.User;
-import com.a2.backend.model.PasswordRecoveryDTO;
-import com.a2.backend.model.PasswordRecoveryInitDTO;
-import com.a2.backend.model.PreferencesUpdateDTO;
-import com.a2.backend.model.UserCreateDTO;
-import com.a2.backend.model.UserUpdateDTO;
-import java.util.UUID;
+import com.a2.backend.model.*;
 
 public interface UserService {
 
     User createUser(UserCreateDTO userCreateDTO);
 
-    User confirmUser(String token, UUID userid);
+    User confirmUser(ConfirmationTokenDTO confirmationTokenDTO);
 
     User recoverPassword(PasswordRecoveryDTO passwordRecoveryDTO);
 

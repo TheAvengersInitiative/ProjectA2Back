@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.ConfirmationTokenDTO;
 import com.a2.backend.model.LoginDTO;
 import com.a2.backend.model.UserCreateDTO;
+import com.a2.backend.repository.UserRepository;
 import java.util.Locale;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,7 @@ import org.springframework.test.annotation.DirtiesContext;
 public class UserLoginLogoutTest {
 
     @Autowired TestRestTemplate restTemplate;
+    @Autowired UserRepository userRepository;
     private final String baseUrl = "/user";
     private final String confirmationUrl = "/confirm";
 
@@ -44,9 +47,7 @@ public class UserLoginLogoutTest {
                         .email(email)
                         .biography(biography)
                         .password(password)
-                        .confirmationToken(confirmationToken)
                         .build();
-        String validConfirmationToken = "token001";
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -55,16 +56,26 @@ public class UserLoginLogoutTest {
 
         val userToActivate = postResponse.getBody();
 
+        val confirmationToken =
+                userRepository
+                        .findById(postResponse.getBody().getId())
+                        .get()
+                        .getConfirmationToken();
+
+        ConfirmationTokenDTO confirmationTokenDTO =
+                ConfirmationTokenDTO.builder()
+                        .confirmationToken(confirmationToken)
+                        .email(email)
+                        .build();
+        confirmationTokenDTO.setConfirmationToken(confirmationToken);
+
+        HttpEntity<ConfirmationTokenDTO> updatedRequest = new HttpEntity<>(confirmationTokenDTO);
+
         val getResponse =
                 restTemplate.exchange(
-                        String.format(
-                                "%s/%s/%s/%s",
-                                baseUrl,
-                                confirmationUrl,
-                                userToActivate.getId(),
-                                validConfirmationToken),
-                        HttpMethod.GET,
-                        null,
+                        String.format("%s/%s", baseUrl, confirmationUrl),
+                        HttpMethod.POST,
+                        updatedRequest,
                         User.class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
@@ -87,7 +98,6 @@ public class UserLoginLogoutTest {
                         .email(email + "l")
                         .biography(biography)
                         .password(password)
-                        .confirmationToken(confirmationToken)
                         .build();
         String validConfirmationToken = "token001";
 
@@ -112,7 +122,6 @@ public class UserLoginLogoutTest {
                         .email(email)
                         .biography(biography)
                         .password(password)
-                        .confirmationToken(confirmationToken)
                         .build();
         String validConfirmationToken = "token001";
 
