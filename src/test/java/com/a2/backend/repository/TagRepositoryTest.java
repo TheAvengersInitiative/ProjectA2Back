@@ -65,4 +65,12 @@ class TagRepositoryTest {
 
         assertTrue(tagRepository.findByName("tag2").isEmpty());
     }
+
+    @Test
+    void Test004_LanguageRepositoryWhenGivenExistingNameFindsLanguage() {
+        Tag tag1 = Tag.builder().name("tAg1").build();
+        tagRepository.save(tag1);
+
+        assertEquals(tagRepository.findTagName("aG").get(0), "tAg1");
+    }
 }

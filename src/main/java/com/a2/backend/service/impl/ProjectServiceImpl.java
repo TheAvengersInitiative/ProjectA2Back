@@ -16,10 +16,7 @@ import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import com.a2.backend.service.UserService;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -170,7 +167,7 @@ public class ProjectServiceImpl implements ProjectService {
             List<String> languages = projectSearchDTO.getLanguages();
             for (String language : languages) {
                 result.addAll(projectRepository.findProjectsByLanguageName(language));
-                validLanguages.addAll(languageRepository.findLanguageByName(language));
+                validLanguages.addAll(languageRepository.findLanguageName(language));
             }
         }
         if (projectSearchDTO.getTags() != null && !projectSearchDTO.getTags().isEmpty()) {
@@ -178,8 +175,11 @@ public class ProjectServiceImpl implements ProjectService {
             List<String> tags = projectSearchDTO.getTags();
             for (String tag : tags) {
                 result.addAll(projectRepository.findProjectsByTagName(tag));
-                validTags.addAll(tagRepository.findTagByName(tag));
+                validTags.addAll(tagRepository.findTagName(tag));
             }
+        }
+        for (int i = 0; i < validLanguages.size(); i++) {
+            System.out.println(validLanguages.get(i));
         }
         for (int i = 0; i < result.size() - 1; i++) {
             for (int j = i + 1; j < result.size(); j++) {
@@ -232,9 +232,7 @@ public class ProjectServiceImpl implements ProjectService {
             int page = projectSearchDTO.getPage();
             if (result.size() > 8 * (page)) {
                 result.removeAll(result.subList(0, 8 * page));
-                for (int i = 0; i < result.size(); i++) {
-                    System.out.println(result.get(i).getTitle());
-                }
+                for (int i = 0; i < result.size(); i++) {}
             }
             if (result.size() > 8) {
                 result.removeAll(result.subList(8, result.size()));

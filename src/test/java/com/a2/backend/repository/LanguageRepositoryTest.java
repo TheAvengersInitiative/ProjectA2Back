@@ -65,4 +65,14 @@ class LanguageRepositoryTest {
 
         assertTrue(languageRepository.findByName("Python").isEmpty());
     }
+
+    @Test
+    void Test004_LanguageRepositoryWhenGivenExistingNameFindsLanguage() {
+        Language language = Language.builder().name("jaVA").build();
+        Language language2 = Language.builder().name("Script").build();
+        languageRepository.save(language);
+        languageRepository.save(language2);
+
+        assertEquals(languageRepository.findLanguageName("Ja").size(), 1);
+    }
 }
