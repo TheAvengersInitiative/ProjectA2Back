@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.LoginDTO;
 import com.a2.backend.model.UserCreateDTO;
+import java.util.Locale;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,5 +127,49 @@ public class UserLoginLogoutTest {
         val loginResponse =
                 restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
         assertEquals(HttpStatus.UNAUTHORIZED, loginResponse.getStatusCode());
+    }
+
+    @Test
+    void Test004_GivenAnExistingUserWithEmailInUpperCaseLoginShouldSucceed() {
+        UserCreateDTO userCreateDTO =
+                UserCreateDTO.builder()
+                        .nickname(nickname)
+                        .email(email)
+                        .biography(biography)
+                        .password(password)
+                        .confirmationToken(confirmationToken)
+                        .build();
+        String validConfirmationToken = "token001";
+
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        val userToActivate = postResponse.getBody();
+
+        val getResponse =
+                restTemplate.exchange(
+                        String.format(
+                                "%s/%s/%s/%s",
+                                baseUrl,
+                                confirmationUrl,
+                                userToActivate.getId(),
+                                validConfirmationToken),
+                        HttpMethod.GET,
+                        null,
+                        User.class);
+        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+
+        val activatedUser = getResponse.getBody();
+        assertTrue(activatedUser.isActive());
+
+        LoginDTO loginUser =
+                LoginDTO.builder().email(email.toUpperCase(Locale.ROOT)).password(password).build();
+
+        HttpEntity<LoginDTO> loginRequest = new HttpEntity<>(loginUser);
+        val loginResponse =
+                restTemplate.exchange("/login", HttpMethod.POST, loginRequest, User.class);
+        assertEquals(HttpStatus.OK, loginResponse.getStatusCode());
     }
 }
