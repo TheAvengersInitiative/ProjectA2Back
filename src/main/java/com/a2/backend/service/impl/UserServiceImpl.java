@@ -61,9 +61,10 @@ public class UserServiceImpl implements UserService {
                         .email(userCreateDTO.getEmail().toLowerCase())
                         .biography(userCreateDTO.getBiography())
                         .password(passwordEncoder.encode(userCreateDTO.getPassword()))
-                        .confirmationToken(userCreateDTO.getConfirmationToken())
+                        .confirmationToken(randomStringUtils)
                         .passwordRecoveryToken(randomStringUtils)
                         .build();
+        mailService.sendConfirmationMail(user);
         return userRepository.save(user);
     }
 
@@ -119,19 +120,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User confirmUser(String token, UUID userID) {
-        val userOptional = userRepository.findById(userID);
+    public User confirmUser(ConfirmationTokenDTO confirmationTokenDTO) {
+        val userOptional = userRepository.findByEmail(confirmationTokenDTO.getEmail());
         if (userOptional.isEmpty()) {
             throw new TokenConfirmationFailedException(
-                    String.format("User with id: %s Not Found ", userID));
+                    String.format(
+                            "User with email: %s Not Found ", confirmationTokenDTO.getEmail()));
         }
         val user = userOptional.get();
         if (user.isActive()) {
             throw new TokenConfirmationFailedException(
-                    String.format("User %s Already Active ", userID));
+                    String.format("User %s Already Active ", user.getId()));
         }
-        if (!user.getConfirmationToken().equals(token)) {
-            throw new TokenConfirmationFailedException(String.format("Invalid Token %s", token));
+        if (!user.getConfirmationToken().equals(confirmationTokenDTO.getConfirmationToken())) {
+            throw new TokenConfirmationFailedException(
+                    String.format("Invalid Token %s", confirmationTokenDTO.getConfirmationToken()));
         }
         user.setActive(true);
         return userRepository.save(user);

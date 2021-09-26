@@ -51,7 +51,6 @@ class UserServiceImplTest {
                     .email(email)
                     .biography(biography)
                     .password(password)
-                    .confirmationToken(confirmationToken)
                     .build();
 
     String updatedNickname = "updated nickname";
@@ -66,6 +65,12 @@ class UserServiceImplTest {
 
     List<String> tags = List.of("tag1", "tag2");
     List<String> languages = List.of("Java", "C");
+
+    ConfirmationTokenDTO confirmationTokenDTO =
+            ConfirmationTokenDTO.builder()
+                    .confirmationToken("token001")
+                    .email(userCreateDTO.getEmail())
+                    .build();
 
     @Test
     void
@@ -169,9 +174,10 @@ class UserServiceImplTest {
     @Test
     void Test007_GivenAValidValidTokenWhenConfirmAccountThenUserIsActiveEqualsTrue() {
         User user = userService.createUser(userCreateDTO);
-        String confirmationToken1 = "token001";
+        confirmationTokenDTO.setEmail(user.getEmail());
+        confirmationTokenDTO.setConfirmationToken(user.getConfirmationToken());
 
-        User activatedUser = userService.confirmUser(confirmationToken1, user.getId());
+        User activatedUser = userService.confirmUser(confirmationTokenDTO);
 
         assertTrue(activatedUser.isActive());
     }
@@ -180,23 +186,24 @@ class UserServiceImplTest {
     void Test008_GivenAnInvalidTokenWhenWantToConfirmAccountThenThrowExceptionInvalidToken() {
         User user = userService.createUser(userCreateDTO);
         String invalidToken = "token002";
-
+        confirmationTokenDTO.setEmail(user.getEmail());
+        confirmationTokenDTO.setConfirmationToken(invalidToken);
         assertThrows(
                 TokenConfirmationFailedException.class,
-                () -> userService.confirmUser(invalidToken, user.getId()));
+                () -> userService.confirmUser(confirmationTokenDTO));
     }
 
     @Test
     void
             Test009_GivenAnAlreadyActiveUserWhenWantToConfirmThatUserThenThrowTokenConfirmationFailedException() {
         User user = userService.createUser(userCreateDTO);
-        String validToken = "token001";
-
-        User validatedUser = userService.confirmUser(validToken, user.getId());
+        confirmationTokenDTO.setConfirmationToken(user.getConfirmationToken());
+        User validatedUser = userService.confirmUser(confirmationTokenDTO);
+        confirmationTokenDTO.setEmail(validatedUser.getEmail());
 
         assertThrows(
                 TokenConfirmationFailedException.class,
-                () -> userService.confirmUser(validToken, validatedUser.getId()));
+                () -> userService.confirmUser(confirmationTokenDTO));
     }
 
     @Test
@@ -261,7 +268,6 @@ class UserServiceImplTest {
                         .nickname(updatedNickname)
                         .email("another@email.com")
                         .password("password")
-                        .confirmationToken("token002")
                         .build());
 
         assertThrows(
@@ -274,8 +280,8 @@ class UserServiceImplTest {
             Test014_GivenaValidEmailandValidNewPasswordWhenWantToRecoverPasswordThenChangeTheOldPasswordForNewOne() {
         User user = userService.createUser(userCreateDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
-
-        User userToBeUpdated = userService.confirmUser("token001", user.getId());
+        confirmationTokenDTO.setConfirmationToken(user.getConfirmationToken());
+        User userToBeUpdated = userService.confirmUser(confirmationTokenDTO);
 
         User passwordUpdatedUser = userService.recoverPassword(passwordRecoveryDTO);
 
@@ -308,7 +314,8 @@ class UserServiceImplTest {
     void Test017_GivenAnInvalidPasswordRecoveryTokenWhenWantToRecoverPasswordThenThrowException() {
         User user = userService.createUser(userCreateDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken("passwordRecoveryToken002");
-        User activatedUser = userService.confirmUser(confirmationToken, user.getId());
+        confirmationTokenDTO.setConfirmationToken(user.getConfirmationToken());
+        User activatedUser = userService.confirmUser(confirmationTokenDTO);
         assertThrows(
                 TokenConfirmationFailedException.class,
                 () -> userService.recoverPassword(passwordRecoveryDTO));
@@ -318,7 +325,8 @@ class UserServiceImplTest {
     void
             Test018_GivenAnInvalidPasswordLengthWhenWantToRecoverPasswordThenThrowPasswordRecoveryException() {
         User user = userService.createUser(userCreateDTO);
-        User userToBeUpdated = userService.confirmUser(confirmationToken, user.getId());
+        confirmationTokenDTO.setConfirmationToken(user.getConfirmationToken());
+        User userToBeUpdated = userService.confirmUser(confirmationTokenDTO);
         passwordRecoveryDTO.setPasswordRecoveryToken(user.getPasswordRecoveryToken());
         passwordRecoveryDTO.setNewPassword("test001");
         passwordRecoveryDTO.setEmail(userToBeUpdated.getEmail());

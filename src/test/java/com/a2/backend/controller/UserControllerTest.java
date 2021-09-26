@@ -4,10 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.entity.User;
-import com.a2.backend.model.PasswordRecoveryDTO;
-import com.a2.backend.model.PreferencesUpdateDTO;
-import com.a2.backend.model.UserCreateDTO;
-import com.a2.backend.model.UserUpdateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -40,7 +37,7 @@ class UserControllerTest {
     @Autowired UserRepository userRepository;
 
     private final String baseUrl = "/user";
-    private final String confirmationUrl = "/confirm";
+    private final String confirmationUrl = "confirm";
     private final String recoverUrl = "recover";
     private final String requestUrl = "request";
 
@@ -57,7 +54,6 @@ class UserControllerTest {
                     .email(email)
                     .biography(biography)
                     .password(password)
-                    .confirmationToken(confirmationToken)
                     .build();
     PasswordRecoveryDTO passwordRecoveryDTO =
             PasswordRecoveryDTO.builder()
@@ -68,6 +64,12 @@ class UserControllerTest {
 
     List<String> tags = List.of("tag1", "tag2");
     List<String> languages = List.of("Java", "C");
+
+    ConfirmationTokenDTO confirmationTokenDTO =
+            ConfirmationTokenDTO.builder()
+                    .confirmationToken(confirmationToken)
+                    .email(email)
+                    .build();
 
     @Test
     void
@@ -243,32 +245,32 @@ class UserControllerTest {
 
     @Test
     void Test010_GivenAValidTokenAndUserWhenConfirmingUserThenStatusOKisReturned() {
-
-        String validConfirmationToken = "token001";
-
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
 
-        val userToActivate = postResponse.getBody();
-        assertNotNull(userToActivate);
+        val confirmationToken =
+                userRepository
+                        .findById(postResponse.getBody().getId())
+                        .get()
+                        .getConfirmationToken();
+        confirmationTokenDTO.setConfirmationToken(confirmationToken);
 
-        val getResponse =
+        HttpEntity<ConfirmationTokenDTO> updatedRequest = new HttpEntity<>(confirmationTokenDTO);
+
+        val postNewResponse =
                 restTemplate.exchange(
-                        String.format(
-                                "%s/%s/%s/%s",
-                                baseUrl,
-                                confirmationUrl,
-                                userToActivate.getId(),
-                                validConfirmationToken),
-                        HttpMethod.GET,
-                        null,
+                        String.format("%s/%s", baseUrl, confirmationUrl),
+                        HttpMethod.POST,
+                        updatedRequest,
                         User.class);
-        assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+        assertEquals(HttpStatus.OK, postNewResponse.getStatusCode());
 
-        val activatedUser = getResponse.getBody();
-        assertNotNull(activatedUser);
+        val activatedUser = postNewResponse.getBody();
+
+        assertEquals(postResponse.getBody().getPassword(), activatedUser.getPassword());
+        assertEquals(postResponse.getBody().getId(), activatedUser.getId());
         assertTrue(activatedUser.isActive());
     }
 
@@ -420,30 +422,31 @@ class UserControllerTest {
 
     @Test
     void Test015_GivenAValidUserWhenWantToRecoverPasswordThenReturnStatusOk() {
-        String validConfirmationToken = "token001";
+
         HttpEntity<UserCreateDTO> userRequest = new HttpEntity<>(userCreateDTO);
         val getResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, userRequest, User.class);
         assertEquals(HttpStatus.CREATED, getResponse.getStatusCode());
-        // agarras response id, llamas al user service
+
         val recoverPasswordToken =
                 userRepository
                         .findById(getResponse.getBody().getId())
                         .get()
                         .getPasswordRecoveryToken();
 
-        User userToActivate = getResponse.getBody();
-        val getActivateResponse =
+        val confirmationToken =
+                userRepository.findById(getResponse.getBody().getId()).get().getConfirmationToken();
+        confirmationTokenDTO.setConfirmationToken(confirmationToken);
+
+        HttpEntity<ConfirmationTokenDTO> updatedRequest = new HttpEntity<>(confirmationTokenDTO);
+
+        val getActivatedResponse =
                 restTemplate.exchange(
-                        String.format(
-                                "%s/%s/%s/%s",
-                                baseUrl,
-                                confirmationUrl,
-                                userToActivate.getId(),
-                                validConfirmationToken),
-                        HttpMethod.GET,
-                        null,
+                        String.format("%s/%s", baseUrl, confirmationUrl),
+                        HttpMethod.POST,
+                        updatedRequest,
                         User.class);
-        assertEquals(HttpStatus.OK, getActivateResponse.getStatusCode());
+        assertEquals(HttpStatus.OK, getActivatedResponse.getStatusCode());
+
         passwordRecoveryDTO.setPasswordRecoveryToken(recoverPasswordToken);
         HttpEntity<PasswordRecoveryDTO> passwordRecoveryRequest =
                 new HttpEntity<>(passwordRecoveryDTO);
@@ -456,12 +459,12 @@ class UserControllerTest {
                         User.class);
         assertEquals(HttpStatus.OK, postResponse.getStatusCode());
 
-        getActivateResponse
+        getActivatedResponse
                 .getBody()
                 .setPasswordRecoveryToken(passwordRecoveryDTO.getPasswordRecoveryToken());
-        val activatedUser = getActivateResponse.getBody();
+        val activatedUser = getActivatedResponse.getBody();
 
-        assertEquals(getActivateResponse.getStatusCode(), HttpStatus.OK);
+        assertEquals(getActivatedResponse.getStatusCode(), HttpStatus.OK);
     }
 
     @Test

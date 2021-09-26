@@ -4,7 +4,6 @@ import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import com.a2.backend.service.UserService;
-import java.util.UUID;
 import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -35,9 +34,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(loggedUser);
     }
 
-    @GetMapping("/confirm/{id}/{token}")
-    public ResponseEntity<User> confirmUser(@PathVariable UUID id, @PathVariable String token) {
-        val userConfirmed = userService.confirmUser(token, id);
+    @PostMapping("/confirm")
+    public ResponseEntity<User> confirmUser(
+            @Valid @RequestBody ConfirmationTokenDTO confirmationTokenDTO) {
+        val userConfirmed = userService.confirmUser(confirmationTokenDTO);
         return ResponseEntity.status(HttpStatus.OK).body(userConfirmed);
     }
 
