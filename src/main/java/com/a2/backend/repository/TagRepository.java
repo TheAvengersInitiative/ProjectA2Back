@@ -11,6 +11,6 @@ public interface TagRepository extends JpaRepository<Tag, UUID> {
 
     Optional<Tag> findByName(String name);
 
-    @Query("SELECT DISTINCT name FROM Tag t WHERE UPPER(t.name) LIKE CONCAT('%',UPPER(name),'%')")
+    @Query("SELECT DISTINCT name FROM Tag t WHERE UPPER(t.name)  LIKE %?1%")
     List<String> findTagName(String tagname);
 }

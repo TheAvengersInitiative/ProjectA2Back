@@ -196,7 +196,8 @@ class ProjectRepositoryTest {
         projectRepository.save(project2);
         projectRepository.save(project3);
 
-        List<Project> projectsWithTag3 = projectRepository.findProjectsByTagName("tag3");
+        List<Project> projectsWithTag3 =
+                projectRepository.findProjectsByTagName("tag3".toUpperCase(Locale.ROOT));
 
         assertEquals(2, projectsWithTag3.size());
         assertTrue(projectsWithTag3.contains(project2));
@@ -250,7 +251,8 @@ class ProjectRepositoryTest {
         projectRepository.save(project2);
         projectRepository.save(project3);
 
-        List<Project> projectsWithLanguage1 = projectRepository.findProjectsByLanguageName("Java");
+        List<Project> projectsWithLanguage1 =
+                projectRepository.findProjectsByLanguageName("Java".toUpperCase(Locale.ROOT));
 
         assertEquals(2, projectsWithLanguage1.size());
         assertTrue(projectsWithLanguage1.contains(project1));

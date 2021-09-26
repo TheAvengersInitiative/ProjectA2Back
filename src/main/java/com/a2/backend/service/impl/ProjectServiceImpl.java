@@ -166,21 +166,23 @@ public class ProjectServiceImpl implements ProjectService {
             nullLangs = false;
             List<String> languages = projectSearchDTO.getLanguages();
             for (String language : languages) {
-                result.addAll(projectRepository.findProjectsByLanguageName(language));
-                validLanguages.addAll(languageRepository.findLanguageName(language));
+                result.addAll(
+                        projectRepository.findProjectsByLanguageName(
+                                language.toUpperCase(Locale.ROOT)));
+                validLanguages.addAll(
+                        languageRepository.findLanguageName(language.toUpperCase(Locale.ROOT)));
             }
         }
         if (projectSearchDTO.getTags() != null && !projectSearchDTO.getTags().isEmpty()) {
             nullTags = false;
             List<String> tags = projectSearchDTO.getTags();
             for (String tag : tags) {
-                result.addAll(projectRepository.findProjectsByTagName(tag));
-                validTags.addAll(tagRepository.findTagName(tag));
+                result.addAll(
+                        projectRepository.findProjectsByTagName(tag.toUpperCase(Locale.ROOT)));
+                validTags.addAll(tagRepository.findTagName(tag.toUpperCase(Locale.ROOT)));
             }
         }
-        for (int i = 0; i < validLanguages.size(); i++) {
-            System.out.println(validLanguages.get(i));
-        }
+
         for (int i = 0; i < result.size() - 1; i++) {
             for (int j = i + 1; j < result.size(); j++) {
                 if (result.get(i).getId().equals(result.get(j).getId())) {

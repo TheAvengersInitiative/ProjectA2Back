@@ -1302,7 +1302,7 @@ class ProjectControllerTest {
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
-                        .tags(Arrays.asList("tag"))
+                        .tags(Arrays.asList("tAg"))
                         .languages(Arrays.asList("Script"))
                         .build();
 

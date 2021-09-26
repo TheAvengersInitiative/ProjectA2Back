@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Language;
 import java.util.List;
+import java.util.Locale;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,6 +74,6 @@ class LanguageRepositoryTest {
         languageRepository.save(language);
         languageRepository.save(language2);
 
-        assertEquals(languageRepository.findLanguageName("Ja").size(), 1);
+        assertEquals(languageRepository.findLanguageName("Ja".toUpperCase(Locale.ROOT)).size(), 1);
     }
 }

@@ -452,12 +452,20 @@ class ProjectServiceImplTest {
                         .tags(tags2)
                         .languages(languages2)
                         .build();
+        ProjectCreateDTO projectToCreate2 =
+                ProjectCreateDTO.builder()
+                        .title("ProjectTitle")
+                        .description(description)
+                        .links(links)
+                        .tags(Arrays.asList("tag7", "tag8"))
+                        .languages(languages2)
+                        .build();
         ProjectSearchDTO projectSeached =
-                ProjectSearchDTO.builder().tags(Arrays.asList("tag5", "TAg6")).build();
+                ProjectSearchDTO.builder().tags(Arrays.asList("tAg5", "Ag6")).build();
         val project = projectService.createProject(projectToCreateWithRepeatedTag);
+        val project2 = projectService.createProject(projectToCreate2);
 
-        assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
-        assertEquals(projectToCreateWithRepeatedTag.getDescription(), project.getDescription());
+        assertEquals(projectService.searchProjecsByFilter(projectSeached).size(), 1);
         assertEquals(
                 projectService.searchProjecsByFilter(projectSeached).get(0).getTitle(), title2);
     }
