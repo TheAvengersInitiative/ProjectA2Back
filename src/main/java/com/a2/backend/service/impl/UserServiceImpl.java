@@ -2,23 +2,20 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
-import com.a2.backend.model.PasswordRecoveryDTO;
-import com.a2.backend.model.PasswordRecoveryInitDTO;
-import com.a2.backend.model.PreferencesUpdateDTO;
-import com.a2.backend.model.UserCreateDTO;
-import com.a2.backend.model.UserUpdateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.MailService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
-import java.util.*;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -62,7 +59,7 @@ public class UserServiceImpl implements UserService {
         User user =
                 User.builder()
                         .nickname(userCreateDTO.getNickname())
-                        .email(userCreateDTO.getEmail())
+                        .email(userCreateDTO.getEmail().toLowerCase())
                         .biography(userCreateDTO.getBiography())
                         .password(passwordEncoder.encode(userCreateDTO.getPassword()))
                         .confirmationToken(userCreateDTO.getConfirmationToken())
@@ -92,7 +89,8 @@ public class UserServiceImpl implements UserService {
 
         loggedUser.setNickname(userUpdateDTO.getNickname());
         loggedUser.setBiography(userUpdateDTO.getBiography());
-        loggedUser.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
+        if (userUpdateDTO.getPassword() != null)
+            loggedUser.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
         return userRepository.save(loggedUser);
     }
 
