@@ -146,9 +146,7 @@ public class UserLoginLogoutTest {
                         .email(email)
                         .biography(biography)
                         .password(password)
-                        .confirmationToken(confirmationToken)
                         .build();
-        String validConfirmationToken = "token001";
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -157,16 +155,26 @@ public class UserLoginLogoutTest {
 
         val userToActivate = postResponse.getBody();
 
+        val confirmationToken =
+                userRepository
+                        .findById(postResponse.getBody().getId())
+                        .get()
+                        .getConfirmationToken();
+
+        ConfirmationTokenDTO confirmationTokenDTO =
+                ConfirmationTokenDTO.builder()
+                        .confirmationToken(confirmationToken)
+                        .email(email)
+                        .build();
+        confirmationTokenDTO.setConfirmationToken(confirmationToken);
+
+        HttpEntity<ConfirmationTokenDTO> updatedRequest = new HttpEntity<>(confirmationTokenDTO);
+
         val getResponse =
                 restTemplate.exchange(
-                        String.format(
-                                "%s/%s/%s/%s",
-                                baseUrl,
-                                confirmationUrl,
-                                userToActivate.getId(),
-                                validConfirmationToken),
-                        HttpMethod.GET,
-                        null,
+                        String.format("%s/%s", baseUrl, confirmationUrl),
+                        HttpMethod.POST,
+                        updatedRequest,
                         User.class);
         assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
