@@ -20,5 +20,5 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(l.name) LIKE %?1% ")
     List<Project> findProjectsByLanguageName(String name);
 
-    List<Project> findByTitleContaining(String title);
+    List<Project> findByTitleContainingIgnoreCase(String title);
 }

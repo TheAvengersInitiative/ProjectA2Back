@@ -1084,7 +1084,7 @@ class ProjectControllerTest {
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
-                        .title(title)
+                        .title("PrOjEct")
                         .tags(Arrays.asList("tag8"))
                         .languages(Arrays.asList("TypeScript"))
                         .build();

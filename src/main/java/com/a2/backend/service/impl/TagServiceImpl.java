@@ -6,6 +6,7 @@ import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.TagService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +74,9 @@ public class TagServiceImpl implements TagService {
     @Override
     public void deleteUnusedTags(List<Tag> removedTags) {
         for (Tag tag : removedTags) {
-            if (projectRepository.findProjectsByTagName(tag.getName()).isEmpty()) {
+            if (projectRepository
+                    .findProjectsByTagName(tag.getName().toUpperCase(Locale.ROOT))
+                    .isEmpty()) {
                 tagRepository.deleteById(tag.getId());
             }
         }

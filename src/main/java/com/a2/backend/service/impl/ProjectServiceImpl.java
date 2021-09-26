@@ -160,7 +160,8 @@ public class ProjectServiceImpl implements ProjectService {
         boolean nullPage = projectSearchDTO.getPage() == -1;
         if (projectSearchDTO.getTitle() != null) {
             nullTitle = false;
-            result.addAll(projectRepository.findByTitleContaining(projectSearchDTO.getTitle()));
+            result.addAll(
+                    projectRepository.findByTitleContainingIgnoreCase(projectSearchDTO.getTitle()));
         }
         if (projectSearchDTO.getLanguages() != null && !projectSearchDTO.getLanguages().isEmpty()) {
             nullLangs = false;
