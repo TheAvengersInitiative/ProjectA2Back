@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Tag;
 import java.util.List;
+import java.util.Locale;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,5 +65,16 @@ class TagRepositoryTest {
         tagRepository.save(tag1);
 
         assertTrue(tagRepository.findByName("tag2").isEmpty());
+    }
+
+    @Test
+    void Test004_LanguageRepositoryWhenGivenExistingNameFindsLanguage() {
+        Tag tag1 = Tag.builder().name("tAg1").build();
+        Tag tag2 = Tag.builder().name("NotFoundTag").build();
+        tagRepository.save(tag1);
+        tagRepository.save(tag2);
+
+        assertEquals(tagRepository.findTagName("aG1".toUpperCase(Locale.ROOT)).get(0), "tAg1");
+        assertEquals(tagRepository.findTagName("ag1".toUpperCase(Locale.ROOT)).size(), 1);
     }
 }

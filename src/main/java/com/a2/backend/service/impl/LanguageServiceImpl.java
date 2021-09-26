@@ -5,10 +5,7 @@ import com.a2.backend.exception.LanguageNotValidException;
 import com.a2.backend.repository.LanguageRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.LanguageService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -88,7 +85,9 @@ public class LanguageServiceImpl implements LanguageService {
     @Override
     public void deleteUnusedLanguages(List<Language> removedLanguages) {
         for (Language language : removedLanguages) {
-            if (projectRepository.findProjectsByLanguageName(language.getName()).isEmpty()) {
+            if (projectRepository
+                    .findProjectsByLanguageName(language.getName().toUpperCase(Locale.ROOT))
+                    .isEmpty()) {
                 languageRepository.deleteById(language.getId());
             }
         }

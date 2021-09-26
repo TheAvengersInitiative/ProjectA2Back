@@ -11,6 +11,6 @@ public interface LanguageRepository extends JpaRepository<Language, UUID> {
 
     Optional<Language> findByName(String name);
 
-    @Query("SELECT DISTINCT name FROM Language l WHERE l.name LIKE %?1%")
-    List<String> findLanguageByName(String language);
+    @Query("SELECT DISTINCT name FROM Language l WHERE UPPER(l.name) LIKE %?1%")
+    List<String> findLanguageName(String name);
 }

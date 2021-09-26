@@ -9,6 +9,7 @@ import com.a2.backend.entity.User;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
@@ -401,5 +402,71 @@ class ProjectServiceImplTest {
                 languageService.findLanguagesByNames(projectToCreateWithRepeatedTag.getLanguages()),
                 project.getLanguages());
         assertEquals(projectToCreateWithRepeatedTag.getLinks(), project.getLinks());
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void Test017_SearchProjectsByLangsCaseInsensitive() {
+        userRepository.save(owner);
+
+        projectService.createProject(projectToCreate);
+
+        String title2 = "A Non Existent Project title";
+        List<String> tags2 = Arrays.asList("tag5", "tag6");
+        List<String> languages2 = Arrays.asList("Java", "Python");
+
+        ProjectCreateDTO projectToCreateWithRepeatedTag =
+                ProjectCreateDTO.builder()
+                        .title(title2)
+                        .description(description)
+                        .links(links)
+                        .tags(tags2)
+                        .languages(languages2)
+                        .build();
+        ProjectSearchDTO projectSeached =
+                ProjectSearchDTO.builder().tags(tags2).languages(Arrays.asList("yTHoN")).build();
+        val project = projectService.createProject(projectToCreateWithRepeatedTag);
+
+        assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
+        assertEquals(projectToCreateWithRepeatedTag.getDescription(), project.getDescription());
+        assertEquals(
+                projectService.searchProjecsByFilter(projectSeached).get(0).getTitle(), title2);
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void Test018_SearchProjectsByTagsCaseInsensitive() {
+        userRepository.save(owner);
+
+        projectService.createProject(projectToCreate);
+
+        String title2 = "A Non Existent Project title";
+        List<String> tags2 = Arrays.asList("tag5", "tag6");
+        List<String> languages2 = Arrays.asList("Java", "Python");
+
+        ProjectCreateDTO projectToCreateWithRepeatedTag =
+                ProjectCreateDTO.builder()
+                        .title(title2)
+                        .description(description)
+                        .links(links)
+                        .tags(tags2)
+                        .languages(languages2)
+                        .build();
+        ProjectCreateDTO projectToCreate2 =
+                ProjectCreateDTO.builder()
+                        .title("ProjectTitle")
+                        .description(description)
+                        .links(links)
+                        .tags(Arrays.asList("tag7", "tag8"))
+                        .languages(languages2)
+                        .build();
+        ProjectSearchDTO projectSeached =
+                ProjectSearchDTO.builder().tags(Arrays.asList("tAg5", "Ag6")).build();
+        val project = projectService.createProject(projectToCreateWithRepeatedTag);
+        val project2 = projectService.createProject(projectToCreate2);
+
+        assertEquals(projectService.searchProjecsByFilter(projectSeached).size(), 1);
+        assertEquals(
+                projectService.searchProjecsByFilter(projectSeached).get(0).getTitle(), title2);
     }
 }

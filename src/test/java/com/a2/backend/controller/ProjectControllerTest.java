@@ -1084,7 +1084,7 @@ class ProjectControllerTest {
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
-                        .title(title)
+                        .title("PrOjEct")
                         .tags(Arrays.asList("tag8"))
                         .languages(Arrays.asList("TypeScript"))
                         .build();
@@ -1302,7 +1302,7 @@ class ProjectControllerTest {
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
-                        .tags(Arrays.asList("tag"))
+                        .tags(Arrays.asList("tAg"))
                         .languages(Arrays.asList("Script"))
                         .build();
 
@@ -1463,6 +1463,118 @@ class ProjectControllerTest {
                         .getContentAsString();
 
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(1, projects.length);
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void Test027_ProjectControllerSuccesfulMultiFilterSearchWithInsensitiveCase() throws Exception {
+        userRepository.save(owner);
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
+        List<String> secondLinks = Arrays.asList("http://link.com", "http://link2.com");
+        List<String> thirdLinks = Arrays.asList("http://link.com", "http://link2.com");
+        List<String> fourthLinks = Arrays.asList("http://link.com", "http://link2.com");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> secondTags = Arrays.asList("tag3", "tag4");
+        List<String> thirdTags = Arrays.asList("tag5", "tag6");
+        List<String> fourthTags = Arrays.asList("tag7", "tag8");
+        List<String> languages = Arrays.asList("Java", "C");
+        List<String> secondLanguages = Arrays.asList("Java", "Python");
+        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
+        List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
+
+        ProjectCreateDTO firstProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .tags(tags)
+                        .links(links)
+                        .languages(languages)
+                        .featured(true)
+                        .build();
+        ProjectCreateDTO secondProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Not Start Project")
+                        .description(description)
+                        .links(secondLinks)
+                        .tags(secondTags)
+                        .languages(secondLanguages)
+                        .build();
+        ProjectCreateDTO thirdProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project2 Title")
+                        .description(description)
+                        .links(thirdLinks)
+                        .tags(thirdTags)
+                        .languages(thirdLanguages)
+                        .build();
+        ProjectCreateDTO fourthProjectToCreate =
+                ProjectCreateDTO.builder()
+                        .title("Project3 Title")
+                        .description(description)
+                        .links(fourthLinks)
+                        .tags(fourthTags)
+                        .featured(true)
+                        .languages(fourthlanguages)
+                        .build();
+
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .featured(true)
+                        .page(0)
+                        .languages(Arrays.asList("scrIpT"))
+                        .build();
+
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        mvc.perform(
+                        MockMvcRequestBuilders.post(baseUrl)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+
         assertEquals(1, projects.length);
     }
 }
