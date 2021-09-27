@@ -1,5 +1,6 @@
 package com.a2.backend.service.impl;
 
+import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
@@ -10,6 +11,7 @@ import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
 import java.util.*;
+import java.util.function.Function;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -185,5 +187,55 @@ public class UserServiceImpl implements UserService {
     public void sendPasswordRecoveryMail(PasswordRecoveryInitDTO passwordRecoveryInitDTO) {
         val userOptional = userRepository.findByEmail(passwordRecoveryInitDTO.getEmail());
         userOptional.ifPresent(mailService::sendForgotPasswordMail);
+    }
+
+    @Override
+    public List<Project> getPreferedProjects() {
+
+        Function<List<Project>, Project> getRandomProject =
+                projects -> {
+                    Random rand = new Random();
+                    int index = rand.nextInt(projectService.getAllProjects().size());
+                    return projects.remove(index);
+                };
+
+        List<Project> projects = new ArrayList<>();
+        List<Project> preferedProjects =
+                getUser()
+                        .map(
+                                user -> {
+                                    ProjectSearchDTO projectSearchDTO =
+                                            ProjectSearchDTO.builder()
+                                                    .tags(user.getPreferredTags())
+                                                    .languages(user.getPreferredLanguages())
+                                                    .build();
+                                    return projectService.searchProjecsByFilter(projectSearchDTO);
+                                })
+                        .orElseGet(projectService::getAllProjects);
+
+        List<Project> allFeaturedProjects = projectService.getFeaturedProject();
+
+        if (preferedProjects.size() < 4) {
+            projects.addAll(preferedProjects);
+            for (int i = projects.size(); i < 6; i++) {
+                projects.add(getRandomProject.apply(allFeaturedProjects));
+            }
+            return projects;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            projects.add(getRandomProject.apply(preferedProjects));
+        }
+
+        for (int i = projects.size(); i < 6; i++) {
+            projects.add(getRandomProject.apply(allFeaturedProjects));
+        }
+        return projects;
+    }
+    // TODO: testear cada caso de si tengo o no la cantidad necesaria de projects.
+    // TODO: hace un happy test qeu tenga toda las cosas ideales, hacer el resto de los tests
+    @Override
+    public Optional<User> getUser() {
+        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findByEmail);
     }
 }

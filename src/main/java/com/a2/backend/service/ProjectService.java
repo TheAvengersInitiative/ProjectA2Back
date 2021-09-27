@@ -26,5 +26,7 @@ public interface ProjectService {
 
     List<Project> searchProjecsByFilter(ProjectSearchDTO projectSearchDTO);
 
+    List<Project> getFeaturedProject();
+
     List<Project> getMyProjects();
 }
