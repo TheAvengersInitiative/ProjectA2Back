@@ -3,6 +3,7 @@ package com.a2.backend.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.ConfirmationTokenDTO;
 import com.a2.backend.model.LoginDTO;
@@ -24,7 +25,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-public class UserLoginLogoutTest {
+public class UserLoginLogoutTest extends AbstractTest {
 
     @Autowired TestRestTemplate restTemplate;
     @Autowired UserRepository userRepository;
@@ -65,7 +66,7 @@ public class UserLoginLogoutTest {
         ConfirmationTokenDTO confirmationTokenDTO =
                 ConfirmationTokenDTO.builder()
                         .confirmationToken(confirmationToken)
-                        .email(email)
+                        .id(userToActivate.getId())
                         .build();
         confirmationTokenDTO.setConfirmationToken(confirmationToken);
 
@@ -164,7 +165,7 @@ public class UserLoginLogoutTest {
         ConfirmationTokenDTO confirmationTokenDTO =
                 ConfirmationTokenDTO.builder()
                         .confirmationToken(confirmationToken)
-                        .email(email)
+                        .id(userToActivate.getId())
                         .build();
         confirmationTokenDTO.setConfirmationToken(confirmationToken);
 

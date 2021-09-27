@@ -3,6 +3,7 @@ package com.a2.backend.controller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import com.a2.backend.repository.UserRepository;
@@ -28,7 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @AutoConfigureMockMvc
-class UserControllerTest {
+class UserControllerTest extends AbstractTest {
 
     @Autowired TestRestTemplate restTemplate;
 
@@ -55,21 +56,9 @@ class UserControllerTest {
                     .biography(biography)
                     .password(password)
                     .build();
-    PasswordRecoveryDTO passwordRecoveryDTO =
-            PasswordRecoveryDTO.builder()
-                    .email(email)
-                    .passwordRecoveryToken(recoveryToken)
-                    .newPassword("NewPassword001")
-                    .build();
 
     List<String> tags = List.of("tag1", "tag2");
     List<String> languages = List.of("Java", "C");
-
-    ConfirmationTokenDTO confirmationTokenDTO =
-            ConfirmationTokenDTO.builder()
-                    .confirmationToken(confirmationToken)
-                    .email(email)
-                    .build();
 
     @Test
     void
@@ -249,6 +238,12 @@ class UserControllerTest {
 
         val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
         assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        ConfirmationTokenDTO confirmationTokenDTO =
+                ConfirmationTokenDTO.builder()
+                        .confirmationToken(confirmationToken)
+                        .id(postResponse.getBody().getId())
+                        .build();
 
         val confirmationToken =
                 userRepository
@@ -433,6 +428,12 @@ class UserControllerTest {
                         .get()
                         .getPasswordRecoveryToken();
 
+        ConfirmationTokenDTO confirmationTokenDTO =
+                ConfirmationTokenDTO.builder()
+                        .confirmationToken(confirmationToken)
+                        .id(getResponse.getBody().getId())
+                        .build();
+
         val confirmationToken =
                 userRepository.findById(getResponse.getBody().getId()).get().getConfirmationToken();
         confirmationTokenDTO.setConfirmationToken(confirmationToken);
@@ -446,6 +447,13 @@ class UserControllerTest {
                         updatedRequest,
                         User.class);
         assertEquals(HttpStatus.OK, getActivatedResponse.getStatusCode());
+
+        PasswordRecoveryDTO passwordRecoveryDTO =
+                PasswordRecoveryDTO.builder()
+                        .id(getActivatedResponse.getBody().getId())
+                        .passwordRecoveryToken(recoveryToken)
+                        .newPassword("NewPassword001")
+                        .build();
 
         passwordRecoveryDTO.setPasswordRecoveryToken(recoverPasswordToken);
         HttpEntity<PasswordRecoveryDTO> passwordRecoveryRequest =
@@ -677,5 +685,47 @@ class UserControllerTest {
                         .getContentAsString();
 
         assertEquals("No user found for email: notReal@gmail.com", errorMessage);
+    }
+
+    @Test
+    void Test024_GivenAUserStartingARecoveryPasswordProcessWhenUserExistsThenOkIsReturned() {
+        HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
+
+        val postResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, request, User.class);
+        assertEquals(HttpStatus.CREATED, postResponse.getStatusCode());
+
+        val confirmationToken =
+                userRepository
+                        .findById(postResponse.getBody().getId())
+                        .get()
+                        .getConfirmationToken();
+        ConfirmationTokenDTO confirmationTokenDTO =
+                ConfirmationTokenDTO.builder()
+                        .confirmationToken(confirmationToken)
+                        .id(postResponse.getBody().getId())
+                        .build();
+        confirmationTokenDTO.setConfirmationToken(confirmationToken);
+
+        HttpEntity<ConfirmationTokenDTO> updatedRequest = new HttpEntity<>(confirmationTokenDTO);
+
+        val postNewResponse =
+                restTemplate.exchange(
+                        String.format("%s/%s", baseUrl, confirmationUrl),
+                        HttpMethod.POST,
+                        updatedRequest,
+                        User.class);
+        assertEquals(HttpStatus.OK, postNewResponse.getStatusCode());
+
+        HttpEntity<PasswordRecoveryInitDTO> initRequest =
+                new HttpEntity<>(
+                        PasswordRecoveryInitDTO.builder().email(userCreateDTO.getEmail()).build());
+        val postStartPasswordRecovery =
+                restTemplate.exchange(
+                        String.format("%s/%s", baseUrl, "/recover"),
+                        HttpMethod.POST,
+                        initRequest,
+                        PasswordRecoveryInitDTO.class);
+
+        assertEquals(HttpStatus.OK, postStartPasswordRecovery.getStatusCode());
     }
 }

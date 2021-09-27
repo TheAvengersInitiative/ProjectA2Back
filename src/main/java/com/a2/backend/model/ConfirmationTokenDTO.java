@@ -1,6 +1,6 @@
 package com.a2.backend.model;
 
-import javax.validation.constraints.Email;
+import java.util.UUID;
 import javax.validation.constraints.Size;
 import lombok.*;
 
@@ -11,9 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConfirmationTokenDTO {
-
-    @Email(message = "Email must be valid")
-    String email;
+    UUID id;
 
     @Size(min = 32, max = 32)
     String confirmationToken;

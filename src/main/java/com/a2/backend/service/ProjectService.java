@@ -25,4 +25,6 @@ public interface ProjectService {
     List<String> getValidLanguageNames();
 
     List<Project> searchProjecsByFilter(ProjectSearchDTO projectSearchDTO);
+
+    List<Project> getMyProjects();
 }

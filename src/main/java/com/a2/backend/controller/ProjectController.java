@@ -86,4 +86,10 @@ public class ProjectController {
         return ResponseEntity.ok(
                 tagService.getAllTags().stream().map(Tag::getName).collect(Collectors.toList()));
     }
+
+    @GetMapping("/my-projects")
+    @Secured({SecurityConstants.USER_ROLE})
+    public ResponseEntity<List<Project>> getMyProjects() {
+        return ResponseEntity.ok(projectService.getMyProjects());
+    }
 }

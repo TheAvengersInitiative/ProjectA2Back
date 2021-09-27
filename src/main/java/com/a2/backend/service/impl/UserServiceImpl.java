@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final String validLanguageNames =
             "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
 
+
     private final List<String> validLanguageList =
             new ArrayList<>(Arrays.asList(validLanguageNames.split(", ")));
 
@@ -64,8 +65,9 @@ public class UserServiceImpl implements UserService {
                         .confirmationToken(randomStringUtils)
                         .passwordRecoveryToken(randomStringUtils)
                         .build();
-        mailService.sendConfirmationMail(user);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        mailService.sendConfirmationMail(savedUser);
+        return savedUser;
     }
 
     @Override
@@ -112,22 +114,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getLoggedUser() {
-        String email = SecurityUtils.getCurrentUserLogin().get();
-        Optional<User> loggedUser = userRepository.findByEmail(email);
-        if (loggedUser.isEmpty())
-            throw new UserNotFoundException(String.format("No user found for email: %s", email));
-        return loggedUser.get();
+        String email =
+                SecurityUtils.getCurrentUserLogin()
+                        .orElseThrow(() -> new UserNotLoggedIn("You must login first"));
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () ->
+                                new UserNotFoundException(
+                                        String.format("No user found for email: %s", email)));
     }
 
     @Override
     public User confirmUser(ConfirmationTokenDTO confirmationTokenDTO) {
-        val userOptional = userRepository.findByEmail(confirmationTokenDTO.getEmail());
-        if (userOptional.isEmpty()) {
-            throw new TokenConfirmationFailedException(
-                    String.format(
-                            "User with email: %s Not Found ", confirmationTokenDTO.getEmail()));
-        }
-        val user = userOptional.get();
+        val user =
+                userRepository
+                        .findById(confirmationTokenDTO.getId())
+                        .orElseThrow(
+                                () ->
+                                        new TokenConfirmationFailedException(
+                                                String.format(
+                                                        "User with id %s not found ",
+                                                        confirmationTokenDTO.getId())));
+
         if (user.isActive()) {
             throw new TokenConfirmationFailedException(
                     String.format("User %s Already Active ", user.getId()));
@@ -142,16 +151,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User recoverPassword(PasswordRecoveryDTO passwordRecoveryDTO) {
-        val userOptional = userRepository.findByEmail(passwordRecoveryDTO.getEmail());
-        if (userOptional.isEmpty()) {
+        val user =
+                userRepository
+                        .findById(passwordRecoveryDTO.getId())
+                        .orElseThrow(
+                                () ->
+                                        new InvalidPasswordRecoveryException(
+                                                "Invalid PasswordRecovery"));
+
+        if (!user.isActive()) {
             throw new InvalidPasswordRecoveryException("Invalid PasswordRecovery");
         }
-        if (!userOptional.get().isActive()) {
-            throw new InvalidPasswordRecoveryException("Invalid PasswordRecovery");
-        }
-        if (!userOptional
-                .get()
-                .getPasswordRecoveryToken()
+        if (!user.getPasswordRecoveryToken()
                 .equals(passwordRecoveryDTO.getPasswordRecoveryToken())) {
             throw new TokenConfirmationFailedException(
                     String.format(
@@ -162,14 +173,12 @@ public class UserServiceImpl implements UserService {
                 || passwordRecoveryDTO.getNewPassword().length() > 32) {
             throw new PasswordRecoveryFailedException("Invalid Body");
         }
-        val userToUpdatePassword = userOptional.get();
 
-        userToUpdatePassword.setPassword(
-                passwordEncoder.encode(passwordRecoveryDTO.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(passwordRecoveryDTO.getNewPassword()));
         String randomStringUtils = RandomStringUtils.getAlphaNumericString(32);
-        userToUpdatePassword.setPasswordRecoveryToken(randomStringUtils);
+        user.setPasswordRecoveryToken(randomStringUtils);
 
-        return userRepository.save(userToUpdatePassword);
+        return userRepository.save(user);
     }
 
     @Override
