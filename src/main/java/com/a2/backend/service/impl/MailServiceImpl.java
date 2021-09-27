@@ -1,42 +1,47 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
-import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile("!test")
 public class MailServiceImpl implements MailService {
 
     @Autowired private JavaMailSender emailsender;
 
-    private final UserRepository userRepository;
-
-    public MailServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @Override
     public void sendConfirmationMail(User user) {
-        this.sendEmail(
-                user.getEmail(),
-                "Account confirmation",
-                "Hello in order to confirm your account press this link: "
-                        + "http://localhost:3000/user/confirm?token="
-                        + user.getConfirmationToken());
+        String body =
+                "Hello in order to confirm your account go to this link: "
+                        + '\n'
+                        + "http://localhost:3000/verify/"
+                        + user.getId()
+                        + '/'
+                        + user.getConfirmationToken()
+                        + '\n'
+                        + '\n'
+                        + "The Project A2 team";
+        this.sendEmail(user.getEmail(), "Account confirmation", body);
     }
 
     @Override
     public void sendForgotPasswordMail(User user) {
-        this.sendEmail(
-                user.getEmail(),
-                "Password Recovery",
-                "Hello in order to confirm your account press this link: "
-                        + "http://localhost:3000/user/recover/forgot-password?token="
-                        + user.getPasswordRecoveryToken());
+        String body =
+                "Hello in order to change your password please follow this link: "
+                        + '\n'
+                        + "http://localhost:3000/forgot-password/"
+                        + user.getId()
+                        + '/'
+                        + user.getConfirmationToken()
+                        + '\n'
+                        + '\n'
+                        + "The Project A2 team";
+        this.sendEmail(user.getEmail(), "Password Recovery", body);
     }
 
     private void sendEmail(String mailTO, String subject, String content) {

@@ -1,6 +1,7 @@
 package com.a2.backend.model;
 
-import javax.validation.constraints.Email;
+import java.util.UUID;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.*;
 
@@ -12,8 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 public class PasswordRecoveryDTO {
 
-    @Email(message = "Email must be valid")
-    String email;
+    @NotNull UUID id;
 
     @Size(min = 8, max = 32, message = "Password must be between 8 and 32 characters")
     String newPassword;

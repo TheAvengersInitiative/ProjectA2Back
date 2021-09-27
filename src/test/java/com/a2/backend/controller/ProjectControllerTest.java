@@ -3,6 +3,7 @@ package com.a2.backend.controller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
@@ -30,9 +30,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @AutoConfigureMockMvc
-class ProjectControllerTest {
-
-    @Autowired private TestRestTemplate restTemplate;
+class ProjectControllerTest extends AbstractTest {
 
     @Autowired MockMvc mvc;
 

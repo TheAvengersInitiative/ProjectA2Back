@@ -2,6 +2,7 @@ package com.a2.backend.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.Language;
 import com.a2.backend.exception.LanguageNotValidException;
 import com.a2.backend.repository.LanguageRepository;
@@ -18,7 +19,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class LanguageServiceImplTest {
+class LanguageServiceImplTest extends AbstractTest {
 
     @Autowired private LanguageService languageService;
 

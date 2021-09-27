@@ -244,4 +244,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         return result;
     }
+
+    @Override
+    public List<Project> getMyProjects() {
+        val user = userService.getLoggedUser();
+        return projectRepository.findByOwner(user);
+    }
 }

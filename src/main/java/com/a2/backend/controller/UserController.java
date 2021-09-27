@@ -41,7 +41,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userConfirmed);
     }
 
-    @GetMapping("/recover")
+    @PostMapping("/recover")
     public ResponseEntity<?> passwordRecoveryInit(
             @RequestBody PasswordRecoveryInitDTO passwordRecoveryInitDTO) {
         userService.sendPasswordRecoveryMail(passwordRecoveryInitDTO);

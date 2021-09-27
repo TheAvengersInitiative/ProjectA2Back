@@ -3,6 +3,7 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.TagService;
@@ -17,7 +18,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class TagServiceImplTest {
+class TagServiceImplTest extends AbstractTest {
 
     @Autowired private TagService tagService;
 
