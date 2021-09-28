@@ -101,15 +101,11 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://www.gnu.org/", "https://www.linux.org/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("C").build(),
                                         Tag.builder().name("C++").build(),
                                         Tag.builder().name("GNU").build(),
                                         Tag.builder().name("Linux").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
-                        .languages(
-                                listOf(
-                                        Language.builder().name("C").build(),
-                                        Language.builder().name("C++").build()))
+                        .languages(listOf(Language.builder().name("C++").build()))
                         .build();
         Project tensorFlow =
                 Project.builder()
@@ -121,8 +117,7 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         Tag.builder().name("Python").build(),
                                         Tag.builder().name("ML").build(),
-                                        Tag.builder().name("CUDA").build(),
-                                        Tag.builder().name("C").build()))
+                                        Tag.builder().name("CUDA").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(
                                 listOf(
@@ -137,13 +132,11 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://nodejs.org/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("JavaScript").build(),
                                         Tag.builder().name("V8").build(),
                                         Tag.builder().name("Node").build()))
                         .owner(userRepository.findByNickname("FabriDS23").get())
                         .languages(
                                 listOf(
-                                        Language.builder().name("JavaScript").build(),
                                         Language.builder().name("Node").build(),
                                         Language.builder().name("V8").build()))
                         .build();

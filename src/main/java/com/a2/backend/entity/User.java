@@ -28,6 +28,7 @@ public class User {
     @Column(unique = true)
     String nickname;
 
+    @Column(length = 500)
     String biography;
 
     @JsonIgnore String password; // Hashed
