@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
     private final String validLanguageNames =
             "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
 
-
     private final List<String> validLanguageList =
             new ArrayList<>(Arrays.asList(validLanguageNames.split(", ")));
 
@@ -232,8 +231,7 @@ public class UserServiceImpl implements UserService {
         }
         return projects;
     }
-    // TODO: testear cada caso de si tengo o no la cantidad necesaria de projects.
-    // TODO: hace un happy test qeu tenga toda las cosas ideales, hacer el resto de los tests
+
     @Override
     public Optional<User> getUser() {
         return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findByEmail);

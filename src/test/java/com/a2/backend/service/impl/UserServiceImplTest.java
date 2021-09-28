@@ -2,8 +2,8 @@ package com.a2.backend.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.a2.backend.entity.Project;
 import com.a2.backend.AbstractTest;
+import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
