@@ -91,10 +91,18 @@ public class ProjectServiceImpl implements ProjectService {
                     String.format(
                             "The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
-        if (projectRepository.findByTitle(projectUpdateDTO.getTitle()).isPresent())
-            throw new ProjectWithThatTitleExistsException(
-                    String.format(
-                            "There is an existing project named %s", projectUpdateDTO.getTitle()));
+
+        val projectToModify = projectToModifyOptional.get();
+        Optional<Project> byTitle = projectRepository.findByTitle(projectUpdateDTO.getTitle());
+        byTitle.ifPresent(
+                x -> {
+                    if (!x.getId().equals(projectToModify.getId())) {
+                        throw new ProjectWithThatTitleExistsException(
+                                String.format(
+                                        "There is an existing project named %s",
+                                        projectUpdateDTO.getTitle()));
+                    }
+                });
 
         List<Tag> removedTags =
                 tagService.getRemovedTags(

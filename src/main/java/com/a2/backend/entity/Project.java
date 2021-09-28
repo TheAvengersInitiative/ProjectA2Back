@@ -36,14 +36,26 @@ public class Project implements Serializable {
     @Size(min = 1, max = 5)
     private List<String> links;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE,
+                CascadeType.DETACH,
+                CascadeType.REFRESH
+            })
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotNull
     @NotEmpty
     @Size(min = 1, max = 5)
     private List<Tag> tags;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.MERGE,
+                CascadeType.DETACH,
+                CascadeType.REFRESH
+            })
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Language> languages;
 
