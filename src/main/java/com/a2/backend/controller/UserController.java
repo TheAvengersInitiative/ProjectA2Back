@@ -81,7 +81,7 @@ public class UserController {
 
     @GetMapping("/preferences")
     public ResponseEntity<List<Project>> getPreferedProjects() {
-        val preferedProjects = userService.getPreferedProjects();
+        val preferedProjects = userService.getPreferredProjects();
         return ResponseEntity.status(HttpStatus.OK).body(preferedProjects);
     }
 }

@@ -24,7 +24,7 @@ public interface UserService {
 
     User getLoggedUser();
 
-    List<Project> getPreferedProjects();
+    List<Project> getPreferredProjects();
 
     Optional<User> getUser();
 }

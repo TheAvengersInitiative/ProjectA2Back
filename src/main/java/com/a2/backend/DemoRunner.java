@@ -127,7 +127,7 @@ public class DemoRunner implements CommandLineRunner {
                         .languages(
                                 listOf(
                                         Language.builder().name("Python").build(),
-                                        Language.builder().name("ML").build()))
+                                        Language.builder().name("MATLAB").build()))
                         .build();
         Project node =
                 Project.builder()

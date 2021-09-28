@@ -12,6 +12,7 @@ import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -189,17 +190,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Project> getPreferedProjects() {
+    public List<Project> getPreferredProjects() {
 
-        Function<List<Project>, Project> getRandomProject =
+        Function<List<Project>, Optional<Project>> getRandomProject =
                 projects -> {
-                    Random rand = new Random();
-                    int index = rand.nextInt(projectService.getAllProjects().size());
-                    return projects.remove(index);
+                    if (projects.isEmpty()) {
+                        return Optional.empty();
+                    } else {
+                        return Optional.of(projects.remove(new Random().nextInt(projects.size())));
+                    }
                 };
 
         List<Project> projects = new ArrayList<>();
-        List<Project> preferedProjects =
+        List<Project> featured = projectService.getFeaturedProject();
+
+        for (int i = 0; i < 2; i++) {
+            getRandomProject.apply(featured).map(projects::add);
+        }
+
+        List<Project> preferredProjects =
                 getUser()
                         .map(
                                 user -> {
@@ -212,22 +221,17 @@ public class UserServiceImpl implements UserService {
                                 })
                         .orElseGet(projectService::getAllProjects);
 
-        List<Project> allFeaturedProjects = projectService.getFeaturedProject();
-
-        if (preferedProjects.size() < 4) {
-            projects.addAll(preferedProjects);
-            for (int i = projects.size(); i < 6; i++) {
-                projects.add(getRandomProject.apply(allFeaturedProjects));
-            }
-            return projects;
-        }
-
         for (int i = 0; i < 4; i++) {
-            projects.add(getRandomProject.apply(preferedProjects));
+            getRandomProject.apply(preferredProjects).map(projects::add);
         }
 
-        for (int i = projects.size(); i < 6; i++) {
-            projects.add(getRandomProject.apply(allFeaturedProjects));
+        val filteredProjects =
+                projectService.getAllProjects().stream()
+                        .filter(p -> !projects.contains(p))
+                        .collect(Collectors.toList());
+
+        while (projects.size() < 6 && !filteredProjects.isEmpty()) {
+            getRandomProject.apply(filteredProjects).map(projects::add);
         }
         return projects;
     }

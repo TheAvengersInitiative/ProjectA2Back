@@ -27,7 +27,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         userService.getLoggedUser().setPreferredTags(preferedTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferedTags).build();
         List<Project> preferedProjects = projectService.searchProjecsByFilter(projectSearchDTO);
-        List<Project> projects = userService.getPreferedProjects();
+        List<Project> projects = userService.getPreferredProjects();
 
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
@@ -43,7 +43,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
     void
             Test002_GivenValidUserWithNotPreferedTagsWhenWantToGetProjectsThenReturnProjectListWithfourRandomProjectsAndTwoFeatured() {
 
-        List<Project> projects = userService.getPreferedProjects();
+        List<Project> projects = userService.getPreferredProjects();
 
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
@@ -59,7 +59,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         userService.getLoggedUser().setPreferredTags(preferedTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferedTags).build();
         List<Project> preferedProjects = projectService.searchProjecsByFilter(projectSearchDTO);
-        List<Project> projects = userService.getPreferedProjects();
+        List<Project> projects = userService.getPreferredProjects();
         for (int i = 0; i < projects.size(); i++) {
             projects.get(i).setFeatured(false);
         }

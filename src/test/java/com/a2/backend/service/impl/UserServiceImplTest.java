@@ -434,7 +434,7 @@ class UserServiceImplTest extends AbstractTest {
         }
         assertEquals(6, projectService.getAllProjects().size());
 
-        List<Project> projects = userService.getPreferedProjects();
+        List<Project> projects = userService.getPreferredProjects();
 
         assertNotNull(projects);
     }
