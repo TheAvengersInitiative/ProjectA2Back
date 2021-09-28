@@ -71,4 +71,5 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         assertTrue(preferedProjects.contains(projects.get(5)));
         assertNotNull(projects);
     }
+
 }
