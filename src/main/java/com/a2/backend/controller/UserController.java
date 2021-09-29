@@ -1,7 +1,6 @@
 package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
-import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import com.a2.backend.service.UserService;
@@ -80,7 +79,7 @@ public class UserController {
     }
 
     @GetMapping("/preferences")
-    public ResponseEntity<List<Project>> getPreferedProjects() {
+    public ResponseEntity<List<ProjectDTO>> getPreferedProjects() {
         val preferedProjects = userService.getPreferredProjects();
         return ResponseEntity.status(HttpStatus.OK).body(preferedProjects);
     }

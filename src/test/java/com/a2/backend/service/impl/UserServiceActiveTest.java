@@ -3,11 +3,13 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Project;
+import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -24,18 +26,23 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         List<String> preferedTags = new ArrayList<>();
         preferedTags.add("Python");
         preferedTags.add("C");
+
         userService.getLoggedUser().setPreferredTags(preferedTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferedTags).build();
-        List<Project> preferedProjects = projectService.searchProjecsByFilter(projectSearchDTO);
-        List<Project> projects = userService.getPreferredProjects();
+        List<Project> preferredProjects = projectService.searchProjecsByFilter(projectSearchDTO);
+        List<ProjectDTO> projects = userService.getPreferredProjects();
+        assertEquals(6, projects.size());
 
+        List<UUID> preferredProjectsId = new ArrayList<>();
+        for (int i = 0; i < preferredProjects.size(); i++) {
+            preferredProjectsId.add(preferredProjects.get(i).getId());
+        }
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
-
-        assertTrue(preferedProjects.contains(projects.get(2)));
-        assertTrue(preferedProjects.contains(projects.get(3)));
-        assertTrue(preferedProjects.contains(projects.get(4)));
-        assertTrue(preferedProjects.contains(projects.get(5)));
+        assertTrue(preferredProjectsId.contains(projects.get(2).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(3).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(4).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(5).getId()));
     }
 
     @Test
@@ -43,7 +50,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
     void
             Test002_GivenValidUserWithNotPreferedTagsWhenWantToGetProjectsThenReturnProjectListWithfourRandomProjectsAndTwoFeatured() {
 
-        List<Project> projects = userService.getPreferredProjects();
+        List<ProjectDTO> projects = userService.getPreferredProjects();
 
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
@@ -58,18 +65,21 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         preferedTags.add("C");
         userService.getLoggedUser().setPreferredTags(preferedTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferedTags).build();
-        List<Project> preferedProjects = projectService.searchProjecsByFilter(projectSearchDTO);
-        List<Project> projects = userService.getPreferredProjects();
+        List<Project> preferredProjects = projectService.searchProjecsByFilter(projectSearchDTO);
+        List<ProjectDTO> projects = userService.getPreferredProjects();
         for (int i = 0; i < projects.size(); i++) {
             projects.get(i).setFeatured(false);
         }
         assertFalse(projects.get(0).isFeatured());
         assertFalse(projects.get(1).isFeatured());
-        assertTrue(preferedProjects.contains(projects.get(2)));
-        assertTrue(preferedProjects.contains(projects.get(3)));
-        assertTrue(preferedProjects.contains(projects.get(4)));
-        assertTrue(preferedProjects.contains(projects.get(5)));
-        assertNotNull(projects);
-    }
 
+        List<UUID> preferredProjectsId = new ArrayList<>();
+        for (int i = 0; i < preferredProjects.size(); i++) {
+            preferredProjectsId.add(preferredProjects.get(i).getId());
+        }
+        assertTrue(preferredProjectsId.contains(projects.get(2).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(3).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(4).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(5).getId()));
+    }
 }

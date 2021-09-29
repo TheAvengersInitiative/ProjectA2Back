@@ -3,7 +3,6 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.AbstractTest;
-import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
@@ -399,43 +398,5 @@ class UserServiceImplTest extends AbstractTest {
         assertThrows(
                 LanguageNotValidException.class,
                 () -> userService.updatePreferences(preferencesUpdateDTO));
-    }
-
-    @Test
-    @WithMockUser(username = "some@email.com")
-    void
-            Test021_GivenValidUserAndValidProjectsWhenWantToGetThePreferedProjectsThenReturnProjectList() {
-        userService.createUser(userCreateDTO);
-        int i = 0;
-        int j = 0;
-        while (i < 4) {
-            projectService.createProject(
-                    ProjectCreateDTO.builder()
-                            .title("Project Title " + i)
-                            .description("description" + i)
-                            .tags(Arrays.asList("tag1", "tag2"))
-                            .links(Arrays.asList("link1", "link2"))
-                            .languages(Arrays.asList("Java", "C"))
-                            .build());
-            i++;
-        }
-        assertEquals(4, projectService.getAllProjects().size());
-        while (j < 2) {
-            projectService.createProject(
-                    ProjectCreateDTO.builder()
-                            .title("New Project Title " + j)
-                            .description("New description" + j)
-                            .tags(Arrays.asList("tag3", "tag4"))
-                            .links(Arrays.asList("link1", "link2"))
-                            .languages(Arrays.asList("Java", "C"))
-                            .featured(true)
-                            .build());
-            j++;
-        }
-        assertEquals(6, projectService.getAllProjects().size());
-
-        List<Project> projects = userService.getPreferredProjects();
-
-        assertNotNull(projects);
     }
 }

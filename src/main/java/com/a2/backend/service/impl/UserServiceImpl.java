@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Project> getPreferredProjects() {
+    public List<ProjectDTO> getPreferredProjects() {
 
         Function<List<Project>, Optional<Project>> getRandomProject =
                 projects -> {
@@ -233,7 +233,12 @@ public class UserServiceImpl implements UserService {
         while (projects.size() < 6 && !filteredProjects.isEmpty()) {
             getRandomProject.apply(filteredProjects).map(projects::add);
         }
-        return projects;
+        List<ProjectDTO> projectDTOS = new ArrayList<>();
+        for (int i = 0; i < projects.size(); i++) {
+            ProjectDTO projectDTO = projects.get(i).toDTO();
+            projectDTOS.add(projectDTO);
+        }
+        return projectDTOS;
     }
 
     @Override

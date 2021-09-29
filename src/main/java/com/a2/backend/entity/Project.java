@@ -1,8 +1,10 @@
 package com.a2.backend.entity;
 
+import com.a2.backend.model.ProjectDTO;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import lombok.*;
@@ -49,4 +51,16 @@ public class Project implements Serializable {
 
     @ManyToOne(cascade = {CascadeType.MERGE})
     private User owner;
+
+    public ProjectDTO toDTO() {
+        return ProjectDTO.builder()
+                .id(id)
+                .title(title)
+                .featured(featured)
+                .languages(languages.stream().map(Language::getName).collect(Collectors.toList()))
+                .tags(tags.stream().map(Tag::getName).collect(Collectors.toList()))
+                .description(description)
+                .links(links)
+                .build();
+    }
 }

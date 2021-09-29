@@ -1,6 +1,5 @@
 package com.a2.backend.service;
 
-import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import java.util.List;
@@ -24,7 +23,7 @@ public interface UserService {
 
     User getLoggedUser();
 
-    List<Project> getPreferredProjects();
+    List<ProjectDTO> getPreferredProjects();
 
     Optional<User> getUser();
 }
