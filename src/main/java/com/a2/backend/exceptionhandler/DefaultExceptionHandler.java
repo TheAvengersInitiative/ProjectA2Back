@@ -93,4 +93,11 @@ public class DefaultExceptionHandler {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InvalidProjectCollaborationApplicationException.class)
+    protected ResponseEntity<?> handleInvalidProjectCollaborationApplication(
+            InvalidProjectCollaborationApplicationException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

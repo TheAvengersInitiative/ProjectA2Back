@@ -1,6 +1,5 @@
 package com.a2.backend.model;
 
-import com.a2.backend.entity.User;
 import java.util.List;
 import java.util.UUID;
 import lombok.*;
@@ -17,8 +16,6 @@ public class ProjectDTO {
 
     private String title;
 
-    private boolean featured = false;
-
     private String description;
 
     private List<String> links;
@@ -27,5 +24,13 @@ public class ProjectDTO {
 
     private List<String> languages;
 
-    private User owner;
+    private boolean featured;
+
+    private ProjectUserDTO owner;
+
+    private List<ProjectUserDTO> collaborators;
+
+    private List<ProjectUserDTO> applicants;
+
+    private List<ProjectUserDTO> rejectedApplicants;
 }

@@ -50,6 +50,9 @@ class ProjectRepositoryTest {
                     .tags(tags)
                     .links(links)
                     .owner(owner)
+                    .applicants(List.of())
+                    .collaborators(List.of())
+                    .rejectedApplicants(List.of())
                     .build();
 
     @Test
@@ -121,6 +124,9 @@ class ProjectRepositoryTest {
                         .tags(tags)
                         .links(links)
                         .owner(owner)
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build());
         assertEquals(2, projectRepository.findAll().size());
 
@@ -148,6 +154,9 @@ class ProjectRepositoryTest {
                         .tags(tags)
                         .links(links)
                         .owner(owner2)
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build());
         assertEquals(2, projectRepository.findAll().size());
 
@@ -172,6 +181,9 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag2))
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
 
         Project project2 =
@@ -181,6 +193,9 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
 
         Project project3 =
@@ -190,6 +205,9 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
 
         projectRepository.save(project1);
@@ -225,6 +243,9 @@ class ProjectRepositoryTest {
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag2))
                         .languages(Arrays.asList(language1, language2))
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
 
         Project project2 =
@@ -235,6 +256,9 @@ class ProjectRepositoryTest {
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
                         .languages(Arrays.asList(language3, language2))
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
 
         Project project3 =
@@ -245,6 +269,9 @@ class ProjectRepositoryTest {
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
                         .languages(Arrays.asList(language1, language3))
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
 
         projectRepository.save(project1);
@@ -272,6 +299,9 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag2))
+                        .applicants(List.of())
+                        .collaborators(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
         assertTrue(projectRepository.findAll().isEmpty());
         assertNull(project.getId());
