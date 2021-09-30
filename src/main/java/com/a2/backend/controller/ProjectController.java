@@ -87,6 +87,12 @@ public class ProjectController {
                 tagService.getAllTags().stream().map(Tag::getName).collect(Collectors.toList()));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<Project>> getFeaturedProject() {
+        val featuredProjects = projectService.getFeaturedProject();
+        return ResponseEntity.status(HttpStatus.OK).body(featuredProjects);
+    }
+
     @GetMapping("/my-projects")
     @Secured({SecurityConstants.USER_ROLE})
     public ResponseEntity<List<Project>> getMyProjects() {

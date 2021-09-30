@@ -1,5 +1,6 @@
 package com.a2.backend.service.impl;
 
+import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
@@ -10,6 +11,8 @@ import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -29,7 +32,6 @@ public class UserServiceImpl implements UserService {
 
     private final String validLanguageNames =
             "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
-
 
     private final List<String> validLanguageList =
             new ArrayList<>(Arrays.asList(validLanguageNames.split(", ")));
@@ -185,5 +187,62 @@ public class UserServiceImpl implements UserService {
     public void sendPasswordRecoveryMail(PasswordRecoveryInitDTO passwordRecoveryInitDTO) {
         val userOptional = userRepository.findByEmail(passwordRecoveryInitDTO.getEmail());
         userOptional.ifPresent(mailService::sendForgotPasswordMail);
+    }
+
+    @Override
+    public List<ProjectDTO> getPreferredProjects() {
+
+        Function<List<Project>, Optional<Project>> getRandomProject =
+                projects -> {
+                    if (projects.isEmpty()) {
+                        return Optional.empty();
+                    } else {
+                        return Optional.of(projects.remove(new Random().nextInt(projects.size())));
+                    }
+                };
+
+        List<Project> projects = new ArrayList<>();
+        List<Project> featured = projectService.getFeaturedProject();
+
+        for (int i = 0; i < 2; i++) {
+            getRandomProject.apply(featured).map(projects::add);
+        }
+
+        List<Project> preferredProjects =
+                getUser()
+                        .map(
+                                user -> {
+                                    ProjectSearchDTO projectSearchDTO =
+                                            ProjectSearchDTO.builder()
+                                                    .tags(user.getPreferredTags())
+                                                    .languages(user.getPreferredLanguages())
+                                                    .build();
+                                    return projectService.searchProjecsByFilter(projectSearchDTO);
+                                })
+                        .orElseGet(projectService::getAllProjects);
+
+        for (int i = 0; i < 4; i++) {
+            getRandomProject.apply(preferredProjects).map(projects::add);
+        }
+
+        val filteredProjects =
+                projectService.getAllProjects().stream()
+                        .filter(p -> !projects.contains(p))
+                        .collect(Collectors.toList());
+
+        while (projects.size() < 6 && !filteredProjects.isEmpty()) {
+            getRandomProject.apply(filteredProjects).map(projects::add);
+        }
+        List<ProjectDTO> projectDTOS = new ArrayList<>();
+        for (int i = 0; i < projects.size(); i++) {
+            ProjectDTO projectDTO = projects.get(i).toDTO();
+            projectDTOS.add(projectDTO);
+        }
+        return projectDTOS;
+    }
+
+    @Override
+    public Optional<User> getUser() {
+        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findByEmail);
     }
 }

@@ -120,14 +120,14 @@ public class DemoRunner implements CommandLineRunner {
                         .tags(
                                 listOf(
                                         Tag.builder().name("Python").build(),
-                                        Tag.builder().name("ML").build(),
+                                        Tag.builder().name("MATLAB").build(),
                                         Tag.builder().name("CUDA").build(),
                                         Tag.builder().name("C").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(
                                 listOf(
                                         Language.builder().name("Python").build(),
-                                        Language.builder().name("ML").build()))
+                                        Language.builder().name("MATLAB").build()))
                         .build();
         Project node =
                 Project.builder()
@@ -147,9 +147,121 @@ public class DemoRunner implements CommandLineRunner {
                                         Language.builder().name("Node").build(),
                                         Language.builder().name("V8").build()))
                         .build();
+
+        Project geany =
+                Project.builder()
+                        .title("Geany")
+                        .description(
+                                "Geany is a small and lightweight IDE that runs on Linux, Windows, MacOS, and every platform that is supported by GTK libraries.")
+                        .links(listOf("https://www.geany.org/"))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("IDE").build(),
+                                        Tag.builder().name("C").build(),
+                                        Tag.builder().name("Geany").build(),
+                                        Tag.builder().name("C++").build()))
+                        .owner(userRepository.findByNickname("FabriDS23").get())
+                        .languages(
+                                listOf(
+                                        Language.builder().name("C").build(),
+                                        Language.builder().name("C++").build()))
+                        .build();
+        Project django =
+                Project.builder()
+                        .title("Django")
+                        .description(
+                                "Django is a high-level Python Web framework, and it’s very loveable. For one thing, it’s designed to help developers achieve their most important objective: rapid development.")
+                        .links(listOf("https://www.djangoproject.com/"))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("Python").build(),
+                                        Tag.builder().name("framework").build(),
+                                        Tag.builder().name("web").build()))
+                        .owner(userRepository.findByNickname("Peltevis").get())
+                        .languages(listOf(Language.builder().name("Python").build()))
+                        .build();
+        Project sakai =
+                Project.builder()
+                        .title("Sakai")
+                        .description(
+                                "Sakai is a free, community source, educational software platform designed to support teaching, research and collaboration.")
+                        .links(listOf("https://www.sakailms.org/"))
+                        .tags(listOf(Tag.builder().name("Java").build()))
+                        .owner(userRepository.findByNickname("Peltevis").get())
+                        .languages(listOf(Language.builder().name("Java").build()))
+                        .build();
+        Project apache =
+                Project.builder()
+                        .title("ApacheCassandra")
+                        .description(
+                                "Apache Cassandra is a distributed and decentralized database designed to manage massive amounts of structured and unstructured data across the world.")
+                        .links(listOf("https://cassandra.apache.org/"))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("Java").build(),
+                                        Tag.builder().name("Apache").build()))
+                        .owner(userRepository.findByNickname("FabriDS23").get())
+                        .languages(listOf(Language.builder().name("Java").build()))
+                        .featured(true)
+                        .build();
+        Project renovate =
+                Project.builder()
+                        .title("Renovate")
+                        .description(
+                                "Renovate is the essential “keep absolutely everything up-to-date” code maintenance tool.")
+                        .links(listOf("https://www.whitesourcesoftware.com/"))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("JavaScript").build(),
+                                        Tag.builder().name("TypeScript").build()))
+                        .owner(userRepository.findByNickname("ropa1998").get())
+                        .languages(
+                                listOf(
+                                        Language.builder().name("JavaSript").build(),
+                                        Language.builder().name("TypeScript").build()))
+                        .featured(true)
+                        .build();
+        Project kubernetes =
+                Project.builder()
+                        .title("Kubernetes")
+                        .description(
+                                "Kubernetes, also known as K8s, is an open-source system for automating deployment, scaling, and management of containerized applications.")
+                        .links(listOf("https://kubernetes.io/"))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("Go").build(),
+                                        Tag.builder().name("K8s").build(),
+                                        Tag.builder().name("Kubernetes").build()))
+                        .owner(userRepository.findByNickname("ropa1998").get())
+                        .languages(listOf(Language.builder().name("Go").build()))
+                        .featured(true)
+                        .build();
+        Project ansible =
+                Project.builder()
+                        .title("RedHatAnsible")
+                        .description(
+                                "Ansible is an IT automation tool that “loves the repetitive work your people hate.” ")
+                        .links(listOf("https://www.ansible.com/"))
+                        .tags(
+                                listOf(
+                                        Tag.builder().name("RedHat").build(),
+                                        Tag.builder().name("Ansible").build(),
+                                        Tag.builder().name("Python").build()))
+                        .owner(userRepository.findByNickname("ropa1998").get())
+                        .languages(listOf(Language.builder().name("Python").build()))
+                        .featured(true)
+                        .build();
+
         projectRepository.save(linux);
         projectRepository.save(tensorFlow);
         projectRepository.save(node);
+        projectRepository.save(geany);
+        projectRepository.save(django);
+        projectRepository.save(sakai);
+        projectRepository.save(apache);
+        projectRepository.save(renovate);
+        projectRepository.save(kubernetes);
+        projectRepository.save(ansible);
     }
 
     @SafeVarargs

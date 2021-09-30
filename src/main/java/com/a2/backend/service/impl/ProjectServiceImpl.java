@@ -246,6 +246,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public List<Project> getFeaturedProject() {
+        return projectRepository.findAllByFeaturedIsTrue();
+    }
+
+    @Override
     public List<Project> getMyProjects() {
         val user = userService.getLoggedUser();
         return projectRepository.findByOwner(user);

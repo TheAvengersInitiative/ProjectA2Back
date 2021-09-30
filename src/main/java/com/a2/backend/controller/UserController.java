@@ -4,6 +4,7 @@ import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import com.a2.backend.service.UserService;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -75,5 +76,11 @@ public class UserController {
             @Valid @RequestBody PreferencesUpdateDTO preferencesUpdateDTO) {
         User updatedUser = userService.updatePreferences(preferencesUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    }
+
+    @GetMapping("/preferences")
+    public ResponseEntity<List<ProjectDTO>> getPreferedProjects() {
+        val preferedProjects = userService.getPreferredProjects();
+        return ResponseEntity.status(HttpStatus.OK).body(preferedProjects);
     }
 }

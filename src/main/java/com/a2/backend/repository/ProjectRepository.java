@@ -22,5 +22,7 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     List<Project> findByTitleContainingIgnoreCase(String title);
 
+    List<Project> findAllByFeaturedIsTrue();
+
     List<Project> findByOwner(User user);
 }
