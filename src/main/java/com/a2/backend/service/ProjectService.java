@@ -6,6 +6,7 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -32,4 +33,8 @@ public interface ProjectService {
     List<Project> getMyProjects();
 
     ProjectDTO applyToProject(UUID projectToApplyID);
+
+    List<Project> getProjectsByOwner(User owner);
+
+    List<Project> getCollaboratingProjects(User user);
 }

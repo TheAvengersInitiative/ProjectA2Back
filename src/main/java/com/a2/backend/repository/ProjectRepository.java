@@ -2,11 +2,12 @@ package com.a2.backend.repository;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
@@ -25,4 +26,6 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     List<Project> findAllByFeaturedIsTrue();
 
     List<Project> findByOwner(User user);
+
+    List<Project> findByCollaboratorsContaining(User user);
 }

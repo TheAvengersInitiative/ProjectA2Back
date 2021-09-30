@@ -4,13 +4,15 @@ import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import com.a2.backend.service.UserService;
-import java.util.List;
-import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -66,7 +68,7 @@ public class UserController {
     @Secured({SecurityConstants.USER_ROLE})
     @PutMapping
     public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-        User updatedUser = userService.updateUser(userUpdateDTO);
+        val updatedUser = userService.updateUser(userUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
@@ -74,13 +76,28 @@ public class UserController {
     @PutMapping("/preferences")
     public ResponseEntity<?> updatePreferences(
             @Valid @RequestBody PreferencesUpdateDTO preferencesUpdateDTO) {
-        User updatedUser = userService.updatePreferences(preferencesUpdateDTO);
+        val updatedUser = userService.updatePreferences(preferencesUpdateDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/privacy")
+    public ResponseEntity<?> updatePrivacySettings(
+            @Valid @RequestBody UserPrivacyDTO userPrivacyDTO) {
+        val updatedUser = userService.updatePrivacySettings(userPrivacyDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @GetMapping("/preferences")
-    public ResponseEntity<List<ProjectDTO>> getPreferedProjects() {
-        val preferedProjects = userService.getPreferredProjects();
-        return ResponseEntity.status(HttpStatus.OK).body(preferedProjects);
+    public ResponseEntity<List<ProjectDTO>> getPreferredProjects() {
+        val preferredProjects = userService.getPreferredProjects();
+        return ResponseEntity.status(HttpStatus.OK).body(preferredProjects);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserProfile(@PathVariable UUID id) {
+        val userProfile = userService.getUserProfile(id);
+        return ResponseEntity.status(HttpStatus.OK).body(userProfile);
     }
 }

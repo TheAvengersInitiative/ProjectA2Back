@@ -18,10 +18,11 @@ import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import com.a2.backend.service.UserService;
-import java.util.*;
-import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.*;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -298,5 +299,15 @@ public class ProjectServiceImpl implements ProjectService {
         project.setApplicants(applicants);
 
         return projectRepository.save(project).toDTO();
+    }
+
+    @Override
+    public List<Project> getProjectsByOwner(User owner) {
+        return projectRepository.findByOwner(owner);
+    }
+
+    @Override
+    public List<Project> getCollaboratingProjects(User user) {
+        return projectRepository.findByCollaboratorsContaining(user);
     }
 }
