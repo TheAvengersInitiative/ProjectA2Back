@@ -52,6 +52,21 @@ public class Project implements Serializable {
     @ManyToOne(cascade = {CascadeType.MERGE})
     private User owner;
 
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @NotNull
+    private List<User> collaborators;
+
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @NotNull
+    private List<User> applicants;
+
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @NotNull
+    private List<User> rejectedApplicants;
+
     public ProjectDTO toDTO() {
         return ProjectDTO.builder()
                 .id(id)
@@ -61,6 +76,11 @@ public class Project implements Serializable {
                 .tags(tags.stream().map(Tag::getName).collect(Collectors.toList()))
                 .description(description)
                 .links(links)
+                .owner(owner.toDTO())
+                .collaborators(collaborators.stream().map(User::toDTO).collect(Collectors.toList()))
+                .applicants(applicants.stream().map(User::toDTO).collect(Collectors.toList()))
+                .rejectedApplicants(
+                        rejectedApplicants.stream().map(User::toDTO).collect(Collectors.toList()))
                 .build();
     }
 }

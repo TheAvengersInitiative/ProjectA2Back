@@ -4,9 +4,11 @@ import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
+import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
 import com.a2.backend.model.ProjectCreateDTO;
+import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
 import com.a2.backend.repository.LanguageRepository;
@@ -68,6 +70,9 @@ public class ProjectServiceImpl implements ProjectService {
                             .tags(tags)
                             .languages(languages)
                             .owner(loggedUser)
+                            .applicants(List.of())
+                            .collaborators(List.of())
+                            .rejectedApplicants(List.of())
                             .build();
             return projectRepository.save(project);
         }
@@ -254,5 +259,44 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Project> getMyProjects() {
         val user = userService.getLoggedUser();
         return projectRepository.findByOwner(user);
+    }
+
+    @Override
+    public ProjectDTO applyToProject(UUID projectToApplyID) {
+        User loggedUser = userService.getLoggedUser();
+        val projectToApplyOptional = projectRepository.findById(projectToApplyID);
+
+        if (projectToApplyOptional.isEmpty()) {
+            throw new ProjectNotFoundException(
+                    String.format(
+                            "The project with that id: %s does not exist!", projectToApplyID));
+        }
+
+        val project = projectToApplyOptional.get();
+
+        if (project.getCollaborators().contains(loggedUser)) {
+            throw new InvalidProjectCollaborationApplicationException(
+                    String.format("Already collaborating in project: %s", project.getTitle()));
+        }
+        if (project.getRejectedApplicants().contains(loggedUser)) {
+            throw new InvalidProjectCollaborationApplicationException(
+                    String.format(
+                            "Already rejected collaboration in project: %s", project.getTitle()));
+        }
+        if (project.getApplicants().contains(loggedUser)) {
+            throw new InvalidProjectCollaborationApplicationException(
+                    String.format("Already applied to project: %s", project.getTitle()));
+        }
+        if (project.getOwner().equals(loggedUser)) {
+            throw new InvalidProjectCollaborationApplicationException(
+                    String.format("Current user owns project: %s", project.getTitle()));
+        }
+
+        val applicants = project.getApplicants();
+        applicants.add(loggedUser);
+
+        project.setApplicants(applicants);
+
+        return projectRepository.save(project).toDTO();
     }
 }

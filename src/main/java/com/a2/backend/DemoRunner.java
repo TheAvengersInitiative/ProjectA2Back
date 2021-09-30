@@ -110,6 +110,10 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         Language.builder().name("C").build(),
                                         Language.builder().name("C++").build()))
+                        .collaborators(List.of())
+                        .applicants(List.of())
+                        .rejectedApplicants(
+                                List.of(userRepository.findByNickname("ropa1998").get()))
                         .build();
         Project tensorFlow =
                 Project.builder()
@@ -128,6 +132,10 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         Language.builder().name("Python").build(),
                                         Language.builder().name("MATLAB").build()))
+                                        Language.builder().name("ML").build()))
+                        .collaborators(List.of())
+                        .applicants(List.of(userRepository.findByNickname("Peltevis").get()))
+                        .rejectedApplicants(List.of())
                         .build();
         Project node =
                 Project.builder()
@@ -146,6 +154,12 @@ public class DemoRunner implements CommandLineRunner {
                                         Language.builder().name("JavaScript").build(),
                                         Language.builder().name("Node").build(),
                                         Language.builder().name("V8").build()))
+                        .collaborators(
+                                List.of(
+                                        userRepository.findByNickname("ropa1998").get(),
+                                        userRepository.findByNickname("Peltevis").get()))
+                        .applicants(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
 
         Project geany =

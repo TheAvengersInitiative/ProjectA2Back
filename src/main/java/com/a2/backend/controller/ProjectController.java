@@ -98,4 +98,11 @@ public class ProjectController {
     public ResponseEntity<List<Project>> getMyProjects() {
         return ResponseEntity.ok(projectService.getMyProjects());
     }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/apply/{id}")
+    public ResponseEntity<?> applyToProject(@PathVariable UUID id) {
+        val appliedProject = projectService.applyToProject(id);
+        return ResponseEntity.status(HttpStatus.OK).body(appliedProject);
+    }
 }

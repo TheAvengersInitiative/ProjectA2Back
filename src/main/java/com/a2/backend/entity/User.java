@@ -1,5 +1,6 @@
 package com.a2.backend.entity;
 
+import com.a2.backend.model.ProjectUserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.UUID;
@@ -45,4 +46,8 @@ public class User {
     @JsonIgnore String passwordRecoveryToken;
 
     @Builder.Default boolean isActive = false;
+
+    public ProjectUserDTO toDTO() {
+        return ProjectUserDTO.builder().id(id).nickname(nickname).email(email).build();
+    }
 }
