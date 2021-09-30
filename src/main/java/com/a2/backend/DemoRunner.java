@@ -131,7 +131,7 @@ public class DemoRunner implements CommandLineRunner {
                         .languages(
                                 listOf(
                                         Language.builder().name("Python").build(),
-                                        Language.builder().name("MATLAB").build()))
+                                        Language.builder().name("MATLAB").build(),
                                         Language.builder().name("ML").build()))
                         .collaborators(List.of())
                         .applicants(List.of(userRepository.findByNickname("Peltevis").get()))
@@ -179,6 +179,10 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         Language.builder().name("C").build(),
                                         Language.builder().name("C++").build()))
+                        .collaborators(List.of(userRepository.findByNickname("Peltevis").get()))
+                        .applicants(List.of())
+                        .rejectedApplicants(
+                                List.of(userRepository.findByNickname("ropa1998").get()))
                         .build();
         Project django =
                 Project.builder()
@@ -193,6 +197,9 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("web").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
                         .languages(listOf(Language.builder().name("Python").build()))
+                        .collaborators(List.of(userRepository.findByNickname("ropa1998").get()))
+                        .applicants(List.of(userRepository.findByNickname("FabriDS23").get()))
+                        .rejectedApplicants(List.of())
                         .build();
         Project sakai =
                 Project.builder()
@@ -203,6 +210,9 @@ public class DemoRunner implements CommandLineRunner {
                         .tags(listOf(Tag.builder().name("Java").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
                         .languages(listOf(Language.builder().name("Java").build()))
+                        .collaborators(List.of())
+                        .applicants(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
         Project apache =
                 Project.builder()
@@ -217,6 +227,9 @@ public class DemoRunner implements CommandLineRunner {
                         .owner(userRepository.findByNickname("FabriDS23").get())
                         .languages(listOf(Language.builder().name("Java").build()))
                         .featured(true)
+                        .collaborators(List.of())
+                        .applicants(List.of(userRepository.findByNickname("ropa1998").get()))
+                        .rejectedApplicants(List.of())
                         .build();
         Project renovate =
                 Project.builder()
@@ -234,6 +247,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Language.builder().name("JavaSript").build(),
                                         Language.builder().name("TypeScript").build()))
                         .featured(true)
+                        .collaborators(List.of())
+                        .applicants(List.of())
+                        .rejectedApplicants(
+                                List.of(userRepository.findByNickname("FabriDS23").get()))
                         .build();
         Project kubernetes =
                 Project.builder()
@@ -249,6 +266,10 @@ public class DemoRunner implements CommandLineRunner {
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(listOf(Language.builder().name("Go").build()))
                         .featured(true)
+                        .collaborators(List.of())
+                        .applicants(List.of())
+                        .rejectedApplicants(
+                                List.of(userRepository.findByNickname("Peltevis").get()))
                         .build();
         Project ansible =
                 Project.builder()
@@ -264,6 +285,9 @@ public class DemoRunner implements CommandLineRunner {
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(listOf(Language.builder().name("Python").build()))
                         .featured(true)
+                        .collaborators(List.of(userRepository.findByNickname("Peltevis").get()))
+                        .applicants(List.of())
+                        .rejectedApplicants(List.of())
                         .build();
 
         projectRepository.save(linux);

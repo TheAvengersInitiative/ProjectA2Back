@@ -79,4 +79,17 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
                 InvalidProjectCollaborationApplicationException.class,
                 () -> projectService.applyToProject(project.getId()));
     }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test005_ProjectServiceWhenWhenOwnerAppliesToCollaborateShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO =
+                ProjectSearchDTO.builder().title("RedHatAnsible").build();
+        Project project = projectService.searchProjecsByFilter(projectSearchDTO).get(0);
+
+        assertThrows(
+                InvalidProjectCollaborationApplicationException.class,
+                () -> projectService.applyToProject(project.getId()));
+    }
 }
