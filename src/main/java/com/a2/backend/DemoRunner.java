@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,10 @@ public class DemoRunner implements CommandLineRunner {
 
     @Autowired private Environment env;
     @Autowired private ProjectRepository projectRepository;
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public DemoRunner() {}
 
@@ -66,7 +70,7 @@ public class DemoRunner implements CommandLineRunner {
                 User.builder()
                         .nickname("Peltevis")
                         .email("agustin.ayerza@ing.austral.edu.ar")
-                        .password("password")
+                        .password(passwordEncoder.encode("password"))
                         .preferredTags(List.of("GNU", "MATLAB"))
                         .confirmationToken("token001")
                         .collaboratedProjectsPrivacy(PrivacyConstant.PRIVATE)
@@ -79,7 +83,7 @@ public class DemoRunner implements CommandLineRunner {
                         .email("rodrigo.pazos@ing.austral.edu.ar")
                         .biography(
                                 "Backend software engineer, passionate about design and clean code. Working with Java, Python and Scala. ")
-                        .password("password")
+                        .password(passwordEncoder.encode("password"))
                         .confirmationToken("token002")
                         .isActive(true)
                         .build();
@@ -89,7 +93,7 @@ public class DemoRunner implements CommandLineRunner {
                         .email("fabrizio.disanto@ing.austral.edu.ar")
                         .biography(
                                 "Software Engineer student, currently working as a full-stack developer. ")
-                        .password("password")
+                        .password(passwordEncoder.encode("password"))
                         .confirmationToken("token003")
                         .languagesPrivacy(PrivacyConstant.PRIVATE)
                         .collaboratedProjectsPrivacy(PrivacyConstant.PRIVATE)
