@@ -1,22 +1,25 @@
 package com.a2.backend;
 
 import com.a2.backend.annotation.Generated;
+import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.entity.User;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("DemoRunner")
 @Transactional
@@ -26,7 +29,10 @@ public class DemoRunner implements CommandLineRunner {
 
     @Autowired private Environment env;
     @Autowired private ProjectRepository projectRepository;
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public DemoRunner() {}
 
@@ -64,8 +70,11 @@ public class DemoRunner implements CommandLineRunner {
                 User.builder()
                         .nickname("Peltevis")
                         .email("agustin.ayerza@ing.austral.edu.ar")
-                        .password("password")
+                        .password(passwordEncoder.encode("password"))
+                        .preferredTags(List.of("GNU", "MATLAB"))
                         .confirmationToken("token001")
+                        .collaboratedProjectsPrivacy(PrivacyConstant.PRIVATE)
+                        .languagesPrivacy(PrivacyConstant.PRIVATE)
                         .isActive(true)
                         .build();
         User rodrigo =
@@ -74,7 +83,7 @@ public class DemoRunner implements CommandLineRunner {
                         .email("rodrigo.pazos@ing.austral.edu.ar")
                         .biography(
                                 "Backend software engineer, passionate about design and clean code. Working with Java, Python and Scala. ")
-                        .password("password")
+                        .password(passwordEncoder.encode("password"))
                         .confirmationToken("token002")
                         .isActive(true)
                         .build();
@@ -84,8 +93,12 @@ public class DemoRunner implements CommandLineRunner {
                         .email("fabrizio.disanto@ing.austral.edu.ar")
                         .biography(
                                 "Software Engineer student, currently working as a full-stack developer. ")
-                        .password("password")
+                        .password(passwordEncoder.encode("password"))
                         .confirmationToken("token003")
+                        .languagesPrivacy(PrivacyConstant.PRIVATE)
+                        .collaboratedProjectsPrivacy(PrivacyConstant.PRIVATE)
+                        .ownedProjectsPrivacy(PrivacyConstant.PRIVATE)
+                        .tagsPrivacy(PrivacyConstant.PRIVATE)
                         .build();
         userRepository.save(agustin);
         userRepository.save(rodrigo);
@@ -244,7 +257,7 @@ public class DemoRunner implements CommandLineRunner {
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(
                                 listOf(
-                                        Language.builder().name("JavaSript").build(),
+                                        Language.builder().name("JavaScript").build(),
                                         Language.builder().name("TypeScript").build()))
                         .featured(true)
                         .collaborators(List.of())

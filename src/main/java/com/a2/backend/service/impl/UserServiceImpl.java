@@ -1,5 +1,6 @@
 package com.a2.backend.service.impl;
 
+import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
@@ -10,14 +11,15 @@ import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -112,6 +114,52 @@ public class UserServiceImpl implements UserService {
         loggedUser.setPreferredTags(preferencesUpdateDTO.getTags());
 
         return userRepository.save(loggedUser);
+    }
+
+    @Override
+    public User updatePrivacySettings(UserPrivacyDTO userPrivacyDTO) {
+        User loggedUser = getLoggedUser();
+
+        loggedUser.setOwnedProjectsPrivacy(userPrivacyDTO.getOwnedProjectsPrivacy());
+        loggedUser.setCollaboratedProjectsPrivacy(userPrivacyDTO.getCollaboratedProjectsPrivacy());
+        loggedUser.setTagsPrivacy(userPrivacyDTO.getTagsPrivacy());
+        loggedUser.setLanguagesPrivacy(userPrivacyDTO.getLanguagesPrivacy());
+
+        return userRepository.save(loggedUser);
+    }
+
+    @Override
+    public UserProfileDTO getUserProfile(UUID id) {
+        if (userRepository.findById(id).isEmpty())
+            throw new UserNotFoundException(String.format("There is no user with id %s", id));
+
+        User user = userRepository.getById(id);
+
+        val userProfile =
+                UserProfileDTO.builder()
+                        .nickname(user.getNickname())
+                        .biography(user.getBiography())
+                        .build();
+
+        if (user.getTagsPrivacy().equals(PrivacyConstant.PUBLIC))
+            userProfile.setPreferredTags(user.getPreferredTags());
+
+        if (user.getLanguagesPrivacy().equals(PrivacyConstant.PUBLIC))
+            userProfile.setPreferredLanguages(user.getPreferredLanguages());
+
+        if (user.getOwnedProjectsPrivacy().equals(PrivacyConstant.PUBLIC))
+            userProfile.setOwnedProjects(
+                    projectService.getProjectsByOwner(user).stream()
+                            .map(Project::toDTO)
+                            .collect(Collectors.toList()));
+
+        if (user.getCollaboratedProjectsPrivacy().equals(PrivacyConstant.PUBLIC))
+            userProfile.setCollaboratedProjects(
+                    projectService.getCollaboratingProjects(user).stream()
+                            .map(Project::toDTO)
+                            .collect(Collectors.toList()));
+
+        return userProfile;
     }
 
     @Override
