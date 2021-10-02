@@ -148,6 +148,7 @@ class UserServiceImplTest extends AbstractTest {
                         .title("Project Title")
                         .description("description")
                         .tags(Arrays.asList("tag1", "tag2"))
+                        .forumTags(Arrays.asList("help", "example"))
                         .links(Arrays.asList("link1", "link2"))
                         .languages(Arrays.asList("Java", "C"))
                         .build());

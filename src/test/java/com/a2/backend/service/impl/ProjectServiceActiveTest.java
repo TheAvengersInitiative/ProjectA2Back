@@ -7,6 +7,9 @@ import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUserDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +35,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         User loggedUser = userService.getLoggedUser();
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("GNU/Linux").build();
-        Project project = projectService.searchProjecsByFilter(projectSearchDTO).get(0);
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertFalse(project.getApplicants().contains(loggedUser));
 
@@ -51,7 +54,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test002_ProjectServiceWhenReceivesApplicationToAnAlreadyRejectedCollaborationProjectToShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("GNU/Linux").build();
-        Project project = projectService.searchProjecsByFilter(projectSearchDTO).get(0);
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -64,7 +67,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test003_ProjectServiceWhenReceivesApplicationToAnAlreadyCollaboratingProjectToShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
-        Project project = projectService.searchProjecsByFilter(projectSearchDTO).get(0);
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -77,7 +80,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test004_ProjectServiceWhenReceivesApplicationToAnAlreadyAppliedProjectToShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
-        Project project = projectService.searchProjecsByFilter(projectSearchDTO).get(0);
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -90,7 +93,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("RedHatAnsible").build();
-        Project project = projectService.searchProjecsByFilter(projectSearchDTO).get(0);
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -144,5 +147,26 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         project = projectService.searchProjecsByFilter(projectSearchDTO).get(0);
 
         assertTrue(ownedProjects.contains(project));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test006_ProjectServiceWhenWantToSearchForAProjectByItsForumTagsThenReturnProjectsWithThoseTags() {
+        User loggedUser = userService.getLoggedUser();
+        List<String> forumTags = new ArrayList<>();
+        forumTags.add("help");
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().forumTags(forumTags).build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        assertFalse(project.getApplicants().contains(loggedUser));
+
+        val projectDTO = projectService.applyToProject(project.getId());
+
+        assertTrue(
+                projectDTO.getApplicants().stream()
+                        .map(ProjectUserDTO::getEmail)
+                        .collect(Collectors.toList())
+                        .contains(loggedUser.getEmail()));
     }
 }

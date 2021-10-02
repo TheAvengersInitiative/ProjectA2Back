@@ -38,7 +38,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
         userService.getLoggedUser().setPreferredTags(preferredTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<Project> preferredProjects = projectService.searchProjecsByFilter(projectSearchDTO);
+        List<Project> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         assertEquals(6, projects.size());
 
@@ -74,7 +74,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         preferredTags.add("C");
         userService.getLoggedUser().setPreferredTags(preferredTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<Project> preferredProjects = projectService.searchProjecsByFilter(projectSearchDTO);
+        List<Project> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         for (int i = 0; i < projects.size(); i++) {
             projects.get(i).setFeatured(false);

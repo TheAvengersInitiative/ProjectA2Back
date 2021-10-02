@@ -47,6 +47,7 @@ class ProjectServiceImplTest extends AbstractTest {
     List<String> links = Arrays.asList("link1", "link2");
     List<String> tags = Arrays.asList("tag1", "tag2");
     List<String> languages = Arrays.asList("Java", "C");
+    List<String> forumTags = Arrays.asList("help", "actual");
 
     User owner =
             User.builder()
@@ -60,6 +61,7 @@ class ProjectServiceImplTest extends AbstractTest {
 
     static List<String> linksUpdate = new ArrayList<>();
     static List<String> tagsUpdate = new ArrayList<>();
+    static List<String> forumTagsUpdate = new ArrayList<>();
     List<String> languagesUpdate = Arrays.asList("Java", "Ruby");
 
     ProjectCreateDTO projectToCreate =
@@ -68,6 +70,7 @@ class ProjectServiceImplTest extends AbstractTest {
                     .description(description)
                     .links(links)
                     .tags(tags)
+                    .forumTags(forumTags)
                     .languages(languages)
                     .build();
     ProjectUpdateDTO projectUpdateDTO =
@@ -75,6 +78,7 @@ class ProjectServiceImplTest extends AbstractTest {
                     .title("new title")
                     .links(linksUpdate)
                     .tags(tagsUpdate)
+                    .forumTags(forumTagsUpdate)
                     .languages(languagesUpdate)
                     .description("new description")
                     .build();
@@ -84,6 +88,8 @@ class ProjectServiceImplTest extends AbstractTest {
         linksUpdate.add("http://google.com");
         tagsUpdate.add("tag1");
         tagsUpdate.add("tag4");
+        forumTagsUpdate.add("forumTagUpdate");
+        forumTagsUpdate.add("forumTagUpdate2");
     }
 
     @Test
@@ -140,6 +146,7 @@ class ProjectServiceImplTest extends AbstractTest {
                         .description(description2)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -289,6 +296,7 @@ class ProjectServiceImplTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags2)
+                        .forumTags(forumTags)
                         .languages(languages2)
                         .build();
 
@@ -389,6 +397,7 @@ class ProjectServiceImplTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags2)
+                        .forumTags(forumTags)
                         .languages(languages2)
                         .build();
 
@@ -422,6 +431,7 @@ class ProjectServiceImplTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags2)
+                        .forumTags(forumTags)
                         .languages(languages2)
                         .build();
         ProjectSearchDTO projectSeached =
@@ -431,7 +441,7 @@ class ProjectServiceImplTest extends AbstractTest {
         assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
         assertEquals(projectToCreateWithRepeatedTag.getDescription(), project.getDescription());
         assertEquals(
-                projectService.searchProjecsByFilter(projectSeached).get(0).getTitle(), title2);
+                projectService.searchProjectsByFilter(projectSeached).get(0).getTitle(), title2);
     }
 
     @Test
@@ -451,6 +461,7 @@ class ProjectServiceImplTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags2)
+                        .forumTags(forumTags)
                         .languages(languages2)
                         .build();
         ProjectCreateDTO projectToCreate2 =
@@ -459,6 +470,7 @@ class ProjectServiceImplTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(Arrays.asList("tag7", "tag8"))
+                        .forumTags(forumTagsUpdate)
                         .languages(languages2)
                         .build();
         ProjectSearchDTO projectSeached =
@@ -466,8 +478,8 @@ class ProjectServiceImplTest extends AbstractTest {
         val project = projectService.createProject(projectToCreateWithRepeatedTag);
         val project2 = projectService.createProject(projectToCreate2);
 
-        assertEquals(projectService.searchProjecsByFilter(projectSeached).size(), 1);
+        assertEquals(projectService.searchProjectsByFilter(projectSeached).size(), 1);
         assertEquals(
-                projectService.searchProjecsByFilter(projectSeached).get(0).getTitle(), title2);
+                projectService.searchProjectsByFilter(projectSeached).get(0).getTitle(), title2);
     }
 }

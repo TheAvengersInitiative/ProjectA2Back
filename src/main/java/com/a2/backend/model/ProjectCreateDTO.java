@@ -49,4 +49,17 @@ public class ProjectCreateDTO {
     private List<String> languages;
 
     @Builder.Default private boolean featured = false;
+
+    @NotNull
+    @NotEmpty
+    @Size(min = 1, max = 5, message = "Number of ForumTags must be between 1 and 5")
+    @UniqueElements
+    private List<
+                    @Pattern(regexp = "[a-zA-Z0-9]+")
+                    @Size(
+                            min = 1,
+                            max = 24,
+                            message = "Tag name must be between 1 and 24 characters")
+                    String>
+            forumTags;
 }

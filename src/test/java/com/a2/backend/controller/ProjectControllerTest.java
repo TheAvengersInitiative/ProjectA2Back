@@ -59,13 +59,14 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
-
+        List<String> forumTags = Arrays.asList("help", "fix");
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -101,6 +102,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -108,6 +110,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -137,6 +140,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -144,6 +148,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -173,6 +178,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -180,6 +186,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -226,6 +233,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -233,6 +241,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -280,6 +289,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -287,6 +297,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -345,6 +356,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -352,6 +364,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -412,6 +425,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         String titleforUpdate = "New Project Title";
         String descriptionforUpdate = "New Project description";
@@ -429,6 +443,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -438,6 +453,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(descriptionforUpdate)
                         .links(linksForUpdate)
                         .tags(tagsForUpdate)
+                        .forumTags(forumTags)
                         .languages(languagesForUpdate)
                         .build();
 
@@ -484,6 +500,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -491,6 +508,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -538,6 +556,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -545,6 +564,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -584,6 +604,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -591,6 +612,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -620,6 +642,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("This is not a valid tag for a project", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -627,6 +650,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -656,6 +680,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = List.of();
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -663,6 +688,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -699,6 +725,7 @@ class ProjectControllerTest extends AbstractTest {
                         "http://link6.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -706,6 +733,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -758,6 +786,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://google.com", "http://link.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Not Valid Language", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -765,6 +794,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -794,6 +824,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C", "Python", "PHP");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -801,6 +832,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -830,6 +862,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = List.of();
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -837,6 +870,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -866,6 +900,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link1.com", "link");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = List.of("C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -873,6 +908,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -902,6 +938,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link1.com", "http://link1.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = List.of("C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -909,6 +946,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -938,6 +976,7 @@ class ProjectControllerTest extends AbstractTest {
         List<String> links = Arrays.asList("http://link1.com");
         List<String> tags = Arrays.asList("t", "t");
         List<String> languages = List.of("C");
+        List<String> forumTags = Arrays.asList("help", "fix");
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
@@ -945,6 +984,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
 
@@ -977,6 +1017,8 @@ class ProjectControllerTest extends AbstractTest {
         List<String> secondTags = Arrays.asList("tag3", "tag4");
         List<String> languages = Arrays.asList("Java", "C");
         List<String> secondLanguages = Arrays.asList("Java", "Python");
+        List<String> forumTags = Arrays.asList("help", "fix");
+        List<String> forumTags2 = Arrays.asList("help2", "fix2");
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -984,6 +1026,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(links)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
@@ -992,6 +1035,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(secondLinks)
                         .tags(secondTags)
+                        .forumTags(forumTags2)
                         .languages(secondLanguages)
                         .build();
 
@@ -1046,6 +1090,10 @@ class ProjectControllerTest extends AbstractTest {
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
+        List<String> forumTags2 = Arrays.asList("help2", "fix2");
+        List<String> forumTags3 = Arrays.asList("help3", "fix3");
+        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
@@ -1053,6 +1101,7 @@ class ProjectControllerTest extends AbstractTest {
                         .links(links)
                         .description(description)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .languages(languages)
                         .build();
         ProjectCreateDTO secondProjectToCreate =
@@ -1061,6 +1110,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(secondLinks)
                         .tags(secondTags)
+                        .forumTags(forumTags2)
                         .languages(secondLanguages)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
@@ -1069,6 +1119,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(thirdLinks)
                         .tags(thirdTags)
+                        .forumTags(forumTags3)
                         .languages(thirdLanguages)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
@@ -1077,6 +1128,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(fourthLinks)
                         .tags(fourthTags)
+                        .forumTags(forumTags4)
                         .languages(fourthLlanguages)
                         .build();
 
@@ -1155,12 +1207,17 @@ class ProjectControllerTest extends AbstractTest {
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
+        List<String> forumTags2 = Arrays.asList("help2", "fix2");
+        List<String> forumTags3 = Arrays.asList("help3", "fix3");
+        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .links(links)
                         .languages(languages)
                         .build();
@@ -1170,6 +1227,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(secondLinks)
                         .tags(secondTags)
+                        .forumTags(forumTags2)
                         .languages(secondLanguages)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
@@ -1178,6 +1236,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(thirdLinks)
                         .tags(thirdTags)
+                        .forumTags(forumTags3)
                         .languages(thirdLanguages)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
@@ -1186,6 +1245,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(fourthLinks)
                         .tags(fourthTags)
+                        .forumTags(forumTags4)
                         .languages(fourthlanguages)
                         .build();
 
@@ -1264,12 +1324,17 @@ class ProjectControllerTest extends AbstractTest {
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
+        List<String> forumTags2 = Arrays.asList("help2", "fix2");
+        List<String> forumTags3 = Arrays.asList("help3", "fix3");
+        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .links(links)
                         .languages(languages)
                         .build();
@@ -1279,6 +1344,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(secondLinks)
                         .tags(secondTags)
+                        .forumTags(forumTags2)
                         .languages(secondLanguages)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
@@ -1287,6 +1353,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(thirdLinks)
                         .tags(thirdTags)
+                        .forumTags(forumTags3)
                         .languages(thirdLanguages)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
@@ -1295,6 +1362,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(fourthLinks)
                         .tags(fourthTags)
+                        .forumTags(forumTags4)
                         .languages(fourthlanguages)
                         .build();
 
@@ -1372,12 +1440,17 @@ class ProjectControllerTest extends AbstractTest {
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
+        List<String> forumTags2 = Arrays.asList("help2", "fix2");
+        List<String> forumTags3 = Arrays.asList("help3", "fix3");
+        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .links(links)
                         .languages(languages)
                         .featured(true)
@@ -1388,6 +1461,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(secondLinks)
                         .tags(secondTags)
+                        .forumTags(forumTags2)
                         .languages(secondLanguages)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
@@ -1396,6 +1470,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(thirdLinks)
                         .tags(thirdTags)
+                        .forumTags(forumTags3)
                         .languages(thirdLanguages)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
@@ -1404,6 +1479,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(fourthLinks)
                         .tags(fourthTags)
+                        .forumTags(forumTags4)
                         .featured(true)
                         .languages(fourthlanguages)
                         .build();
@@ -1482,12 +1558,17 @@ class ProjectControllerTest extends AbstractTest {
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
+        List<String> forumTags = Arrays.asList("help", "fix");
+        List<String> forumTags2 = Arrays.asList("help2", "fix2");
+        List<String> forumTags3 = Arrays.asList("help3", "fix3");
+        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
         ProjectCreateDTO firstProjectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
                         .tags(tags)
+                        .forumTags(forumTags)
                         .links(links)
                         .languages(languages)
                         .featured(true)
@@ -1498,6 +1579,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(secondLinks)
                         .tags(secondTags)
+                        .forumTags(forumTags2)
                         .languages(secondLanguages)
                         .build();
         ProjectCreateDTO thirdProjectToCreate =
@@ -1506,6 +1588,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(thirdLinks)
                         .tags(thirdTags)
+                        .forumTags(forumTags3)
                         .languages(thirdLanguages)
                         .build();
         ProjectCreateDTO fourthProjectToCreate =
@@ -1514,6 +1597,7 @@ class ProjectControllerTest extends AbstractTest {
                         .description(description)
                         .links(fourthLinks)
                         .tags(fourthTags)
+                        .forumTags(forumTags4)
                         .featured(true)
                         .languages(fourthlanguages)
                         .build();

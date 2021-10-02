@@ -22,6 +22,8 @@ public class ProjectDTO {
 
     private List<String> tags;
 
+    private List<String> forumTags;
+
     private List<String> languages;
 
     private boolean featured;

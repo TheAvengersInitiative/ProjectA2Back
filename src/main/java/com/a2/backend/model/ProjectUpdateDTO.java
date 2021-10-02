@@ -45,6 +45,19 @@ public class ProjectUpdateDTO {
                     String>
             tags;
 
+    @NotNull
+    @NotEmpty
+    @Size(min = 1, max = 5, message = "Number of ForumTags must be between 1 and 5")
+    @UniqueElements
+    private List<
+                    @Pattern(regexp = "[a-zA-Z0-9]+")
+                    @Size(
+                            min = 1,
+                            max = 24,
+                            message = "Tag name must be between 1 and 24 characters")
+                    String>
+            forumTags;
+
     @Size(min = 1, max = 3, message = "Number of languages must be between 1 and 3")
     private List<String> languages;
 }

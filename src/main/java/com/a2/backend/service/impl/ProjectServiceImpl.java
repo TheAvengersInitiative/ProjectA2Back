@@ -1,9 +1,6 @@
 package com.a2.backend.service.impl;
 
-import com.a2.backend.entity.Language;
-import com.a2.backend.entity.Project;
-import com.a2.backend.entity.Tag;
-import com.a2.backend.entity.User;
+import com.a2.backend.entity.*;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
@@ -11,13 +8,11 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
+import com.a2.backend.repository.ForumTagRepository;
 import com.a2.backend.repository.LanguageRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.TagRepository;
-import com.a2.backend.service.LanguageService;
-import com.a2.backend.service.ProjectService;
-import com.a2.backend.service.TagService;
-import com.a2.backend.service.UserService;
+import com.a2.backend.service.*;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +31,11 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserService userService;
 
     private final TagRepository tagRepository;
+
+    private final ForumTagService forumTagService;
+
+    private final ForumTagRepository forumTagRepository;
+
     private final LanguageRepository languageRepository;
 
     public ProjectServiceImpl(
@@ -44,13 +44,17 @@ public class ProjectServiceImpl implements ProjectService {
             LanguageService languageService,
             UserService userService,
             LanguageRepository languageRepository,
-            TagRepository tagRepository) {
+            TagRepository tagRepository,
+            ForumTagService forumTagService,
+            ForumTagRepository forumTagRepository) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
         this.languageService = languageService;
         this.userService = userService;
         this.languageRepository = languageRepository;
         this.tagRepository = tagRepository;
+        this.forumTagService = forumTagService;
+        this.forumTagRepository = forumTagRepository;
     }
 
     @Override
@@ -60,6 +64,8 @@ public class ProjectServiceImpl implements ProjectService {
         User loggedUser = userService.getLoggedUser();
         if (existingProjectWithTitle.isEmpty()) {
             List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
+            List<ForumTag> forumTags =
+                    forumTagService.findOrCreateTag(projectCreateDTO.getForumTags());
             List<Language> languages =
                     languageService.findOrCreateLanguage(projectCreateDTO.getLanguages());
 
@@ -69,6 +75,7 @@ public class ProjectServiceImpl implements ProjectService {
                             .description(projectCreateDTO.getDescription())
                             .links(projectCreateDTO.getLinks())
                             .tags(tags)
+                            .forumTags(forumTags)
                             .languages(languages)
                             .owner(loggedUser)
                             .applicants(List.of())
@@ -106,6 +113,10 @@ public class ProjectServiceImpl implements ProjectService {
                 tagService.getRemovedTags(
                         projectUpdateDTO.getTags(),
                         getProjectDetails(projectToBeUpdatedID).getTags());
+        List<ForumTag> removedForumTags =
+                forumTagService.getRemovedTags(
+                        projectUpdateDTO.getTags(),
+                        getProjectDetails(projectToBeUpdatedID).getForumTags());
 
         List<Language> removedLanguages =
                 languageService.getRemovedLanguages(
@@ -116,11 +127,13 @@ public class ProjectServiceImpl implements ProjectService {
         project.setTitle(projectUpdateDTO.getTitle());
         project.setLinks(projectUpdateDTO.getLinks());
         project.setTags(tagService.findOrCreateTag(projectUpdateDTO.getTags()));
+        project.setForumTags(forumTagService.findOrCreateTag(projectUpdateDTO.getForumTags()));
         project.setLanguages(languageService.findOrCreateLanguage(projectUpdateDTO.getLanguages()));
         project.setDescription(projectUpdateDTO.getDescription());
 
         Project updatedProject = projectRepository.save(project);
         tagService.deleteUnusedTags(removedTags);
+        forumTagService.deleteUnusedTags(removedForumTags);
         languageService.deleteUnusedLanguages(removedLanguages);
         return updatedProject;
     }
@@ -155,13 +168,15 @@ public class ProjectServiceImpl implements ProjectService {
         return languageService.getValidLanguages();
     }
 
-    public List<Project> searchProjecsByFilter(ProjectSearchDTO projectSearchDTO) {
+    public List<Project> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO) {
         ArrayList<String> validLanguages = new ArrayList<>();
         ArrayList<String> validTags = new ArrayList<>();
+        ArrayList<String> validForumTags = new ArrayList<>();
         ArrayList<Project> result = new ArrayList<>();
         boolean nullTitle = true;
         boolean nullTags = true;
         boolean nullLangs = true;
+        boolean nullForumTags = true;
         boolean featured = projectSearchDTO.isFeatured();
         boolean nullPage = projectSearchDTO.getPage() == -1;
         if (projectSearchDTO.getTitle() != null) {
@@ -189,6 +204,17 @@ public class ProjectServiceImpl implements ProjectService {
                 validTags.addAll(tagRepository.findTagName(tag.toUpperCase(Locale.ROOT)));
             }
         }
+        if (projectSearchDTO.getForumTags() != null && !projectSearchDTO.getForumTags().isEmpty()) {
+            nullForumTags = false;
+            List<String> forumTags = projectSearchDTO.getForumTags();
+            for (String forumTag : forumTags) {
+                result.addAll(
+                        projectRepository.findProjectsByForumTagName(
+                                forumTag.toUpperCase(Locale.ROOT)));
+                validForumTags.addAll(
+                        forumTagRepository.findForumTagName(forumTag.toUpperCase(Locale.ROOT)));
+            }
+        }
 
         for (int i = 0; i < result.size() - 1; i++) {
             for (int j = i + 1; j < result.size(); j++) {
@@ -202,6 +228,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (int i = 0; i < result.size(); i++) {
             ArrayList<String> languageNames = new ArrayList<>();
             ArrayList<String> tagNames = new ArrayList<>();
+            ArrayList<String> forumTagNames = new ArrayList<>();
             if (!nullLangs) {
                 for (int j = 0; j < result.get(i).getLanguages().size(); j++) {
                     languageNames.add(result.get(i).getLanguages().get(j).getName());
@@ -210,6 +237,11 @@ public class ProjectServiceImpl implements ProjectService {
             if (!nullTags) {
                 for (int j = 0; j < result.get(i).getTags().size(); j++) {
                     tagNames.add(result.get(i).getTags().get(j).getName());
+                }
+            }
+            if (!nullForumTags) {
+                for (int j = 0; j < result.get(i).getForumTags().size(); j++) {
+                    forumTagNames.add(result.get(i).getForumTags().get(j).getName());
                 }
             }
             if (!nullTitle) {
@@ -231,6 +263,12 @@ public class ProjectServiceImpl implements ProjectService {
             }
             if (!nullTags) {
                 if (Collections.disjoint(validTags, tagNames)) {
+                    result.remove(i);
+                    i--;
+                }
+            }
+            if (!nullForumTags) {
+                if (Collections.disjoint(validForumTags, forumTagNames)) {
                     result.remove(i);
                     i--;
                 }

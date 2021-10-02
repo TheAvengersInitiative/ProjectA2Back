@@ -3,10 +3,7 @@ package com.a2.backend.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.BackendApplication;
-import com.a2.backend.entity.Language;
-import com.a2.backend.entity.Project;
-import com.a2.backend.entity.Tag;
-import com.a2.backend.entity.User;
+import com.a2.backend.entity.*;
 import java.util.*;
 import java.util.Arrays;
 import lombok.val;
@@ -43,11 +40,15 @@ class ProjectRepositoryTest {
                     .build();
     List<Tag> tags = Collections.singletonList(Tag.builder().name("Start").build());
     List<String> links = Collections.singletonList("http://link.com");
+    List<ForumTag> forumTags =
+            Collections.singletonList(ForumTag.builder().name("forumTag").build());
+
     Project project =
             Project.builder()
                     .title(title)
                     .description(description)
                     .tags(tags)
+                    .forumTags(forumTags)
                     .links(links)
                     .owner(owner)
                     .applicants(List.of())
@@ -122,6 +123,7 @@ class ProjectRepositoryTest {
                         .title("Project Title")
                         .description("description")
                         .tags(tags)
+                        .forumTags(forumTags)
                         .links(links)
                         .owner(owner)
                         .applicants(List.of())
@@ -152,6 +154,7 @@ class ProjectRepositoryTest {
                         .title("Project Title")
                         .description("description")
                         .tags(tags)
+                        .forumTags(forumTags)
                         .links(links)
                         .owner(owner2)
                         .applicants(List.of())
@@ -181,6 +184,7 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag2))
+                        .forumTags(forumTags)
                         .applicants(List.of())
                         .collaborators(List.of())
                         .rejectedApplicants(List.of())
@@ -193,6 +197,7 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
+                        .forumTags(forumTags)
                         .applicants(List.of())
                         .collaborators(List.of())
                         .rejectedApplicants(List.of())
@@ -205,6 +210,7 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
+                        .forumTags(forumTags)
                         .applicants(List.of())
                         .collaborators(List.of())
                         .rejectedApplicants(List.of())
@@ -242,6 +248,7 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag2))
+                        .forumTags(forumTags)
                         .languages(Arrays.asList(language1, language2))
                         .applicants(List.of())
                         .collaborators(List.of())
@@ -255,6 +262,7 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
+                        .forumTags(forumTags)
                         .languages(Arrays.asList(language3, language2))
                         .applicants(List.of())
                         .collaborators(List.of())
@@ -268,6 +276,7 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag3))
+                        .forumTags(forumTags)
                         .languages(Arrays.asList(language1, language3))
                         .applicants(List.of())
                         .collaborators(List.of())
@@ -299,6 +308,7 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .links(Arrays.asList("link1", "link2"))
                         .tags(Arrays.asList(tag1, tag2))
+                        .forumTags(forumTags)
                         .applicants(List.of())
                         .collaborators(List.of())
                         .rejectedApplicants(List.of())
