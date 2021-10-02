@@ -100,4 +100,11 @@ public class DefaultExceptionHandler {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(DiscussionWithThatTitleExistsInProjectException.class)
+    protected ResponseEntity<?> handleDiscussionWithThatTitleExistsInProject(
+            DiscussionWithThatTitleExistsInProjectException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

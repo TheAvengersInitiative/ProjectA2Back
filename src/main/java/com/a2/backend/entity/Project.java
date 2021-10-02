@@ -38,6 +38,10 @@ public class Project implements Serializable {
     @Size(min = 1, max = 5)
     private List<String> links;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Discussion> discussions;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotNull
