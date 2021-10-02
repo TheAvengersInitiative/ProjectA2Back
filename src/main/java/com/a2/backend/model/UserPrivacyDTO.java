@@ -1,9 +1,8 @@
 package com.a2.backend.model;
 
 import com.a2.backend.constants.PrivacyConstant;
-import lombok.*;
-
 import javax.validation.constraints.NotNull;
+import lombok.*;
 
 @Getter
 @Setter
@@ -13,15 +12,11 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class UserPrivacyDTO {
 
-    @NotNull
-    private PrivacyConstant tagsPrivacy;
+    @NotNull private PrivacyConstant tagsPrivacy;
 
-    @NotNull
-    private PrivacyConstant languagesPrivacy;
+    @NotNull private PrivacyConstant languagesPrivacy;
 
-    @NotNull
-    private PrivacyConstant ownedProjectsPrivacy;
+    @NotNull private PrivacyConstant ownedProjectsPrivacy;
 
-    @NotNull
-    private PrivacyConstant collaboratedProjectsPrivacy;
+    @NotNull private PrivacyConstant collaboratedProjectsPrivacy;
 }

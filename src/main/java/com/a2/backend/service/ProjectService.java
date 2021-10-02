@@ -6,7 +6,6 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
-
 import java.util.List;
 import java.util.UUID;
 

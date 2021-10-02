@@ -1,11 +1,16 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.UserPrivacyDTO;
 import com.a2.backend.model.UserProfileDTO;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Objects;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,30 +19,21 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Objects;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @AutoConfigureMockMvc
 public class UserControllerActiveTest extends AbstractControllerTest {
-    @Autowired
-    MockMvc mvc;
+    @Autowired MockMvc mvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
+    @Autowired ObjectMapper objectMapper;
 
-    @Autowired
-    UserRepository userRepository;
+    @Autowired UserRepository userRepository;
 
     private final String baseUrl = "/user";
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test001_UserControllerWhenUpdatingUserPreferencesThenTheyStatusIsOkAndUpdatedUserIsReturned()
-            throws Exception {
+            Test001_UserControllerWhenUpdatingUserPreferencesThenTheyStatusIsOkAndUpdatedUserIsReturned()
+                    throws Exception {
         UserPrivacyDTO privacyDTO =
                 UserPrivacyDTO.builder()
                         .tagsPrivacy(PrivacyConstant.PRIVATE)
@@ -68,8 +64,8 @@ public class UserControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test002_UserControllerWhenGettingUserProfileThenStatusIsOkAndProfileWithPublicFieldsIsReturned()
-            throws Exception {
+            Test002_UserControllerWhenGettingUserProfileThenStatusIsOkAndProfileWithPublicFieldsIsReturned()
+                    throws Exception {
         User user = userRepository.findByEmail("rodrigo.pazos@ing.austral.edu.ar").get();
 
         String contentAsString =
@@ -99,8 +95,8 @@ public class UserControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test003_UserControllerWhenGettingUserProfileThenStatusIsOkAndProfileWithNullOnPrivateFieldsIsReturned()
-            throws Exception {
+            Test003_UserControllerWhenGettingUserProfileThenStatusIsOkAndProfileWithNullOnPrivateFieldsIsReturned()
+                    throws Exception {
         User user = userRepository.findByEmail("agustin.ayerza@ing.austral.edu.ar").get();
 
         String contentAsString =
