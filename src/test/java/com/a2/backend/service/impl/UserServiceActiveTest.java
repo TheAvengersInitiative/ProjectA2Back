@@ -3,7 +3,6 @@ package com.a2.backend.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.constants.PrivacyConstant;
-import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.model.ProjectDTO;
@@ -35,7 +34,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
         userService.getLoggedUser().setPreferredTags(preferredTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<Project> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
+        List<ProjectDTO> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         assertEquals(6, projects.size());
 
@@ -71,7 +70,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         preferredTags.add("C");
         userService.getLoggedUser().setPreferredTags(preferredTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<Project> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
+        List<ProjectDTO> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         for (int i = 0; i < projects.size(); i++) {
             projects.get(i).setFeatured(false);
@@ -117,24 +116,32 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test005_GivenValidUserWhenGettingProfileThenOnlyFieldsWithPublicPrivacyAreReturned() {
+    void Test005_WhenGettingProfileForLoggedUserThenEveryFieldIsReturnedRegardlessOfPrivacy() {
         User loggedUser = userService.getLoggedUser();
         UserProfileDTO userProfile = userService.getUserProfile(loggedUser.getId());
 
         assertEquals(loggedUser.getNickname(), userProfile.getNickname());
         assertEquals(loggedUser.getBiography(), userProfile.getBiography());
         assertEquals(loggedUser.getPreferredTags(), userProfile.getPreferredTags());
+        assertEquals(loggedUser.getPreferredLanguages(), userProfile.getPreferredLanguages());
         assertNotNull(userProfile.getOwnedProjects());
         assertTrue(
                 projectService.getProjectsByOwner(loggedUser).stream()
-                        .map(Project::getId)
+                        .map(ProjectDTO::getId)
                         .collect(Collectors.toList())
                         .containsAll(
                                 userProfile.getOwnedProjects().stream()
                                         .map(ProjectDTO::getId)
                                         .collect(Collectors.toList())));
-        assertNull(userProfile.getCollaboratedProjects());
-        assertNull(userProfile.getPreferredLanguages());
+        assertNotNull(userProfile.getCollaboratedProjects());
+        assertTrue(
+                projectService.getCollaboratingProjects(loggedUser).stream()
+                        .map(ProjectDTO::getId)
+                        .collect(Collectors.toList())
+                        .containsAll(
+                                userProfile.getCollaboratedProjects().stream()
+                                        .map(ProjectDTO::getId)
+                                        .collect(Collectors.toList())));
     }
 
     @Test

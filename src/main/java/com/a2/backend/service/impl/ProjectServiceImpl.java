@@ -17,6 +17,10 @@ import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
@@ -88,13 +92,15 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+    public List<ProjectDTO> getAllProjects() {
+        return projectRepository.findAll().stream()
+                .map(Project::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public Project updateProject(ProjectUpdateDTO projectUpdateDTO, UUID projectToBeUpdatedID) {
+    public ProjectDTO updateProject(ProjectUpdateDTO projectUpdateDTO, UUID projectToBeUpdatedID) {
         val projectToModifyOptional = projectRepository.findById(projectToBeUpdatedID);
         if (projectToModifyOptional.isEmpty()) {
             throw new ProjectNotFoundException(
@@ -132,7 +138,7 @@ public class ProjectServiceImpl implements ProjectService {
         tagService.deleteUnusedTags(removedTags);
         forumTagService.deleteUnusedTags(removedForumTags);
         languageService.deleteUnusedLanguages(removedLanguages);
-        return updatedProject;
+        return updatedProject.toDTO();
     }
 
     @Override
@@ -145,9 +151,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project getProjectDetails(UUID projectID) {
+    public ProjectDTO getProjectDetails(UUID projectID) {
         return projectRepository
                 .findById(projectID)
+                .map(Project::toDTO)
                 .orElseThrow(
                         () ->
                                 new ProjectNotFoundException(
@@ -165,7 +172,7 @@ public class ProjectServiceImpl implements ProjectService {
         return languageService.getValidLanguages();
     }
 
-    public List<Project> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO) {
+    public List<ProjectDTO> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO) {
         ArrayList<String> validLanguages = new ArrayList<>();
         ArrayList<String> validTags = new ArrayList<>();
         ArrayList<String> validForumTags = new ArrayList<>();
@@ -268,18 +275,22 @@ public class ProjectServiceImpl implements ProjectService {
             }
         }
 
-        return result;
+        return result.stream().map(Project::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<Project> getFeaturedProject() {
-        return projectRepository.findAllByFeaturedIsTrue();
+    public List<ProjectDTO> getFeaturedProject() {
+        return projectRepository.findAllByFeaturedIsTrue().stream()
+                .map(Project::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Project> getMyProjects() {
+    public List<ProjectDTO> getMyProjects() {
         val user = userService.getLoggedUser();
-        return projectRepository.findByOwner(user);
+        return projectRepository.findByOwner(user).stream()
+                .map(Project::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -318,13 +329,17 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<Project> getProjectsByOwner(User owner) {
-        return projectRepository.findByOwner(owner);
+    public List<ProjectDTO> getProjectsByOwner(User owner) {
+        return projectRepository.findByOwner(owner).stream()
+                .map(Project::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Project> getCollaboratingProjects(User user) {
-        return projectRepository.findByCollaboratorsContaining(user);
+    public List<ProjectDTO> getCollaboratingProjects(User user) {
+        return projectRepository.findByCollaboratorsContaining(user).stream()
+                .map(Project::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

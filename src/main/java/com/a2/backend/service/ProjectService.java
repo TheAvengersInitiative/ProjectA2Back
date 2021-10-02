@@ -10,29 +10,29 @@ public interface ProjectService {
 
     Project createProject(ProjectCreateDTO projectCreateDTO);
 
-    List<Project> getAllProjects();
+    List<ProjectDTO> getAllProjects();
 
-    Project updateProject(ProjectUpdateDTO updateProject, UUID projectToBeUpdatedID);
+    ProjectDTO updateProject(ProjectUpdateDTO updateProject, UUID projectToBeUpdatedID);
 
     void deleteProject(UUID uuid);
 
-    Project getProjectDetails(UUID id);
+    ProjectDTO getProjectDetails(UUID id);
 
     void deleteProjectsFromUser(User owner);
 
     List<String> getValidLanguageNames();
 
-    List<Project> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO);
+    List<ProjectDTO> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO);
 
-    List<Project> getFeaturedProject();
+    List<ProjectDTO> getFeaturedProject();
 
-    List<Project> getMyProjects();
+    List<ProjectDTO> getMyProjects();
 
     ProjectDTO applyToProject(UUID projectToApplyID);
 
-    List<Project> getProjectsByOwner(User owner);
+    List<ProjectDTO> getProjectsByOwner(User owner);
 
-    List<Project> getCollaboratingProjects(User user);
+    List<ProjectDTO> getCollaboratingProjects(User user);
 
     List<ProjectUserDTO> getProjectApplicants(UUID uuid);
 

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
+import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.model.ProjectSearchDTO;
@@ -35,9 +36,13 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         User loggedUser = userService.getLoggedUser();
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("GNU/Linux").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
-        assertFalse(project.getApplicants().contains(loggedUser));
+        assertFalse(
+                project.getApplicants().stream()
+                        .map(ProjectUserDTO::getNickname)
+                        .collect(Collectors.toList())
+                        .contains(loggedUser.getNickname()));
 
         val projectDTO = projectService.applyToProject(project.getId());
 
@@ -51,10 +56,23 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
+            Test002_ProjectServiceWhenReceivesApplicationToAnAlreadyRejectedCollaborationProjectToShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("GNU/Linux").build();
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        assertThrows(
+                InvalidProjectCollaborationApplicationException.class,
+                () -> projectService.applyToProject(project.getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
             Test003_ProjectServiceWhenReceivesApplicationToAnAlreadyCollaboratingProjectToShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -67,7 +85,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test004_ProjectServiceWhenReceivesApplicationToAnAlreadyAppliedProjectToShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -80,7 +98,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("RedHatAnsible").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -91,49 +109,32 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
             Test006_ProjectServiceWhenFindingProjectsByCollaboratorsContainingUserThenProjectsAreReturned() {
-        List<Project> collaboratingProjects =
+        List<ProjectDTO> collaboratingProjects =
                 projectService.getCollaboratingProjects(userService.getLoggedUser());
 
         assertEquals(2, collaboratingProjects.size());
 
-        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(collaboratingProjects.contains(project));
-
-        projectSearchDTO.setTitle("Django");
-        project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(collaboratingProjects.contains(project));
+        List<String> collaboratingProjectTitles =
+                collaboratingProjects.stream()
+                        .map(ProjectDTO::getTitle)
+                        .collect(Collectors.toList());
+        assertTrue(collaboratingProjectTitles.contains("Node.js"));
+        assertTrue(collaboratingProjectTitles.contains("Django"));
     }
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void Test007_ProjectServiceWhenFindingProjectsByOwnerThenProjectsAreReturned() {
-        List<Project> ownedProjects =
+        List<ProjectDTO> ownedProjects =
                 projectService.getProjectsByOwner(userService.getLoggedUser());
 
         assertEquals(4, ownedProjects.size());
-
-        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(ownedProjects.contains(project));
-
-        projectSearchDTO.setTitle("Renovate");
-        project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(ownedProjects.contains(project));
-
-        projectSearchDTO.setTitle("Kubernetes");
-        project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(ownedProjects.contains(project));
-
-        projectSearchDTO.setTitle("RedHatAnsible");
-        project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(ownedProjects.contains(project));
+        List<String> ownedProjectTitles =
+                ownedProjects.stream().map(ProjectDTO::getTitle).collect(Collectors.toList());
+        assertTrue(ownedProjectTitles.contains("TensorFlow"));
+        assertTrue(ownedProjectTitles.contains("Renovate"));
+        assertTrue(ownedProjectTitles.contains("Kubernetes"));
+        assertTrue(ownedProjectTitles.contains("RedHatAnsible"));
     }
 
     @Test
