@@ -348,3 +348,4 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.findByCollaboratorsContaining(user);
     }
 }
+
