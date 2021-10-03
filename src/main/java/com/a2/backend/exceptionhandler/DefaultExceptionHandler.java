@@ -107,4 +107,11 @@ public class DefaultExceptionHandler {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UserIsNotCollaboratorNorOwnerException.class)
+    protected ResponseEntity<?> handleUserIsNotCollaboratorNorOwner(
+            UserIsNotCollaboratorNorOwnerException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
 }

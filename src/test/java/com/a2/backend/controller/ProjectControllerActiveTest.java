@@ -5,9 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.entity.Project;
+import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -182,5 +185,38 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getContentAsString();
 
         assert (Objects.requireNonNull(errorMessage).contains("Current user owns project"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test0032_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNotExistingProjectShouldReturnBadRequest()
+                    throws Exception {
+
+        val project = projectRepository.findByTitle("GNU/Linux");
+        String discussionTitle = "Discussion title";
+        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+
+        DiscussionCreateDTO discussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
+
+        String discussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.get().getId().toString()
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isUnauthorized())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
     }
 }
