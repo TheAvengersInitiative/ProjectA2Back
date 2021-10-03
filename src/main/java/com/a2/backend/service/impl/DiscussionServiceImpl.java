@@ -9,11 +9,10 @@ import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
+import com.a2.backend.service.UserService;
 import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
-
-import com.a2.backend.service.UserService;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ public class DiscussionServiceImpl implements DiscussionService {
             UserService userService) {
         this.forumTagService = forumTagService;
         this.projectRepository = projectRepository;
-        this.userService=userService;
+        this.userService = userService;
         this.discussionRepository = discussionRepository;
     }
 

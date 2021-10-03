@@ -2013,8 +2013,8 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-    Test0032_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNotExistingProjectShouldReturnBadRequest()
-            throws Exception {
+            Test0032_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNotExistingProjectShouldReturnBadRequest()
+                    throws Exception {
         userRepository.save(owner);
 
         String title = "Project title";
@@ -2044,10 +2044,10 @@ class ProjectControllerTest extends AbstractTest {
 
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post(baseUrl)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToCreate))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isCreated())
                         .andReturn()
                         .getResponse()
@@ -2063,16 +2063,16 @@ class ProjectControllerTest extends AbstractTest {
 
         String discussionAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post(
-                                "/project/"
-                                        + project.getId().toString()
-                                        + "z"
-                                        + "/discussion")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        objectMapper.writeValueAsString(
-                                                discussionCreateDTO))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.getId().toString()
+                                                        + "z"
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest())
                         .andReturn()
                         .getResponse()
