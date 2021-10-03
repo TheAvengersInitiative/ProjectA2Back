@@ -203,17 +203,6 @@ public class ProjectServiceImpl implements ProjectService {
                 validTags.addAll(tagRepository.findTagName(tag.toUpperCase(Locale.ROOT)));
             }
         }
-        if (projectSearchDTO.getForumTags() != null && !projectSearchDTO.getForumTags().isEmpty()) {
-            nullForumTags = false;
-            List<String> forumTags = projectSearchDTO.getForumTags();
-            for (String forumTag : forumTags) {
-                result.addAll(
-                        projectRepository.findProjectsByForumTagName(
-                                forumTag.toUpperCase(Locale.ROOT)));
-                validForumTags.addAll(
-                        forumTagRepository.findForumTagName(forumTag.toUpperCase(Locale.ROOT)));
-            }
-        }
 
         for (int i = 0; i < result.size() - 1; i++) {
             for (int j = i + 1; j < result.size(); j++) {
@@ -238,11 +227,7 @@ public class ProjectServiceImpl implements ProjectService {
                     tagNames.add(result.get(i).getTags().get(j).getName());
                 }
             }
-            if (!nullForumTags) {
-                for (int j = 0; j < result.get(i).getForumTags().size(); j++) {
-                    forumTagNames.add(result.get(i).getForumTags().get(j).getName());
-                }
-            }
+
             if (!nullTitle) {
                 if (!result.get(i).getTitle().contains(projectSearchDTO.getTitle())) {
                     result.remove(i);
@@ -348,4 +333,3 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.findByCollaboratorsContaining(user);
     }
 }
-

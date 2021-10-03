@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.AbstractTest;
+import com.a2.backend.entity.Discussion;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
+import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
@@ -1658,5 +1660,353 @@ class ProjectControllerTest extends AbstractTest {
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
         assertEquals(1, projects.length);
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void Test0028_ProjectControllerWhenReceivesValidCreateDiscussionDTOShouldReturnStatusCreated()
+            throws Exception {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
+
+        String discussionTitle = "Discussion title";
+        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+
+        DiscussionCreateDTO discussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .build();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project project = objectMapper.readValue(contentAsString, Project.class);
+
+        assertNotNull(project.getId());
+        assertEquals(title, project.getTitle());
+        assertEquals(description, project.getDescription());
+        assertEquals(links, project.getLinks());
+        assertEquals(owner.getId(), project.getOwner().getId());
+
+        String discussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.getId().toString()
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Discussion discussion = objectMapper.readValue(discussionAsString, Discussion.class);
+        assertNotNull(discussion.getId());
+        assertEquals(discussionTitle, discussion.getTitle());
+        assertEquals(discussion.getForumTags().size(), discussionCreateDTO.getForumTags().size());
+        assertEquals(
+                discussion.getForumTags().get(0).getName(),
+                discussionCreateDTO.getForumTags().get(0));
+        assertEquals(discussion.getProject().getId(), project.getId());
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+            Test0029_ProjectControllerWhenReceivesNotValidProjectWhileCreatingDiscussionShouldReturnBadRequestStatus()
+                    throws Exception {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
+
+        String discussionTitle = "Discussion title";
+        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+
+        DiscussionCreateDTO discussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .forumTags(discussionTags)
+                        .tags(tags)
+                        .languages(languages)
+                        .build();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project project = objectMapper.readValue(contentAsString, Project.class);
+
+        assertNotNull(project.getId());
+        assertEquals(title, project.getTitle());
+        assertEquals(description, project.getDescription());
+        assertEquals(links, project.getLinks());
+        assertEquals(owner.getId(), project.getOwner().getId());
+
+        String discussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.getId().toString()
+                                                        + 1
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+            Test0030_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNonExistingProjectShouldReturnBadStatus()
+                    throws Exception {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
+
+        String discussionTitle = "Discussion title";
+        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+
+        DiscussionCreateDTO discussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .forumTags(discussionTags)
+                        .description(description)
+                        .links(links)
+                        .tags(tags)
+                        .languages(languages)
+                        .build();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project project = objectMapper.readValue(contentAsString, Project.class);
+
+        assertNotNull(project.getId());
+        assertEquals(title, project.getTitle());
+        assertEquals(description, project.getDescription());
+        assertEquals(links, project.getLinks());
+        assertEquals(owner.getId(), project.getOwner().getId());
+
+        String discussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.getId().toString()
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Discussion discussion = objectMapper.readValue(discussionAsString, Discussion.class);
+        assertNotNull(discussion.getId());
+        assertEquals(discussionTitle, discussion.getTitle());
+        assertEquals(discussion.getForumTags().size(), discussionCreateDTO.getForumTags().size());
+        assertEquals(
+                discussion.getForumTags().get(0).getName(),
+                discussionCreateDTO.getForumTags().get(0));
+        assertEquals(discussion.getProject().getId(), project.getId());
+
+        String secondDiscussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.getId().toString()
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(username = "some@gmail.com")
+    void
+            Test0031_ProjectControllerWhenReceivesSecondValidCreateDiscussionDTOShouldReturnStatusCreated()
+                    throws Exception {
+        userRepository.save(owner);
+
+        String title = "Project title";
+        String description = "Testing exception for existing title";
+        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<String> languages = Arrays.asList("Java", "C");
+
+        String discussionTitle = "Discussion title";
+        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+
+        DiscussionCreateDTO discussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
+        DiscussionCreateDTO secondDiscussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle + "2")
+                        .build();
+
+        ProjectCreateDTO projectToCreate =
+                ProjectCreateDTO.builder()
+                        .title(title)
+                        .description(description)
+                        .links(links)
+                        .forumTags(discussionTags)
+                        .tags(tags)
+                        .languages(languages)
+                        .build();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(baseUrl)
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToCreate))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project project = objectMapper.readValue(contentAsString, Project.class);
+
+        assertNotNull(project.getId());
+        assertEquals(title, project.getTitle());
+        assertEquals(description, project.getDescription());
+        assertEquals(links, project.getLinks());
+        assertEquals(owner.getId(), project.getOwner().getId());
+
+        String discussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.getId().toString()
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Discussion discussion = objectMapper.readValue(discussionAsString, Discussion.class);
+        assertNotNull(discussion.getId());
+        assertEquals(discussionTitle, discussion.getTitle());
+        assertEquals(discussion.getForumTags().size(), discussionCreateDTO.getForumTags().size());
+        assertEquals(
+                discussion.getForumTags().get(0).getName(),
+                discussionCreateDTO.getForumTags().get(0));
+        assertEquals(discussion.getProject().getId(), project.getId());
+
+        String secondDiscussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.getId().toString()
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        secondDiscussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Discussion secondDiscussion =
+                objectMapper.readValue(secondDiscussionAsString, Discussion.class);
+        assertNotNull(secondDiscussion.getId());
+        assertEquals(discussionTitle + "2", secondDiscussion.getTitle());
+        assertEquals(
+                secondDiscussion.getForumTags().size(),
+                secondDiscussionCreateDTO.getForumTags().size());
+        assertEquals(
+                secondDiscussion.getForumTags().get(0).getName(),
+                secondDiscussionCreateDTO.getForumTags().get(0));
+        assertEquals(secondDiscussion.getProject().getId(), project.getId());
     }
 }

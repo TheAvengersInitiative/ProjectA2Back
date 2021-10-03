@@ -9,7 +9,6 @@ import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUserDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.val;
@@ -142,26 +141,5 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertTrue(ownedProjects.contains(project));
-    }
-
-    @Test
-    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void
-            Test006_ProjectServiceWhenWantToSearchForAProjectByItsForumTagsThenReturnProjectsWithThoseTags() {
-        User loggedUser = userService.getLoggedUser();
-        List<String> forumTags = new ArrayList<>();
-        forumTags.add("help");
-        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().forumTags(forumTags).build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertFalse(project.getApplicants().contains(loggedUser));
-
-        val projectDTO = projectService.applyToProject(project.getId());
-
-        assertTrue(
-                projectDTO.getApplicants().stream()
-                        .map(ProjectUserDTO::getEmail)
-                        .collect(Collectors.toList())
-                        .contains(loggedUser.getEmail()));
     }
 }
