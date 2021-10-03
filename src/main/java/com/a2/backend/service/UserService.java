@@ -31,4 +31,6 @@ public interface UserService {
     User updatePrivacySettings(UserPrivacyDTO userPrivacyDTO);
 
     UserProfileDTO getUserProfile(UUID id);
+
+    User getUser(UUID id);
 }

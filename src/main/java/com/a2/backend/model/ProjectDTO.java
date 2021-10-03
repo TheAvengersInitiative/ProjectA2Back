@@ -33,6 +33,4 @@ public class ProjectDTO {
     private List<ProjectUserDTO> collaborators;
 
     private List<ProjectUserDTO> applicants;
-
-    private List<ProjectUserDTO> rejectedApplicants;
 }

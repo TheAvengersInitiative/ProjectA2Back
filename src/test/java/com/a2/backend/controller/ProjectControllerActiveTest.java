@@ -7,7 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.a2.backend.entity.Project;
 import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.model.ProjectDTO;
+import com.a2.backend.model.ProjectUserDTO;
 import com.a2.backend.repository.ProjectRepository;
+import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +31,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Autowired ObjectMapper objectMapper;
 
     @Autowired ProjectRepository projectRepository;
+
+    @Autowired UserRepository userRepository;
 
     private final String baseUrl = "/project";
 
@@ -115,32 +119,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void
-            Test005_ProjectControllerWithApplicationToAnAlreadyRejectedCollaborationProjectToShouldReturnStatusBadRequest()
-                    throws Exception {
-        val project = projectRepository.findByTitle("GNU/Linux");
-
-        String errorMessage =
-                mvc.perform(
-                                MockMvcRequestBuilders.put(
-                                                String.format(
-                                                        "%s/%s",
-                                                        baseUrl + "/apply",
-                                                        Objects.requireNonNull(
-                                                                project.get().getId())))
-                                        .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
-
-        assert (Objects.requireNonNull(errorMessage).contains("Already rejected collaboration"));
-    }
-
-    @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
-    void Test006_ProjectControllerWithValidApplicationToProjectToShouldReturnHttpOkTest()
+    void Test005_ProjectControllerWithValidApplicationToProjectToShouldReturnHttpOkTest()
             throws Exception {
         val project = projectRepository.findByTitle("GNU/Linux");
 
@@ -166,7 +146,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
 
     @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
-    void Test007_ProjectControllerWhenOwnerAppliesToCollaborateShouldReturnStatusBadRequest()
+    void Test006_ProjectControllerWhenOwnerAppliesToCollaborateShouldReturnStatusBadRequest()
             throws Exception {
         val project = projectRepository.findByTitle("Node.js");
 
@@ -185,6 +165,162 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getContentAsString();
 
         assert (Objects.requireNonNull(errorMessage).contains("Current user owns project"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test007_ProjectControllerWhenProjectOwnerWithValidProjectIdRequestsForApplicantsShouldReturnHttpOkTest()
+                    throws Exception {
+        val project = projectRepository.findByTitle("TensorFlow");
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl + "/applicants",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        ProjectUserDTO[] users = objectMapper.readValue(contentAsString, ProjectUserDTO[].class);
+
+        assertNotNull(users);
+        assertEquals(1, users.length);
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test008_ProjectControllerWhenNotProjectOwnerRequestsForApplicantsShouldReturnBadRequest()
+            throws Exception {
+        val project = projectRepository.findByTitle("TensorFlow");
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl + "/applicants",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test009_ProjectControllerWhenAcceptingValidApplicantShouldReturnHttpOkTest()
+            throws Exception {
+        val project = projectRepository.findByTitle("ApacheCassandra");
+        val applicant = userRepository.findByNickname("ropa1998");
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s/%s",
+                                                        baseUrl + "/accept",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId()),
+                                                        Objects.requireNonNull(
+                                                                applicant.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        ProjectUserDTO[] updatedApplicants =
+                objectMapper.readValue(contentAsString, ProjectUserDTO[].class);
+
+        assertNotNull(updatedApplicants);
+        assertEquals(0, updatedApplicants.length);
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test010_ProjectControllerWhenAcceptingNotValidApplicantShouldReturnBadRequest()
+            throws Exception {
+        val project = projectRepository.findByTitle("ApacheCassandra");
+        val applicant = userRepository.findByNickname("Peltevis");
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s/%s",
+                                                        baseUrl + "/accept",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId()),
+                                                        Objects.requireNonNull(
+                                                                applicant.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test011_ProjectControllerWhenRejectingValidApplicantShouldReturnHttpOkTest()
+            throws Exception {
+        val project = projectRepository.findByTitle("ApacheCassandra");
+        val applicant = userRepository.findByNickname("ropa1998");
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s/%s",
+                                                        baseUrl + "/reject",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId()),
+                                                        Objects.requireNonNull(
+                                                                applicant.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        ProjectUserDTO[] updatedApplicants =
+                objectMapper.readValue(contentAsString, ProjectUserDTO[].class);
+
+        assertNotNull(updatedApplicants);
+        assertEquals(0, updatedApplicants.length);
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test012_ProjectControllerWhenRejectingNotValidApplicantShouldReturnBadRequest()
+            throws Exception {
+        val project = projectRepository.findByTitle("ApacheCassandra");
+        val applicant = userRepository.findByNickname("Peltevis");
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s/%s",
+                                                        baseUrl + "/reject",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId()),
+                                                        Objects.requireNonNull(
+                                                                applicant.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
     }
 
     @Test

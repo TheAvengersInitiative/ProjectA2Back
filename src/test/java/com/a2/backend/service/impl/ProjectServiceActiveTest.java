@@ -5,11 +5,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
+import com.a2.backend.exception.InvalidUserException;
+import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUserDTO;
+import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -21,6 +25,8 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
     @Autowired private ProjectService projectService;
 
     @Autowired private UserService userService;
+
+    @Autowired private UserRepository userRepository;
 
     @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
@@ -40,19 +46,6 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
                         .map(ProjectUserDTO::getEmail)
                         .collect(Collectors.toList())
                         .contains(loggedUser.getEmail()));
-    }
-
-    @Test
-    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void
-            Test002_ProjectServiceWhenReceivesApplicationToAnAlreadyRejectedCollaborationProjectToShouldThrowException() {
-
-        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("GNU/Linux").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertThrows(
-                InvalidProjectCollaborationApplicationException.class,
-                () -> projectService.applyToProject(project.getId()));
     }
 
     @Test
@@ -141,5 +134,168 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertTrue(ownedProjects.contains(project));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test008_ProjectServiceWhenNotProjectOwnerRequestsForApplicantsShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> projectService.getProjectApplicants(project.getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test009_ProjectServiceWhenProjectOwnerWithValidProjectIdRequestsForApplicantsShouldReturnProjectUserDTOs() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        val applicants = projectService.getProjectApplicants(project.getId());
+        assertNotNull(applicants);
+        assertEquals(1, applicants.size());
+        assertEquals("Peltevis", applicants.get(0).getNickname());
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test010_ProjectServiceWhenGettingApplicantsToProjectWithInvalidIdShouldThrowException() {
+
+        assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.getProjectApplicants(UUID.randomUUID()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test011_ProjectServiceWhenApplyingToProjectWithInvalidIdShouldThrowException() {
+
+        assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.applyToProject(UUID.randomUUID()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test011_ProjectServiceWhenAcceptingApplicationWithInvalidProjectIdShouldThrowException() {
+
+        var applicant = userRepository.findByNickname("FabriDS23");
+        assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.acceptApplicant(UUID.randomUUID(), applicant.get().getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test012_ProjectServiceWhenRejectingApplicationWithInvalidProjectIdShouldThrowException() {
+
+        var applicant = userRepository.findByNickname("FabriDS23");
+        assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.rejectApplicant(UUID.randomUUID(), applicant.get().getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test013_ProjectServiceWhenNotProjectOwnerAcceptsApplicantsShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO =
+                ProjectSearchDTO.builder().title("ApacheCassandra").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        var applicant = userRepository.findByNickname("ropa1998");
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> projectService.acceptApplicant(project.getId(), applicant.get().getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test014_ProjectServiceWhenNotProjectOwnerRejectsApplicantsShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO =
+                ProjectSearchDTO.builder().title("ApacheCassandra").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        var applicant = userRepository.findByNickname("ropa1998");
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> projectService.rejectApplicant(project.getId(), applicant.get().getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test015_ProjectServiceWhenAcceptingInvalidApplicantsShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO =
+                ProjectSearchDTO.builder().title("ApacheCassandra").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        var applicant = userRepository.findByNickname("Peltevis");
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> projectService.acceptApplicant(project.getId(), applicant.get().getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test016_ProjectServiceWhenRejectingInvalidApplicantsShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO =
+                ProjectSearchDTO.builder().title("ApacheCassandra").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        var applicant = userRepository.findByNickname("Peltevis");
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> projectService.rejectApplicant(project.getId(), applicant.get().getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void
+            Test017_ProjectServiceWhenAcceptingValidApplicantsShouldUpdateApplicantAndCollaboratorsList() {
+
+        ProjectSearchDTO projectSearchDTO =
+                ProjectSearchDTO.builder().title("ApacheCassandra").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        var applicant = userRepository.findByNickname("ropa1998").get();
+
+        assertTrue(project.getApplicants().contains(applicant));
+        assertFalse(project.getCollaborators().contains(applicant));
+
+        projectService.acceptApplicant(project.getId(), applicant.getId());
+
+        assertTrue(project.getCollaborators().contains(applicant));
+        assertFalse(project.getApplicants().contains(applicant));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test018_ProjectServiceWhenRejectingValidApplicantsShouldUpdateApplicantList() {
+
+        ProjectSearchDTO projectSearchDTO =
+                ProjectSearchDTO.builder().title("ApacheCassandra").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        var applicant = userRepository.findByNickname("ropa1998").get();
+
+        assertTrue(project.getApplicants().contains(applicant));
+        assertFalse(project.getCollaborators().contains(applicant));
+
+        projectService.rejectApplicant(project.getId(), applicant.getId());
+
+        assertFalse(project.getCollaborators().contains(applicant));
+        assertFalse(project.getApplicants().contains(applicant));
     }
 }

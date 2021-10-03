@@ -123,8 +123,6 @@ public class DemoRunner implements CommandLineRunner {
                                         ForumTag.builder().name("GNU").build()))
                         .collaborators(List.of())
                         .applicants(List.of())
-                        .rejectedApplicants(
-                                List.of(userRepository.findByNickname("ropa1998").get()))
                         .build();
         Project tensorFlow =
                 Project.builder()
@@ -150,7 +148,6 @@ public class DemoRunner implements CommandLineRunner {
                                         ForumTag.builder().name("software library").build()))
                         .collaborators(List.of())
                         .applicants(List.of(userRepository.findByNickname("Peltevis").get()))
-                        .rejectedApplicants(List.of())
                         .build();
         Project node =
                 Project.builder()
@@ -178,7 +175,6 @@ public class DemoRunner implements CommandLineRunner {
                                         userRepository.findByNickname("ropa1998").get(),
                                         userRepository.findByNickname("Peltevis").get()))
                         .applicants(List.of())
-                        .rejectedApplicants(List.of())
                         .build();
 
         Project geany =
@@ -201,8 +197,6 @@ public class DemoRunner implements CommandLineRunner {
                         .forumTags(listOf(ForumTag.builder().name("lightweight IDE").build()))
                         .collaborators(List.of(userRepository.findByNickname("Peltevis").get()))
                         .applicants(List.of())
-                        .rejectedApplicants(
-                                List.of(userRepository.findByNickname("ropa1998").get()))
                         .build();
         Project django =
                 Project.builder()
@@ -223,7 +217,6 @@ public class DemoRunner implements CommandLineRunner {
                                         ForumTag.builder().name("high-level").build()))
                         .collaborators(List.of(userRepository.findByNickname("ropa1998").get()))
                         .applicants(List.of(userRepository.findByNickname("FabriDS23").get()))
-                        .rejectedApplicants(List.of())
                         .build();
         Project sakai =
                 Project.builder()
@@ -237,7 +230,6 @@ public class DemoRunner implements CommandLineRunner {
                         .forumTags(listOf(ForumTag.builder().name("help").build()))
                         .collaborators(List.of())
                         .applicants(List.of())
-                        .rejectedApplicants(List.of())
                         .build();
         Project apache =
                 Project.builder()
@@ -258,7 +250,6 @@ public class DemoRunner implements CommandLineRunner {
                         .featured(true)
                         .collaborators(List.of())
                         .applicants(List.of(userRepository.findByNickname("ropa1998").get()))
-                        .rejectedApplicants(List.of())
                         .build();
         Project renovate =
                 Project.builder()
@@ -279,8 +270,6 @@ public class DemoRunner implements CommandLineRunner {
                         .featured(true)
                         .collaborators(List.of())
                         .applicants(List.of())
-                        .rejectedApplicants(
-                                List.of(userRepository.findByNickname("FabriDS23").get()))
                         .build();
         Project kubernetes =
                 Project.builder()
@@ -299,8 +288,6 @@ public class DemoRunner implements CommandLineRunner {
                         .featured(true)
                         .collaborators(List.of())
                         .applicants(List.of())
-                        .rejectedApplicants(
-                                List.of(userRepository.findByNickname("Peltevis").get()))
                         .build();
         Project ansible =
                 Project.builder()
@@ -322,7 +309,6 @@ public class DemoRunner implements CommandLineRunner {
                         .featured(true)
                         .collaborators(List.of(userRepository.findByNickname("Peltevis").get()))
                         .applicants(List.of())
-                        .rejectedApplicants(List.of())
                         .build();
 
         projectRepository.save(linux);
