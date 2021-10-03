@@ -2,6 +2,7 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.*;
 import com.a2.backend.exception.DiscussionWithThatTitleExistsInProjectException;
+import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
@@ -33,6 +34,17 @@ public class DiscussionServiceImpl implements DiscussionService {
     @Override
     @Transactional
     public Discussion createDiscussion(UUID projectId, DiscussionCreateDTO discussionCreateDTO) {
+        User loggedUser = userService.getLoggedUser();
+        val project = projectRepository.findById(projectId);
+        if (!project.isPresent()) {
+            throw new ProjectNotFoundException("Project not found with that ID");
+        }
+        if (!project.get().getCollaborators().contains(loggedUser)
+                && !project.get().getOwner().getId().equals(loggedUser.getId())) {
+            throw new UserIsNotCollaboratorNorOwnerException(
+                    "User must be collaborator or owner to create a discussion");
+        }
+
         val existingDiscussionWithTitleInProject =
                 discussionRepository.findByProjectIdAndTitle(
                         projectId, discussionCreateDTO.getTitle());
