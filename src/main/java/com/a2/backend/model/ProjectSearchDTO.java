@@ -18,6 +18,9 @@ public class ProjectSearchDTO {
     @Size(max = 5, message = "Number of tags must be between 1 and 5")
     private List<@Size(min = 1, max = 24) String> tags;
 
+    @Size(max = 5, message = "Number of tags must be between 1 and 5")
+    private List<@Size(min = 1, max = 24) String> forumTags;
+
     @Size(max = 3, message = "Number of languages must be between 1 and 3")
     private List<String> languages;
 

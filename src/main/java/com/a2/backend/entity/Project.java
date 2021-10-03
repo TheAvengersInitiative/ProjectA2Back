@@ -47,6 +47,13 @@ public class Project implements Serializable {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
+    @NotNull
+    @NotEmpty
+    @Size(min = 1, max = 5)
+    private List<ForumTag> forumTags;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Language> languages;
 
     @ManyToOne(cascade = {CascadeType.MERGE})
@@ -74,6 +81,7 @@ public class Project implements Serializable {
                 .featured(featured)
                 .languages(languages.stream().map(Language::getName).collect(Collectors.toList()))
                 .tags(tags.stream().map(Tag::getName).collect(Collectors.toList()))
+                .forumTags(forumTags.stream().map(ForumTag::getName).collect(Collectors.toList()))
                 .description(description)
                 .links(links)
                 .owner(owner.toDTO())

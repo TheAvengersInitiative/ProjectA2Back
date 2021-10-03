@@ -2,12 +2,12 @@ package com.a2.backend;
 
 import com.a2.backend.annotation.Generated;
 import com.a2.backend.constants.PrivacyConstant;
-import com.a2.backend.entity.Language;
-import com.a2.backend.entity.Project;
-import com.a2.backend.entity.Tag;
-import com.a2.backend.entity.User;
+import com.a2.backend.entity.*;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component("DemoRunner")
 @Transactional
 @Generated
@@ -29,10 +25,8 @@ public class DemoRunner implements CommandLineRunner {
 
     @Autowired private Environment env;
     @Autowired private ProjectRepository projectRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Autowired private UserRepository userRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     public DemoRunner() {}
 
@@ -123,6 +117,10 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         Language.builder().name("C").build(),
                                         Language.builder().name("C++").build()))
+                        .forumTags(
+                                listOf(
+                                        ForumTag.builder().name("linux").build(),
+                                        ForumTag.builder().name("GNU").build()))
                         .collaborators(List.of())
                         .applicants(List.of())
                         .rejectedApplicants(
@@ -146,6 +144,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Language.builder().name("Python").build(),
                                         Language.builder().name("MATLAB").build(),
                                         Language.builder().name("ML").build()))
+                        .forumTags(
+                                listOf(
+                                        ForumTag.builder().name("Great").build(),
+                                        ForumTag.builder().name("software library").build()))
                         .collaborators(List.of())
                         .applicants(List.of(userRepository.findByNickname("Peltevis").get()))
                         .rejectedApplicants(List.of())
@@ -167,6 +169,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Language.builder().name("JavaScript").build(),
                                         Language.builder().name("Node").build(),
                                         Language.builder().name("V8").build()))
+                        .forumTags(
+                                listOf(
+                                        ForumTag.builder().name("cross-platform").build(),
+                                        ForumTag.builder().name("environment").build()))
                         .collaborators(
                                 List.of(
                                         userRepository.findByNickname("ropa1998").get(),
@@ -192,6 +198,7 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         Language.builder().name("C").build(),
                                         Language.builder().name("C++").build()))
+                        .forumTags(listOf(ForumTag.builder().name("lightweight IDE").build()))
                         .collaborators(List.of(userRepository.findByNickname("Peltevis").get()))
                         .applicants(List.of())
                         .rejectedApplicants(
@@ -210,6 +217,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("web").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
                         .languages(listOf(Language.builder().name("Python").build()))
+                        .forumTags(
+                                listOf(
+                                        ForumTag.builder().name("frameworks").build(),
+                                        ForumTag.builder().name("high-level").build()))
                         .collaborators(List.of(userRepository.findByNickname("ropa1998").get()))
                         .applicants(List.of(userRepository.findByNickname("FabriDS23").get()))
                         .rejectedApplicants(List.of())
@@ -223,6 +234,7 @@ public class DemoRunner implements CommandLineRunner {
                         .tags(listOf(Tag.builder().name("Java").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
                         .languages(listOf(Language.builder().name("Java").build()))
+                        .forumTags(listOf(ForumTag.builder().name("help").build()))
                         .collaborators(List.of())
                         .applicants(List.of())
                         .rejectedApplicants(List.of())
@@ -239,6 +251,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("Apache").build()))
                         .owner(userRepository.findByNickname("FabriDS23").get())
                         .languages(listOf(Language.builder().name("Java").build()))
+                        .forumTags(
+                                listOf(
+                                        ForumTag.builder().name("decentralized").build(),
+                                        ForumTag.builder().name("worldwide").build()))
                         .featured(true)
                         .collaborators(List.of())
                         .applicants(List.of(userRepository.findByNickname("ropa1998").get()))
@@ -259,6 +275,7 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         Language.builder().name("JavaScript").build(),
                                         Language.builder().name("TypeScript").build()))
+                        .forumTags(listOf(ForumTag.builder().name("maintenance tool").build()))
                         .featured(true)
                         .collaborators(List.of())
                         .applicants(List.of())
@@ -278,6 +295,7 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("Kubernetes").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(listOf(Language.builder().name("Go").build()))
+                        .forumTags(listOf(ForumTag.builder().name("K8s").build()))
                         .featured(true)
                         .collaborators(List.of())
                         .applicants(List.of())
@@ -297,6 +315,10 @@ public class DemoRunner implements CommandLineRunner {
                                         Tag.builder().name("Python").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(listOf(Language.builder().name("Python").build()))
+                        .forumTags(
+                                listOf(
+                                        ForumTag.builder().name("automation tools").build(),
+                                        ForumTag.builder().name("help").build()))
                         .featured(true)
                         .collaborators(List.of(userRepository.findByNickname("Peltevis").get()))
                         .applicants(List.of())

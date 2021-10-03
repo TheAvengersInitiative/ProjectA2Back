@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
@@ -10,35 +12,30 @@ import com.a2.backend.model.UserPrivacyDTO;
 import com.a2.backend.model.UserProfileDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 public class UserServiceActiveTest extends AbstractServiceTest {
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
 
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private ProjectService projectService;
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test001_GivenValidUserAndValidProjectsWhenWantToGetThePreferredProjectsThenReturnProjectList() {
+            Test001_GivenValidUserAndValidProjectsWhenWantToGetThePreferredProjectsThenReturnProjectList() {
         List<String> preferredTags = new ArrayList<>();
         preferredTags.add("Python");
         preferredTags.add("C");
 
         userService.getLoggedUser().setPreferredTags(preferredTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<Project> preferredProjects = projectService.searchProjecsByFilter(projectSearchDTO);
+        List<Project> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         assertEquals(6, projects.size());
 
@@ -57,7 +54,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test002_GivenValidUserWithNotPreferredTagsWhenWantToGetProjectsThenReturnProjectListWithFourRandomProjectsAndTwoFeatured() {
+            Test002_GivenValidUserWithNotPreferredTagsWhenWantToGetProjectsThenReturnProjectListWithFourRandomProjectsAndTwoFeatured() {
 
         List<ProjectDTO> projects = userService.getPreferredProjects();
 
@@ -74,7 +71,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         preferredTags.add("C");
         userService.getLoggedUser().setPreferredTags(preferredTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<Project> preferredProjects = projectService.searchProjecsByFilter(projectSearchDTO);
+        List<Project> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         for (int i = 0; i < projects.size(); i++) {
             projects.get(i).setFeatured(false);

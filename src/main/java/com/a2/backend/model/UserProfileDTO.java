@@ -1,10 +1,9 @@
 package com.a2.backend.model;
 
+import java.util.List;
+import javax.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.lang.Nullable;
-
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,15 +17,11 @@ public class UserProfileDTO {
 
     @NotNull String biography;
 
-    @Nullable
-    List<String> preferredTags;
+    @Nullable List<String> preferredTags;
 
-    @Nullable
-    List<String> preferredLanguages;
+    @Nullable List<String> preferredLanguages;
 
-    @Nullable
-    List<ProjectDTO> ownedProjects;
+    @Nullable List<ProjectDTO> ownedProjects;
 
-    @Nullable
-    List<ProjectDTO> collaboratedProjects;
+    @Nullable List<ProjectDTO> collaboratedProjects;
 }

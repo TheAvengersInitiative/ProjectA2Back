@@ -1,11 +1,13 @@
 package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
+import com.a2.backend.entity.ForumTag;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
+import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import java.util.List;
@@ -24,10 +26,13 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final TagService tagService;
+    private final ForumTagService forumTagService;
 
-    public ProjectController(ProjectService projectService, TagService tagService) {
+    public ProjectController(
+            ProjectService projectService, TagService tagService, ForumTagService forumTagService) {
         this.projectService = projectService;
         this.tagService = tagService;
+        this.forumTagService = forumTagService;
     }
 
     @Secured({SecurityConstants.USER_ROLE})
@@ -48,7 +53,7 @@ public class ProjectController {
     @PostMapping("/search")
     public ResponseEntity<List<Project>> getProjectsByNameSearch(
             @Valid @RequestBody ProjectSearchDTO projectSearchDTO) {
-        val projects = projectService.searchProjecsByFilter(projectSearchDTO);
+        val projects = projectService.searchProjectsByFilter(projectSearchDTO);
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
@@ -104,5 +109,13 @@ public class ProjectController {
     public ResponseEntity<?> applyToProject(@PathVariable UUID id) {
         val appliedProject = projectService.applyToProject(id);
         return ResponseEntity.status(HttpStatus.OK).body(appliedProject);
+    }
+
+    @GetMapping("/forumtags")
+    public ResponseEntity<List<String>> getForumTags() {
+        return ResponseEntity.ok(
+                forumTagService.getAllTags().stream()
+                        .map(ForumTag::getName)
+                        .collect(Collectors.toList()));
     }
 }
