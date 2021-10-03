@@ -39,14 +39,16 @@ public class DiscussionRepositoryTest {
                     .biography("bio")
                     .password("password")
                     .build();
+    List<ForumTag> forumTags = Collections.singletonList(ForumTag.builder().name("Start").build());
     List<Tag> tags = Collections.singletonList(Tag.builder().name("Start").build());
     List<String> links = Collections.singletonList("http://link.com");
     Project project =
             Project.builder()
                     .title(title)
                     .description(description)
-                    .tags(tags)
+                    .forumTags(forumTags)
                     .links(links)
+                    .tags(tags)
                     .owner(owner)
                     .applicants(List.of())
                     .collaborators(List.of())
@@ -54,7 +56,7 @@ public class DiscussionRepositoryTest {
                     .build();
 
     Discussion discussion =
-            Discussion.builder().title("Discussion").project(project).tags(tags).build();
+            Discussion.builder().title("Discussion").project(project).forumTags(forumTags).build();
 
     @Test
     void Test001_DiscussionRepositoryShouldSaveDiscussions() {
@@ -119,7 +121,7 @@ public class DiscussionRepositoryTest {
         Discussion savedDiscussion =
                 discussionRepository.findByProjectIdAndTitle(
                         savedProject.getId(), discussion.getTitle());
-        assertEquals(savedDiscussion.getTags().get(0).getId(), tags.get(0).getId());
+        assertEquals(savedDiscussion.getForumTags().get(0).getId(), forumTags.get(0).getId());
         assertEquals(savedDiscussion.getProject().getId(), savedProject.getId());
     }
 

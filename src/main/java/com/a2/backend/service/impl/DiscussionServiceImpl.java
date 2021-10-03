@@ -5,9 +5,8 @@ import com.a2.backend.exception.DiscussionWithThatTitleExistsInProjectException;
 import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
-import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.DiscussionService;
-import com.a2.backend.service.TagService;
+import com.a2.backend.service.ForumTagService;
 import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
@@ -19,17 +18,15 @@ public class DiscussionServiceImpl implements DiscussionService {
 
     private final ProjectRepository projectRepository;
     private final DiscussionRepository discussionRepository;
-    private final TagService tagService;
-    private final TagRepository tagRepository;
+    private final ForumTagService forumTagService;
 
     public DiscussionServiceImpl(
             ProjectRepository projectRepository,
             DiscussionRepository discussionRepository,
-            TagService tagService,
-            TagRepository tagRepository) {
+            ForumTagService forumTagService) {
+        this.forumTagService = forumTagService;
         this.projectRepository = projectRepository;
-        this.tagService = tagService;
-        this.tagRepository = tagRepository;
+
         this.discussionRepository = discussionRepository;
     }
 
@@ -40,12 +37,13 @@ public class DiscussionServiceImpl implements DiscussionService {
                 discussionRepository.findByProjectIdAndTitle(
                         projectId, discussionCreateDTO.getTitle());
         if (existingDiscussionWithTitleInProject == null) {
-            List<Tag> tags = tagService.findOrCreateTag(discussionCreateDTO.getTags());
+            List<ForumTag> tags =
+                    forumTagService.findOrCreateTag(discussionCreateDTO.getForumTags());
             Discussion discussion =
                     Discussion.builder()
                             .title(discussionCreateDTO.getTitle())
                             .project(projectRepository.findById(projectId).get())
-                            .tags(tags)
+                            .forumTags(tags)
                             .build();
             return discussionRepository.save(discussion);
         }

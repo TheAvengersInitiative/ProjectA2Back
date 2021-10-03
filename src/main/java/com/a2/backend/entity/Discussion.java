@@ -33,7 +33,7 @@ public class Discussion {
     @NotNull
     @NotEmpty
     @Size(min = 1, max = 5)
-    private List<Tag> tags;
+    private List<ForumTag> forumTags;
 
     @ManyToOne
     @LazyCollection(LazyCollectionOption.FALSE)

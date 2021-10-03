@@ -8,8 +8,8 @@ import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUpdateDTO;
-import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.DiscussionService;
+import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
 import java.util.List;
@@ -31,18 +31,15 @@ public class ProjectController {
     private final ForumTagService forumTagService;
     private final DiscussionService discussionService;
 
-
-
-
     public ProjectController(
-                ForumTagService forumTagService,
+            ForumTagService forumTagService,
             ProjectService projectService,
             TagService tagService,
             DiscussionService discussionService) {
         this.projectService = projectService;
         this.tagService = tagService;
         this.discussionService = discussionService;
-            this.forumTagService = forumTagService;
+        this.forumTagService = forumTagService;
     }
 
     @Secured({SecurityConstants.USER_ROLE})
@@ -128,6 +125,7 @@ public class ProjectController {
                         .map(ForumTag::getName)
                         .collect(Collectors.toList()));
     }
+
     @Secured({SecurityConstants.USER_ROLE})
     @PostMapping("/{id}/discussion")
     public ResponseEntity<?> postNewDiscussion(

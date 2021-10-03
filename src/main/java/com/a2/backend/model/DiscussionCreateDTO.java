@@ -30,5 +30,5 @@ public class DiscussionCreateDTO {
                             max = 24,
                             message = "Tag name must be between 1 and 24 characters")
                     String>
-            tags;
+            forumTags;
 }

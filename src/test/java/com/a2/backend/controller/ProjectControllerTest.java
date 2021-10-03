@@ -1678,10 +1678,14 @@ class ProjectControllerTest extends AbstractTest {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
         DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder().tags(discussionTags).title(discussionTitle).build();
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
+                        .forumTags(discussionTags)
                         .title(title)
                         .description(description)
                         .links(links)
@@ -1727,8 +1731,10 @@ class ProjectControllerTest extends AbstractTest {
         Discussion discussion = objectMapper.readValue(discussionAsString, Discussion.class);
         assertNotNull(discussion.getId());
         assertEquals(discussionTitle, discussion.getTitle());
-        assertEquals(discussion.getTags().size(), discussionCreateDTO.getTags().size());
-        assertEquals(discussion.getTags().get(0).getName(), discussionCreateDTO.getTags().get(0));
+        assertEquals(discussion.getForumTags().size(), discussionCreateDTO.getForumTags().size());
+        assertEquals(
+                discussion.getForumTags().get(0).getName(),
+                discussionCreateDTO.getForumTags().get(0));
         assertEquals(discussion.getProject().getId(), project.getId());
     }
 
@@ -1749,13 +1755,17 @@ class ProjectControllerTest extends AbstractTest {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
         DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder().tags(discussionTags).title(discussionTitle).build();
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
                         .description(description)
                         .links(links)
+                        .forumTags(discussionTags)
                         .tags(tags)
                         .languages(languages)
                         .build();
@@ -1814,11 +1824,15 @@ class ProjectControllerTest extends AbstractTest {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
         DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder().tags(discussionTags).title(discussionTitle).build();
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
 
         ProjectCreateDTO projectToCreate =
                 ProjectCreateDTO.builder()
                         .title(title)
+                        .forumTags(discussionTags)
                         .description(description)
                         .links(links)
                         .tags(tags)
@@ -1863,8 +1877,10 @@ class ProjectControllerTest extends AbstractTest {
         Discussion discussion = objectMapper.readValue(discussionAsString, Discussion.class);
         assertNotNull(discussion.getId());
         assertEquals(discussionTitle, discussion.getTitle());
-        assertEquals(discussion.getTags().size(), discussionCreateDTO.getTags().size());
-        assertEquals(discussion.getTags().get(0).getName(), discussionCreateDTO.getTags().get(0));
+        assertEquals(discussion.getForumTags().size(), discussionCreateDTO.getForumTags().size());
+        assertEquals(
+                discussion.getForumTags().get(0).getName(),
+                discussionCreateDTO.getForumTags().get(0));
         assertEquals(discussion.getProject().getId(), project.getId());
 
         String secondDiscussionAsString =
@@ -1901,10 +1917,13 @@ class ProjectControllerTest extends AbstractTest {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
         DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder().tags(discussionTags).title(discussionTitle).build();
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
         DiscussionCreateDTO secondDiscussionCreateDTO =
                 DiscussionCreateDTO.builder()
-                        .tags(discussionTags)
+                        .forumTags(discussionTags)
                         .title(discussionTitle + "2")
                         .build();
 
@@ -1913,6 +1932,7 @@ class ProjectControllerTest extends AbstractTest {
                         .title(title)
                         .description(description)
                         .links(links)
+                        .forumTags(discussionTags)
                         .tags(tags)
                         .languages(languages)
                         .build();
@@ -1955,8 +1975,10 @@ class ProjectControllerTest extends AbstractTest {
         Discussion discussion = objectMapper.readValue(discussionAsString, Discussion.class);
         assertNotNull(discussion.getId());
         assertEquals(discussionTitle, discussion.getTitle());
-        assertEquals(discussion.getTags().size(), discussionCreateDTO.getTags().size());
-        assertEquals(discussion.getTags().get(0).getName(), discussionCreateDTO.getTags().get(0));
+        assertEquals(discussion.getForumTags().size(), discussionCreateDTO.getForumTags().size());
+        assertEquals(
+                discussion.getForumTags().get(0).getName(),
+                discussionCreateDTO.getForumTags().get(0));
         assertEquals(discussion.getProject().getId(), project.getId());
 
         String secondDiscussionAsString =
@@ -1979,10 +2001,12 @@ class ProjectControllerTest extends AbstractTest {
                 objectMapper.readValue(secondDiscussionAsString, Discussion.class);
         assertNotNull(secondDiscussion.getId());
         assertEquals(discussionTitle + "2", secondDiscussion.getTitle());
-        assertEquals(secondDiscussion.getTags().size(), secondDiscussionCreateDTO.getTags().size());
         assertEquals(
-                secondDiscussion.getTags().get(0).getName(),
-                secondDiscussionCreateDTO.getTags().get(0));
+                secondDiscussion.getForumTags().size(),
+                secondDiscussionCreateDTO.getForumTags().size());
+        assertEquals(
+                secondDiscussion.getForumTags().get(0).getName(),
+                secondDiscussionCreateDTO.getForumTags().get(0));
         assertEquals(secondDiscussion.getProject().getId(), project.getId());
     }
 }

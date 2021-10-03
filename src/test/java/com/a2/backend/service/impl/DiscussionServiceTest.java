@@ -45,6 +45,7 @@ class DiscussionServiceImplTest extends AbstractTest {
     String description = "Testing exception for existing title";
     List<String> links = Arrays.asList("link1", "link2");
     List<String> tags = Arrays.asList("tag1", "tag2");
+    List<String> forumTags = Arrays.asList("ftag1", "ftag2");
     List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
     List<String> languages = Arrays.asList("Java", "C");
 
@@ -68,6 +69,7 @@ class DiscussionServiceImplTest extends AbstractTest {
                     .description(description)
                     .links(links)
                     .tags(tags)
+                    .forumTags(forumTags)
                     .languages(languages)
                     .build();
     ProjectCreateDTO secondProjectToCreate =
@@ -76,10 +78,11 @@ class DiscussionServiceImplTest extends AbstractTest {
                     .description(description)
                     .links(links)
                     .tags(tags)
+                    .forumTags(forumTags)
                     .languages(languages)
                     .build();
     DiscussionCreateDTO discussionCreateDTO =
-            DiscussionCreateDTO.builder().tags(discussionTags).title(discussiontitle).build();
+            DiscussionCreateDTO.builder().forumTags(discussionTags).title(discussiontitle).build();
 
     @BeforeAll
     static void setUp() {
