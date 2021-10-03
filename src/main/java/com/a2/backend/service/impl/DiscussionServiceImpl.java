@@ -3,6 +3,7 @@ package com.a2.backend.service.impl;
 import com.a2.backend.entity.*;
 import com.a2.backend.exception.DiscussionWithThatTitleExistsInProjectException;
 import com.a2.backend.exception.ProjectNotFoundException;
+import com.a2.backend.exception.UserIsNotCollaboratorNorOwnerException;
 import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
@@ -11,6 +12,8 @@ import com.a2.backend.service.ForumTagService;
 import java.util.List;
 import java.util.UUID;
 import javax.transaction.Transactional;
+
+import com.a2.backend.service.UserService;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +23,16 @@ public class DiscussionServiceImpl implements DiscussionService {
     private final ProjectRepository projectRepository;
     private final DiscussionRepository discussionRepository;
     private final ForumTagService forumTagService;
+    private final UserService userService;
 
     public DiscussionServiceImpl(
             ProjectRepository projectRepository,
             DiscussionRepository discussionRepository,
-            ForumTagService forumTagService) {
+            ForumTagService forumTagService,
+            UserService userService) {
         this.forumTagService = forumTagService;
         this.projectRepository = projectRepository;
-
+        this.userService=userService;
         this.discussionRepository = discussionRepository;
     }
 
