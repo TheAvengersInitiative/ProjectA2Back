@@ -116,7 +116,7 @@ public class DefaultExceptionHandler {
     }
 
     @ExceptionHandler(InvalidUserException.class)
-    protected ResponseEntity<?> handleNotTheProjectOwner(InvalidUserException exception) {
+    protected ResponseEntity<?> handleInvalidUser(InvalidUserException exception) {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
