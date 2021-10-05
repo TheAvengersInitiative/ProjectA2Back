@@ -2,10 +2,7 @@ package com.a2.backend.service;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
-import com.a2.backend.model.ProjectCreateDTO;
-import com.a2.backend.model.ProjectDTO;
-import com.a2.backend.model.ProjectSearchDTO;
-import com.a2.backend.model.ProjectUpdateDTO;
+import com.a2.backend.model.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,4 +33,10 @@ public interface ProjectService {
     List<Project> getProjectsByOwner(User owner);
 
     List<Project> getCollaboratingProjects(User user);
+
+    List<ProjectUserDTO> getProjectApplicants(UUID uuid);
+
+    List<ProjectUserDTO> acceptApplicant(UUID projectId, UUID userId);
+
+    List<ProjectUserDTO> rejectApplicant(UUID projectId, UUID userId);
 }

@@ -292,4 +292,9 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUser() {
         return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findByEmail);
     }
+
+    @Override
+    public User getUser(UUID id) {
+        return userRepository.getById(id);
+    }
 }

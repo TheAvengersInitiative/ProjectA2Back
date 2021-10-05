@@ -2,18 +2,17 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.*;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
+import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.exception.ProjectWithThatTitleExistsException;
-import com.a2.backend.model.ProjectCreateDTO;
-import com.a2.backend.model.ProjectDTO;
-import com.a2.backend.model.ProjectSearchDTO;
-import com.a2.backend.model.ProjectUpdateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.repository.ForumTagRepository;
 import com.a2.backend.repository.LanguageRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.*;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -79,7 +78,6 @@ public class ProjectServiceImpl implements ProjectService {
                             .owner(loggedUser)
                             .applicants(List.of())
                             .collaborators(List.of())
-                            .rejectedApplicants(List.of())
                             .build();
             return projectRepository.save(project);
         }
@@ -301,11 +299,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new InvalidProjectCollaborationApplicationException(
                     String.format("Already collaborating in project: %s", project.getTitle()));
         }
-        if (project.getRejectedApplicants().contains(loggedUser)) {
-            throw new InvalidProjectCollaborationApplicationException(
-                    String.format(
-                            "Already rejected collaboration in project: %s", project.getTitle()));
-        }
+
         if (project.getApplicants().contains(loggedUser)) {
             throw new InvalidProjectCollaborationApplicationException(
                     String.format("Already applied to project: %s", project.getTitle()));
@@ -331,5 +325,97 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<Project> getCollaboratingProjects(User user) {
         return projectRepository.findByCollaboratorsContaining(user);
+    }
+
+    @Override
+    public List<ProjectUserDTO> getProjectApplicants(UUID projectId) {
+        User loggedUser = userService.getLoggedUser();
+        val projectOptional = projectRepository.findById(projectId);
+
+        if (projectOptional.isEmpty()) {
+            throw new ProjectNotFoundException(
+                    String.format("The project with that id: %s does not exist!", projectId));
+        }
+
+        val project = projectOptional.get();
+
+        if (!project.getOwner().equals(loggedUser)) {
+            throw new InvalidUserException("Only project owners can see applicants");
+        }
+
+        val applicants = project.getApplicants();
+
+        return applicants.stream().map(User::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectUserDTO> acceptApplicant(UUID projectId, UUID userId) {
+        User loggedUser = userService.getLoggedUser();
+        val projectOptional = projectRepository.findById(projectId);
+
+        if (projectOptional.isEmpty()) {
+            throw new ProjectNotFoundException(
+                    String.format("The project with that id: %s does not exist!", projectId));
+        }
+
+        val project = projectOptional.get();
+
+        if (!project.getOwner().equals(loggedUser)) {
+            throw new InvalidUserException("Only project owners can accept applicants");
+        }
+
+        if (!project.getApplicants().stream()
+                .map(User::getId)
+                .collect(Collectors.toList())
+                .contains(userId)) {
+            throw new InvalidUserException(
+                    String.format("The applicants with that id: %s does not exist!", userId));
+        }
+
+        var updatedApplicants = project.getApplicants();
+        updatedApplicants.remove(userService.getUser(userId));
+        var updatedCollaborators = project.getCollaborators();
+        updatedCollaborators.add(userService.getUser(userId));
+
+        project.setApplicants(updatedApplicants);
+        project.setCollaborators(updatedCollaborators);
+
+        return projectRepository.save(project).getApplicants().stream()
+                .map(User::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectUserDTO> rejectApplicant(UUID projectId, UUID userId) {
+        User loggedUser = userService.getLoggedUser();
+        val projectOptional = projectRepository.findById(projectId);
+
+        if (projectOptional.isEmpty()) {
+            throw new ProjectNotFoundException(
+                    String.format("The project with that id: %s does not exist!", projectId));
+        }
+
+        val project = projectOptional.get();
+
+        if (!project.getOwner().equals(loggedUser)) {
+            throw new InvalidUserException("Only project owners can reject applicants");
+        }
+
+        if (!project.getApplicants().stream()
+                .map(User::getId)
+                .collect(Collectors.toList())
+                .contains(userId)) {
+            throw new InvalidUserException(
+                    String.format("The applicants with that id: %s does not exist!", userId));
+        }
+
+        var updatedApplicants = project.getApplicants();
+        updatedApplicants.remove(userService.getUser(userId));
+
+        project.setApplicants(updatedApplicants);
+
+        return projectRepository.save(project).getApplicants().stream()
+                .map(User::toDTO)
+                .collect(Collectors.toList());
     }
 }

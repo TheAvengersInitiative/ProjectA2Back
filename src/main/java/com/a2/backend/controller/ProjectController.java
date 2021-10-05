@@ -133,4 +133,27 @@ public class ProjectController {
         val createdDiscussion = discussionService.createDiscussion(id, discussionCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDiscussion);
     }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @GetMapping("/applicants/{id}")
+    public ResponseEntity<?> getProjectApplicants(@PathVariable UUID id) {
+        val projectApplicants = projectService.getProjectApplicants(id);
+        return ResponseEntity.status(HttpStatus.OK).body(projectApplicants);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/accept/{projectId}/{userId}")
+    public ResponseEntity<?> acceptApplicant(
+            @PathVariable UUID projectId, @PathVariable UUID userId) {
+        val applicants = projectService.acceptApplicant(projectId, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(applicants);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/reject/{projectId}/{userId}")
+    public ResponseEntity<?> rejectApplicant(
+            @PathVariable UUID projectId, @PathVariable UUID userId) {
+        val applicants = projectService.rejectApplicant(projectId, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(applicants);
+    }
 }

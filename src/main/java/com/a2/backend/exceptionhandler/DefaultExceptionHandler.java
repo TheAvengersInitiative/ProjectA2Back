@@ -114,4 +114,10 @@ public class DefaultExceptionHandler {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(InvalidUserException.class)
+    protected ResponseEntity<?> handleInvalidUser(InvalidUserException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
