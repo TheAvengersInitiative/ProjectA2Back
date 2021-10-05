@@ -255,6 +255,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         var applicant = userRepository.findByNickname("Peltevis");
 
+
         assertThrows(
                 InvalidUserException.class,
                 () -> projectService.rejectApplicant(project.getId(), applicant.get().getId()));
