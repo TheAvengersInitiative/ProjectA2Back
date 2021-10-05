@@ -1,7 +1,6 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.constants.PrivacyConstant;
-import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
@@ -11,14 +10,15 @@ import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -129,6 +129,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileDTO getUserProfile(UUID id) {
+        Optional<User> loggedUserOptional = getUser();
+        if (loggedUserOptional.isPresent() && loggedUserOptional.get().getId().equals(id)) {
+            User loggedUser = loggedUserOptional.get();
+            return UserProfileDTO.builder()
+                    .nickname(loggedUser.getNickname())
+                    .biography(loggedUser.getBiography())
+                    .preferredTags(loggedUser.getPreferredTags())
+                    .preferredLanguages(loggedUser.getPreferredLanguages())
+                    .ownedProjects(projectService.getProjectsByOwner(loggedUser))
+                    .collaboratedProjects(projectService.getCollaboratingProjects(loggedUser))
+                    .build();
+        }
+
         if (userRepository.findById(id).isEmpty())
             throw new UserNotFoundException(String.format("There is no user with id %s", id));
 
@@ -147,16 +160,10 @@ public class UserServiceImpl implements UserService {
             userProfile.setPreferredLanguages(user.getPreferredLanguages());
 
         if (user.getOwnedProjectsPrivacy().equals(PrivacyConstant.PUBLIC))
-            userProfile.setOwnedProjects(
-                    projectService.getProjectsByOwner(user).stream()
-                            .map(Project::toDTO)
-                            .collect(Collectors.toList()));
+            userProfile.setOwnedProjects(projectService.getProjectsByOwner(user));
 
         if (user.getCollaboratedProjectsPrivacy().equals(PrivacyConstant.PUBLIC))
-            userProfile.setCollaboratedProjects(
-                    projectService.getCollaboratingProjects(user).stream()
-                            .map(Project::toDTO)
-                            .collect(Collectors.toList()));
+            userProfile.setCollaboratedProjects(projectService.getCollaboratingProjects(user));
 
         return userProfile;
     }
@@ -239,7 +246,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<ProjectDTO> getPreferredProjects() {
 
-        Function<List<Project>, Optional<Project>> getRandomProject =
+        Function<List<ProjectDTO>, Optional<ProjectDTO>> getRandomProject =
                 projects -> {
                     if (projects.isEmpty()) {
                         return Optional.empty();
@@ -248,14 +255,14 @@ public class UserServiceImpl implements UserService {
                     }
                 };
 
-        List<Project> projects = new ArrayList<>();
-        List<Project> featured = projectService.getFeaturedProject();
+        List<ProjectDTO> projects = new ArrayList<>();
+        List<ProjectDTO> featured = projectService.getFeaturedProject();
 
         for (int i = 0; i < 2; i++) {
             getRandomProject.apply(featured).map(projects::add);
         }
 
-        List<Project> preferredProjects =
+        List<ProjectDTO> preferredProjects =
                 getUser()
                         .map(
                                 user -> {
@@ -280,12 +287,7 @@ public class UserServiceImpl implements UserService {
         while (projects.size() < 6 && !filteredProjects.isEmpty()) {
             getRandomProject.apply(filteredProjects).map(projects::add);
         }
-        List<ProjectDTO> projectDTOS = new ArrayList<>();
-        for (int i = 0; i < projects.size(); i++) {
-            ProjectDTO projectDTO = projects.get(i).toDTO();
-            projectDTOS.add(projectDTO);
-        }
-        return projectDTOS;
+        return new ArrayList<>(projects);
     }
 
     @Override

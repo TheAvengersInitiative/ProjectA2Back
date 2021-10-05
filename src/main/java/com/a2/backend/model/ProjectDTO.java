@@ -1,8 +1,12 @@
 package com.a2.backend.model;
 
+import com.a2.backend.entity.ForumTag;
+import com.a2.backend.entity.Language;
+import com.a2.backend.entity.Tag;
+import lombok.*;
+
 import java.util.List;
 import java.util.UUID;
-import lombok.*;
 
 @Getter
 @Setter
@@ -20,11 +24,11 @@ public class ProjectDTO {
 
     private List<String> links;
 
-    private List<String> tags;
+    private List<Tag> tags;
 
-    private List<String> forumTags;
+    private List<ForumTag> forumTags;
 
-    private List<String> languages;
+    private List<Language> languages;
 
     private boolean featured;
 

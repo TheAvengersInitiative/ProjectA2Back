@@ -2,7 +2,6 @@ package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.ForumTag;
-import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -12,15 +11,15 @@ import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/project")
@@ -51,14 +50,14 @@ public class ProjectController {
 
     @Secured({SecurityConstants.USER_ROLE})
     @GetMapping
-    public ResponseEntity<List<Project>> getAllProjects() {
+    public ResponseEntity<?> getAllProjects() {
         val projects = projectService.getAllProjects();
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }
 
     @Secured({SecurityConstants.USER_ROLE})
     @PostMapping("/search")
-    public ResponseEntity<List<Project>> getProjectsByNameSearch(
+    public ResponseEntity<?> getProjectsByNameSearch(
             @Valid @RequestBody ProjectSearchDTO projectSearchDTO) {
         val projects = projectService.searchProjectsByFilter(projectSearchDTO);
         return ResponseEntity.status(HttpStatus.OK).body(projects);
@@ -66,7 +65,7 @@ public class ProjectController {
 
     @Secured({SecurityConstants.USER_ROLE})
     @DeleteMapping("/{id}")
-    public ResponseEntity<UUID> deleteProject(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteProject(@PathVariable UUID id) {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
     }
@@ -81,33 +80,33 @@ public class ProjectController {
 
     @Secured({SecurityConstants.USER_ROLE})
     @GetMapping("/{id}")
-    public ResponseEntity<Project> getProjectDetails(@PathVariable UUID id) {
+    public ResponseEntity<?> getProjectDetails(@PathVariable UUID id) {
         val projectDetails = projectService.getProjectDetails(id);
         return ResponseEntity.status(HttpStatus.OK).body(projectDetails);
     }
 
     @Secured({SecurityConstants.USER_ROLE})
     @GetMapping("/languages")
-    public ResponseEntity<List<String>> getValidLanguages() {
+    public ResponseEntity<?> getValidLanguages() {
         val validLanguages = projectService.getValidLanguageNames();
         return ResponseEntity.status(HttpStatus.OK).body(validLanguages);
     }
 
     @GetMapping("/tags")
-    public ResponseEntity<List<String>> getTags() {
+    public ResponseEntity<?> getTags() {
         return ResponseEntity.ok(
                 tagService.getAllTags().stream().map(Tag::getName).collect(Collectors.toList()));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Project>> getFeaturedProject() {
+    public ResponseEntity<?> getFeaturedProject() {
         val featuredProjects = projectService.getFeaturedProject();
         return ResponseEntity.status(HttpStatus.OK).body(featuredProjects);
     }
 
     @GetMapping("/my-projects")
     @Secured({SecurityConstants.USER_ROLE})
-    public ResponseEntity<List<Project>> getMyProjects() {
+    public ResponseEntity<?> getMyProjects() {
         return ResponseEntity.ok(projectService.getMyProjects());
     }
 
@@ -119,7 +118,7 @@ public class ProjectController {
     }
 
     @GetMapping("/forumtags")
-    public ResponseEntity<List<String>> getForumTags() {
+    public ResponseEntity<?> getForumTags() {
         return ResponseEntity.ok(
                 forumTagService.getAllTags().stream()
                         .map(ForumTag::getName)

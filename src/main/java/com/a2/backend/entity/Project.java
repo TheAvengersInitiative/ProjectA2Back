@@ -1,15 +1,18 @@
 package com.a2.backend.entity;
 
 import com.a2.backend.model.ProjectDTO;
+import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import lombok.*;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Getter
@@ -78,9 +81,9 @@ public class Project implements Serializable {
                 .id(id)
                 .title(title)
                 .featured(featured)
-                .languages(languages.stream().map(Language::getName).collect(Collectors.toList()))
-                .tags(tags.stream().map(Tag::getName).collect(Collectors.toList()))
-                .forumTags(forumTags.stream().map(ForumTag::getName).collect(Collectors.toList()))
+                .languages(languages)
+                .tags(tags)
+                .forumTags(forumTags)
                 .description(description)
                 .links(links)
                 .owner(owner.toDTO())

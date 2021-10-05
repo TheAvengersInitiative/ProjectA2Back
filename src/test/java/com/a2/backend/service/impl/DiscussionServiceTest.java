@@ -1,19 +1,17 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.DiscussionWithThatTitleExistsInProjectException;
-import com.a2.backend.model.*;
+import com.a2.backend.model.DiscussionCreateDTO;
+import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
-import com.a2.backend.service.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.a2.backend.service.DiscussionService;
+import com.a2.backend.service.LanguageService;
+import com.a2.backend.service.ProjectService;
+import com.a2.backend.service.TagService;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,14 +21,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class DiscussionServiceImplTest extends AbstractTest {
 
-    @Autowired private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
-    @Autowired private TagService tagService;
+    @Autowired
+    private TagService tagService;
 
     @Autowired private LanguageService languageService;
 
@@ -112,18 +118,10 @@ class DiscussionServiceImplTest extends AbstractTest {
                 project.getLanguages());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
 
-        // The whole owner is the same but when the project is persisted the persisted owner is
-        // merged and thus .equals() returns false.
-        // The same happens with preferred tags and languages collections.
         assertEquals(owner.getId(), project.getOwner().getId());
         assertEquals(owner.getNickname(), project.getOwner().getNickname());
         assertEquals(owner.getEmail(), project.getOwner().getEmail());
-        assertEquals(owner.getPassword(), project.getOwner().getPassword());
-        assertEquals(owner.getBiography(), project.getOwner().getBiography());
-        assertTrue(
-                owner.getPreferredLanguages()
-                        .containsAll(project.getOwner().getPreferredLanguages()));
-        assertTrue(owner.getPreferredTags().containsAll(project.getOwner().getPreferredTags()));
+
         val discussion = discussionService.createDiscussion(project.getId(), discussionCreateDTO);
         assertEquals(discussion.getTitle(), discussiontitle);
     }
@@ -150,18 +148,10 @@ class DiscussionServiceImplTest extends AbstractTest {
                 project.getLanguages());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
 
-        // The whole owner is the same but when the project is persisted the persisted owner is
-        // merged and thus .equals() returns false.
-        // The same happens with preferred tags and languages collections.
         assertEquals(owner.getId(), project.getOwner().getId());
         assertEquals(owner.getNickname(), project.getOwner().getNickname());
         assertEquals(owner.getEmail(), project.getOwner().getEmail());
-        assertEquals(owner.getPassword(), project.getOwner().getPassword());
-        assertEquals(owner.getBiography(), project.getOwner().getBiography());
-        assertTrue(
-                owner.getPreferredLanguages()
-                        .containsAll(project.getOwner().getPreferredLanguages()));
-        assertTrue(owner.getPreferredTags().containsAll(project.getOwner().getPreferredTags()));
+
         val discussion = discussionService.createDiscussion(project.getId(), discussionCreateDTO);
         assertThrows(
                 DiscussionWithThatTitleExistsInProjectException.class,
@@ -188,18 +178,10 @@ class DiscussionServiceImplTest extends AbstractTest {
                 project.getLanguages());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
 
-        // The whole owner is the same but when the project is persisted the persisted owner is
-        // merged and thus .equals() returns false.
-        // The same happens with preferred tags and languages collections.
         assertEquals(owner.getId(), project.getOwner().getId());
         assertEquals(owner.getNickname(), project.getOwner().getNickname());
         assertEquals(owner.getEmail(), project.getOwner().getEmail());
-        assertEquals(owner.getPassword(), project.getOwner().getPassword());
-        assertEquals(owner.getBiography(), project.getOwner().getBiography());
-        assertTrue(
-                owner.getPreferredLanguages()
-                        .containsAll(project.getOwner().getPreferredLanguages()));
-        assertTrue(owner.getPreferredTags().containsAll(project.getOwner().getPreferredTags()));
+
         val discussion = discussionService.createDiscussion(project.getId(), discussionCreateDTO);
         assertEquals(discussion.getTitle(), discussiontitle);
         val secondDiscussion =

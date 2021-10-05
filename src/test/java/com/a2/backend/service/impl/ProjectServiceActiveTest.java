@@ -1,24 +1,25 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
 import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.exception.ProjectNotFoundException;
+import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUserDTO;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ProjectServiceActiveTest extends AbstractServiceTest {
 
@@ -35,9 +36,13 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         User loggedUser = userService.getLoggedUser();
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("GNU/Linux").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
-        assertFalse(project.getApplicants().contains(loggedUser));
+        assertFalse(
+                project.getApplicants().stream()
+                        .map(ProjectUserDTO::getNickname)
+                        .collect(Collectors.toList())
+                        .contains(loggedUser.getNickname()));
 
         val projectDTO = projectService.applyToProject(project.getId());
 
@@ -54,7 +59,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test003_ProjectServiceWhenReceivesApplicationToAnAlreadyCollaboratingProjectToShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -67,7 +72,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test004_ProjectServiceWhenReceivesApplicationToAnAlreadyAppliedProjectToShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -80,7 +85,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("RedHatAnsible").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidProjectCollaborationApplicationException.class,
@@ -91,49 +96,32 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
             Test006_ProjectServiceWhenFindingProjectsByCollaboratorsContainingUserThenProjectsAreReturned() {
-        List<Project> collaboratingProjects =
+        List<ProjectDTO> collaboratingProjects =
                 projectService.getCollaboratingProjects(userService.getLoggedUser());
 
         assertEquals(2, collaboratingProjects.size());
 
-        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(collaboratingProjects.contains(project));
-
-        projectSearchDTO.setTitle("Django");
-        project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(collaboratingProjects.contains(project));
+        List<String> collaboratingProjectTitles =
+                collaboratingProjects.stream()
+                        .map(ProjectDTO::getTitle)
+                        .collect(Collectors.toList());
+        assertTrue(collaboratingProjectTitles.contains("Node.js"));
+        assertTrue(collaboratingProjectTitles.contains("Django"));
     }
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void Test007_ProjectServiceWhenFindingProjectsByOwnerThenProjectsAreReturned() {
-        List<Project> ownedProjects =
+        List<ProjectDTO> ownedProjects =
                 projectService.getProjectsByOwner(userService.getLoggedUser());
 
         assertEquals(4, ownedProjects.size());
-
-        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(ownedProjects.contains(project));
-
-        projectSearchDTO.setTitle("Renovate");
-        project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(ownedProjects.contains(project));
-
-        projectSearchDTO.setTitle("Kubernetes");
-        project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(ownedProjects.contains(project));
-
-        projectSearchDTO.setTitle("RedHatAnsible");
-        project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
-
-        assertTrue(ownedProjects.contains(project));
+        List<String> ownedProjectTitles =
+                ownedProjects.stream().map(ProjectDTO::getTitle).collect(Collectors.toList());
+        assertTrue(ownedProjectTitles.contains("TensorFlow"));
+        assertTrue(ownedProjectTitles.contains("Renovate"));
+        assertTrue(ownedProjectTitles.contains("Kubernetes"));
+        assertTrue(ownedProjectTitles.contains("RedHatAnsible"));
     }
 
     @Test
@@ -141,7 +129,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
     void Test008_ProjectServiceWhenNotProjectOwnerRequestsForApplicantsShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         assertThrows(
                 InvalidUserException.class,
@@ -154,7 +142,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test009_ProjectServiceWhenProjectOwnerWithValidProjectIdRequestsForApplicantsShouldReturnProjectUserDTOs() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("TensorFlow").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         val applicants = projectService.getProjectApplicants(project.getId());
         assertNotNull(applicants);
@@ -206,7 +194,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("ApacheCassandra").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         var applicant = userRepository.findByNickname("ropa1998");
 
@@ -221,7 +209,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("ApacheCassandra").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         var applicant = userRepository.findByNickname("ropa1998");
 
@@ -236,7 +224,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("ApacheCassandra").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         var applicant = userRepository.findByNickname("Peltevis");
 
@@ -251,10 +239,9 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("ApacheCassandra").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         var applicant = userRepository.findByNickname("Peltevis");
-
 
         assertThrows(
                 InvalidUserException.class,
@@ -268,17 +255,35 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("ApacheCassandra").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         var applicant = userRepository.findByNickname("ropa1998").get();
 
-        assertTrue(project.getApplicants().contains(applicant));
-        assertFalse(project.getCollaborators().contains(applicant));
+        assertTrue(
+                project.getApplicants().stream()
+                        .map(ProjectUserDTO::getId)
+                        .collect(Collectors.toList())
+                        .contains(applicant.getId()));
+        assertFalse(
+                project.getCollaborators().stream()
+                        .map(ProjectUserDTO::getId)
+                        .collect(Collectors.toList())
+                        .contains(applicant.getId()));
 
         projectService.acceptApplicant(project.getId(), applicant.getId());
 
-        assertTrue(project.getCollaborators().contains(applicant));
-        assertFalse(project.getApplicants().contains(applicant));
+        val updatedProject = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        assertTrue(
+                updatedProject.getCollaborators().stream()
+                        .map(ProjectUserDTO::getId)
+                        .collect(Collectors.toList())
+                        .contains(applicant.getId()));
+        assertFalse(
+                updatedProject.getApplicants().stream()
+                        .map(ProjectUserDTO::getId)
+                        .collect(Collectors.toList())
+                        .contains(applicant.getId()));
     }
 
     @Test
@@ -287,16 +292,33 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().title("ApacheCassandra").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         var applicant = userRepository.findByNickname("ropa1998").get();
 
-        assertTrue(project.getApplicants().contains(applicant));
-        assertFalse(project.getCollaborators().contains(applicant));
+        assertTrue(
+                project.getApplicants().stream()
+                        .map(ProjectUserDTO::getId)
+                        .collect(Collectors.toList())
+                        .contains(applicant.getId()));
+        assertFalse(
+                project.getCollaborators().stream()
+                        .map(ProjectUserDTO::getId)
+                        .collect(Collectors.toList())
+                        .contains(applicant.getId()));
 
         projectService.rejectApplicant(project.getId(), applicant.getId());
+        val updatedProject = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
-        assertFalse(project.getCollaborators().contains(applicant));
-        assertFalse(project.getApplicants().contains(applicant));
+        assertFalse(
+                updatedProject.getCollaborators().stream()
+                        .map(ProjectUserDTO::getId)
+                        .collect(Collectors.toList())
+                        .contains(applicant.getId()));
+        assertFalse(
+                updatedProject.getApplicants().stream()
+                        .map(ProjectUserDTO::getId)
+                        .collect(Collectors.toList())
+                        .contains(applicant.getId()));
     }
 }

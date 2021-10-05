@@ -62,7 +62,7 @@ public class UserControllerActiveTest extends AbstractControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
             Test002_UserControllerWhenGettingUserProfileThenStatusIsOkAndProfileWithPublicFieldsIsReturned()
                     throws Exception {

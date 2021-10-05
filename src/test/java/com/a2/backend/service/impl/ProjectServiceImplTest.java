@@ -1,7 +1,5 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
@@ -17,7 +15,6 @@ import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import java.util.*;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,14 +24,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectServiceImplTest extends AbstractTest {
 
-    @Autowired private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
-    @Autowired private TagService tagService;
+    @Autowired
+    private TagService tagService;
 
     @Autowired private LanguageService languageService;
 
@@ -116,18 +122,9 @@ class ProjectServiceImplTest extends AbstractTest {
                 project.getLanguages());
         assertEquals(projectToCreate.getLinks(), project.getLinks());
 
-        // The whole owner is the same but when the project is persisted the persisted owner is
-        // merged and thus .equals() returns false.
-        // The same happens with preferred tags and languages collections.
         assertEquals(owner.getId(), project.getOwner().getId());
         assertEquals(owner.getNickname(), project.getOwner().getNickname());
         assertEquals(owner.getEmail(), project.getOwner().getEmail());
-        assertEquals(owner.getPassword(), project.getOwner().getPassword());
-        assertEquals(owner.getBiography(), project.getOwner().getBiography());
-        assertTrue(
-                owner.getPreferredLanguages()
-                        .containsAll(project.getOwner().getPreferredLanguages()));
-        assertTrue(owner.getPreferredTags().containsAll(project.getOwner().getPreferredTags()));
     }
 
     @Test
@@ -169,11 +166,11 @@ class ProjectServiceImplTest extends AbstractTest {
 
         Project savedProject = projectService.createProject(projectToCreate);
 
-        List<Project> allProjects = projectService.getAllProjects();
+        val allProjects = projectService.getAllProjects();
 
         assertEquals(1, allProjects.size());
 
-        Project singleProject = allProjects.get(0);
+        val singleProject = allProjects.get(0);
 
         assertEquals(projectToCreate.getTitle(), singleProject.getTitle());
         assertEquals(projectToCreate.getDescription(), singleProject.getDescription());
@@ -193,7 +190,7 @@ class ProjectServiceImplTest extends AbstractTest {
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
         Project project = projectService.createProject(projectToCreate);
-        List<Project> allProjects = projectService.getAllProjects();
+        val allProjects = projectService.getAllProjects();
         assertEquals(1, allProjects.size());
 
         // When
@@ -245,7 +242,7 @@ class ProjectServiceImplTest extends AbstractTest {
         // Given
         assertTrue(projectService.getAllProjects().isEmpty());
         Project project = projectService.createProject(projectToCreate);
-        List<Project> allProjects = projectService.getAllProjects();
+        val allProjects = projectService.getAllProjects();
         assertEquals(1, allProjects.size());
 
         // When
@@ -323,8 +320,7 @@ class ProjectServiceImplTest extends AbstractTest {
         assertEquals("tag1", createdProject.getTags().get(0).getName());
         assertEquals("tag2", createdProject.getTags().get(1).getName());
 
-        Project updatedProject =
-                projectService.updateProject(projectUpdateDTO, createdProject.getId());
+        val updatedProject = projectService.updateProject(projectUpdateDTO, createdProject.getId());
 
         assertEquals(createdProject.getId(), updatedProject.getId());
         assertEquals(projectUpdateDTO.getTitle(), updatedProject.getTitle());
@@ -361,8 +357,7 @@ class ProjectServiceImplTest extends AbstractTest {
         assertEquals("Java", createdProject.getLanguages().get(0).getName());
         assertEquals("C", createdProject.getLanguages().get(1).getName());
 
-        Project updatedProject =
-                projectService.updateProject(projectUpdateDTO, createdProject.getId());
+        val updatedProject = projectService.updateProject(projectUpdateDTO, createdProject.getId());
 
         assertEquals(createdProject.getId(), updatedProject.getId());
         assertEquals(projectUpdateDTO.getTitle(), updatedProject.getTitle());

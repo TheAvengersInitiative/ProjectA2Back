@@ -5,9 +5,6 @@ import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.*;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,18 +14,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component("DemoRunner")
 @Transactional
 @Generated
 public class DemoRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DemoRunner.class);
 
-    @Autowired private Environment env;
-    @Autowired private ProjectRepository projectRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private Environment env;
+    @Autowired
+    private ProjectRepository projectRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public DemoRunner() {}
+    public DemoRunner() {
+    }
 
     @Override
     public void run(String... args) {
@@ -108,8 +114,6 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://www.gnu.org/", "https://www.linux.org/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("C").build(),
-                                        Tag.builder().name("C++").build(),
                                         Tag.builder().name("GNU").build(),
                                         Tag.builder().name("Linux").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
@@ -132,10 +136,9 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://www.tensorflow.org/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("Python").build(),
-                                        Tag.builder().name("MATLAB").build(),
-                                        Tag.builder().name("CUDA").build(),
-                                        Tag.builder().name("C").build()))
+                                        Tag.builder().name("AI").build(),
+                                        Tag.builder().name("Data science").build(),
+                                        Tag.builder().name("Machine learning").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(
                                 listOf(
@@ -157,9 +160,9 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://nodejs.org/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("JavaScript").build(),
-                                        Tag.builder().name("V8").build(),
-                                        Tag.builder().name("Node").build()))
+                                        Tag.builder().name("Frontend").build(),
+                                        Tag.builder().name("Open-Source").build(),
+                                        Tag.builder().name("Cross-platform").build()))
                         .owner(userRepository.findByNickname("FabriDS23").get())
                         .languages(
                                 listOf(
@@ -186,9 +189,9 @@ public class DemoRunner implements CommandLineRunner {
                         .tags(
                                 listOf(
                                         Tag.builder().name("IDE").build(),
-                                        Tag.builder().name("C").build(),
+                                        Tag.builder().name("Linux").build(),
                                         Tag.builder().name("Geany").build(),
-                                        Tag.builder().name("C++").build()))
+                                        Tag.builder().name("Windows").build()))
                         .owner(userRepository.findByNickname("FabriDS23").get())
                         .languages(
                                 listOf(
@@ -206,7 +209,7 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://www.djangoproject.com/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("Python").build(),
+                                        Tag.builder().name("Backend").build(),
                                         Tag.builder().name("framework").build(),
                                         Tag.builder().name("web").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
@@ -224,7 +227,7 @@ public class DemoRunner implements CommandLineRunner {
                         .description(
                                 "Sakai is a free, community source, educational software platform designed to support teaching, research and collaboration.")
                         .links(listOf("https://www.sakailms.org/"))
-                        .tags(listOf(Tag.builder().name("Java").build()))
+                        .tags(listOf(Tag.builder().name("Education").build()))
                         .owner(userRepository.findByNickname("Peltevis").get())
                         .languages(listOf(Language.builder().name("Java").build()))
                         .forumTags(listOf(ForumTag.builder().name("help").build()))
@@ -239,7 +242,7 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://cassandra.apache.org/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("Java").build(),
+                                        Tag.builder().name("Big data").build(),
                                         Tag.builder().name("Apache").build()))
                         .owner(userRepository.findByNickname("FabriDS23").get())
                         .languages(listOf(Language.builder().name("Java").build()))
@@ -259,8 +262,8 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://www.whitesourcesoftware.com/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("JavaScript").build(),
-                                        Tag.builder().name("TypeScript").build()))
+                                        Tag.builder().name("Code maintenance").build(),
+                                        Tag.builder().name("Dependencies").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(
                                 listOf(
@@ -279,8 +282,8 @@ public class DemoRunner implements CommandLineRunner {
                         .links(listOf("https://kubernetes.io/"))
                         .tags(
                                 listOf(
-                                        Tag.builder().name("Go").build(),
                                         Tag.builder().name("K8s").build(),
+                                        Tag.builder().name("Automation").build(),
                                         Tag.builder().name("Kubernetes").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(listOf(Language.builder().name("Go").build()))
@@ -299,7 +302,7 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         Tag.builder().name("RedHat").build(),
                                         Tag.builder().name("Ansible").build(),
-                                        Tag.builder().name("Python").build()))
+                                        Tag.builder().name("Tool").build()))
                         .owner(userRepository.findByNickname("ropa1998").get())
                         .languages(listOf(Language.builder().name("Python").build()))
                         .forumTags(
