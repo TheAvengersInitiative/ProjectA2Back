@@ -10,14 +10,15 @@ import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -128,8 +129,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserProfileDTO getUserProfile(UUID id) {
-        User loggedUser = getLoggedUser();
-        if (loggedUser.getId().equals(id))
+        Optional<User> loggedUserOptional = getUser();
+        if (loggedUserOptional.isPresent() && loggedUserOptional.get().getId().equals(id)) {
+            User loggedUser = loggedUserOptional.get();
             return UserProfileDTO.builder()
                     .nickname(loggedUser.getNickname())
                     .biography(loggedUser.getBiography())
@@ -138,6 +140,7 @@ public class UserServiceImpl implements UserService {
                     .ownedProjects(projectService.getProjectsByOwner(loggedUser))
                     .collaboratedProjects(projectService.getCollaboratingProjects(loggedUser))
                     .build();
+        }
 
         if (userRepository.findById(id).isEmpty())
             throw new UserNotFoundException(String.format("There is no user with id %s", id));

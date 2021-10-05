@@ -4,14 +4,15 @@ import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import com.a2.backend.service.UserService;
-import java.util.List;
-import java.util.UUID;
-import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -93,7 +94,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(preferredProjects);
     }
 
-    @Secured({SecurityConstants.USER_ROLE})
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserProfile(@PathVariable UUID id) {
         val userProfile = userService.getUserProfile(id);
