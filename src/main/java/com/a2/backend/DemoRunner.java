@@ -5,9 +5,6 @@ import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.*;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("DemoRunner")
 @Transactional
@@ -27,8 +28,10 @@ public class DemoRunner implements CommandLineRunner {
     private Environment env;
     @Autowired
     private ProjectRepository projectRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public DemoRunner() {
     }

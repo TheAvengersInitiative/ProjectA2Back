@@ -83,7 +83,7 @@ public class Project implements Serializable {
                 .featured(featured)
                 .languages(languages)
                 .tags(tags)
-                .forumTags(forumTags.stream().map(ForumTag::getName).collect(Collectors.toList()))
+                .forumTags(forumTags)
                 .description(description)
                 .links(links)
                 .owner(owner.toDTO())

@@ -1,5 +1,6 @@
 package com.a2.backend.model;
 
+import com.a2.backend.entity.ForumTag;
 import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Tag;
 import lombok.*;
@@ -25,7 +26,7 @@ public class ProjectDTO {
 
     private List<Tag> tags;
 
-    private List<String> forumTags;
+    private List<ForumTag> forumTags;
 
     private List<Language> languages;
 

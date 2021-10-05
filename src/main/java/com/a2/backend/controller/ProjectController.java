@@ -2,7 +2,6 @@ package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.ForumTag;
-import com.a2.backend.entity.Project;
 import com.a2.backend.entity.Tag;
 import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.model.ProjectCreateDTO;
@@ -119,7 +118,7 @@ public class ProjectController {
     }
 
     @GetMapping("/forumtags")
-    public ResponseEntity<List<String>> getForumTags() {
+    public ResponseEntity<?> getForumTags() {
         return ResponseEntity.ok(
                 forumTagService.getAllTags().stream()
                         .map(ForumTag::getName)

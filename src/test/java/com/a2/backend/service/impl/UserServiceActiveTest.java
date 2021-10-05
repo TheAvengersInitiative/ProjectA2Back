@@ -1,7 +1,5 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.UserNotFoundException;
@@ -11,13 +9,16 @@ import com.a2.backend.model.UserPrivacyDTO;
 import com.a2.backend.model.UserProfileDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceActiveTest extends AbstractServiceTest {
     @Autowired private UserService userService;
@@ -34,7 +35,8 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
         userService.getLoggedUser().setPreferredTags(preferredTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<ProjectDTO> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
+        List<ProjectDTO> preferredProjects =
+                projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         assertEquals(6, projects.size());
 
@@ -70,7 +72,8 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         preferredTags.add("C");
         userService.getLoggedUser().setPreferredTags(preferredTags);
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<ProjectDTO> preferredProjects = projectService.searchProjectsByFilter(projectSearchDTO);
+        List<ProjectDTO> preferredProjects =
+                projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         for (int i = 0; i < projects.size(); i++) {
             projects.get(i).setFeatured(false);
