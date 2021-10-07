@@ -3,10 +3,7 @@ package com.a2.backend.controller;
 import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.entity.ForumTag;
 import com.a2.backend.entity.Tag;
-import com.a2.backend.model.DiscussionCreateDTO;
-import com.a2.backend.model.ProjectCreateDTO;
-import com.a2.backend.model.ProjectSearchDTO;
-import com.a2.backend.model.ProjectUpdateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.ProjectService;
@@ -153,5 +150,21 @@ public class ProjectController {
             @PathVariable UUID projectId, @PathVariable UUID userId) {
         val applicants = projectService.rejectApplicant(projectId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(applicants);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/review/{id}")
+    public ResponseEntity<?> reviewCollaborator(
+            @Valid @RequestBody ReviewCreateDTO reviewCreateDTO, @PathVariable UUID id) {
+        val review = projectService.createReview(id, reviewCreateDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(review);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @GetMapping("/reviews/{projectId}/{userId}")
+    public ResponseEntity<?> getUserReviewsInProject(
+            @PathVariable UUID projectId, @PathVariable UUID userId) {
+        val reviews = projectService.getUserReviews(projectId, userId);
+        return ResponseEntity.status(HttpStatus.OK).body(reviews);
     }
 }

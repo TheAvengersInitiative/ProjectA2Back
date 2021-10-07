@@ -1,10 +1,7 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.*;
-import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
-import com.a2.backend.exception.InvalidUserException;
-import com.a2.backend.exception.ProjectNotFoundException;
-import com.a2.backend.exception.ProjectWithThatTitleExistsException;
+import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
 import com.a2.backend.repository.ForumTagRepository;
 import com.a2.backend.repository.LanguageRepository;
@@ -36,6 +33,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final LanguageRepository languageRepository;
 
+    private final ReviewService reviewService;
+
     public ProjectServiceImpl(
             ProjectRepository projectRepository,
             TagService tagService,
@@ -44,7 +43,8 @@ public class ProjectServiceImpl implements ProjectService {
             LanguageRepository languageRepository,
             TagRepository tagRepository,
             ForumTagService forumTagService,
-            ForumTagRepository forumTagRepository) {
+            ForumTagRepository forumTagRepository,
+            ReviewService reviewService) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
         this.languageService = languageService;
@@ -53,6 +53,7 @@ public class ProjectServiceImpl implements ProjectService {
         this.tagRepository = tagRepository;
         this.forumTagService = forumTagService;
         this.forumTagRepository = forumTagRepository;
+        this.reviewService = reviewService;
     }
 
     @Override
@@ -79,6 +80,7 @@ public class ProjectServiceImpl implements ProjectService {
                             .owner(loggedUser)
                             .applicants(List.of())
                             .collaborators(List.of())
+                            .reviews(List.of())
                             .build();
             return projectRepository.save(project);
         }
@@ -471,6 +473,65 @@ public class ProjectServiceImpl implements ProjectService {
 
         return projectRepository.save(project).getApplicants().stream()
                 .map(User::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public ReviewDTO createReview(UUID projectId, ReviewCreateDTO reviewCreateDTO) {
+        User loggedUser = userService.getLoggedUser();
+        val projectOptional = projectRepository.findById(projectId);
+
+        if (projectOptional.isEmpty()) {
+            throw new ProjectNotFoundException(
+                    String.format("The project with that id: %s does not exist!", projectId));
+        }
+
+        val project = projectOptional.get();
+
+        if (!project.getOwner().equals(loggedUser)) {
+            throw new InvalidUserException("Only project owners can submit reviews");
+        }
+
+        if (!project.getCollaborators().stream()
+                .map(User::getId)
+                .collect(Collectors.toList())
+                .contains(reviewCreateDTO.getCollaboratorID())) {
+            throw new NotValidCollaboratorException(
+                    String.format(
+                            "The user with id: %s does not collaborate in project with id: %s",
+                            reviewCreateDTO.getCollaboratorID(), projectId));
+        }
+
+        val reviews = project.getReviews();
+        val review = reviewService.createReview(reviewCreateDTO);
+        reviews.add(review);
+
+        project.setReviews(reviews);
+        projectRepository.save(project);
+
+        return review.toDTO();
+    }
+
+    @Override
+    public List<ReviewDTO> getUserReviews(UUID projectId, UUID userId) {
+
+        User loggedUser = userService.getLoggedUser();
+        val projectOptional = projectRepository.findById(projectId);
+
+        if (projectOptional.isEmpty()) {
+            throw new ProjectNotFoundException(
+                    String.format("The project with that id: %s does not exist!", projectId));
+        }
+
+        val project = projectOptional.get();
+
+        if (!project.getOwner().equals(loggedUser)) {
+            throw new InvalidUserException("Only project owners can see collaborator reviews");
+        }
+
+        return project.getReviews().stream()
+                .filter(r -> r.getCollaborator().getId() == userId)
+                .map(Review::toDTO)
                 .collect(Collectors.toList());
     }
 }

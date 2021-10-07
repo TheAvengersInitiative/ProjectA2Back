@@ -52,6 +52,7 @@ public class DiscussionRepositoryTest {
                     .owner(owner)
                     .applicants(List.of())
                     .collaborators(List.of())
+                    .reviews(List.of())
                     .build();
 
     Discussion discussion =

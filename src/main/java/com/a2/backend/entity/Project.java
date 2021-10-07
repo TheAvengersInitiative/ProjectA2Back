@@ -75,6 +75,11 @@ public class Project implements Serializable {
     @NotNull
     private List<User> applicants;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @NotNull
+    private List<Review> reviews;
+
     public ProjectDTO toDTO() {
         return ProjectDTO.builder()
                 .id(id)
@@ -88,6 +93,7 @@ public class Project implements Serializable {
                 .owner(owner.toDTO())
                 .collaborators(collaborators.stream().map(User::toDTO).collect(Collectors.toList()))
                 .applicants(applicants.stream().map(User::toDTO).collect(Collectors.toList()))
+                .reviews(reviews.stream().map(Review::toDTO).collect(Collectors.toList()))
                 .build();
     }
 }

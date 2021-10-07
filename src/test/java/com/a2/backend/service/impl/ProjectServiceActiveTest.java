@@ -9,6 +9,7 @@ import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectSearchDTO;
 import com.a2.backend.model.ProjectUserDTO;
+import com.a2.backend.model.ReviewCreateDTO;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
@@ -319,5 +320,136 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
                         .map(ProjectUserDTO::getId)
                         .collect(Collectors.toList())
                         .contains(applicant.getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test019_ProjectServiceWhenNotProjectOwnerSubmitsReviewShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Geany").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        val collaborator = userRepository.findByNickname("Peltevis");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> projectService.createReview(project.getId(), reviewCreateDTO));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test020_ProjectServiceWithNotValidProjectIdWhenSubmittingReviewShouldThrowException() {
+
+        val collaborator = userRepository.findByNickname("Peltevis");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.createReview(UUID.randomUUID(), reviewCreateDTO));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void
+            Test021_ProjectServiceWithNotValidCollaboratorIdWhenSubmittingReviewShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Geany").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        val collaborator = userRepository.findByNickname("ropa1998");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.createReview(project.getId(), reviewCreateDTO));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void
+            Test022_ProjectServiceWithValidReviewCreateDTOWhenSubmittingReviewShouldUpdateReviewList() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Geany").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        val collaborator = userRepository.findByNickname("Peltevis");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        assertEquals(0, project.getReviews().size());
+        val review = projectService.createReview(project.getId(), reviewCreateDTO);
+
+        assertEquals(1, project.getReviews().size());
+
+        assertEquals(review.getCollaborator().getId(), reviewCreateDTO.getCollaboratorID());
+        assertEquals(review.getScore(), reviewCreateDTO.getScore());
+        assertEquals(review.getComment(), reviewCreateDTO.getComment());
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test022_ProjectServiceWithValidProjectIdAndUserIdShouldReturnUserReviewsInGivenProject() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        val collaborator = userRepository.findByNickname("ropa1998");
+
+        val reviews = projectService.getUserReviews(project.getId(), collaborator.get().getId());
+
+        assertNotNull(reviews);
+        assertEquals(2, reviews.size());
+        assertEquals(collaborator.get().getId(), reviews.get(0).getCollaborator().getId());
+        assertEquals(collaborator.get().getId(), reviews.get(1).getCollaborator().getId());
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test023_ProjectServiceWithNotValidProjectIdWhenAskingForUserReviewsShouldThrowException() {
+
+        val collaborator = userRepository.findByNickname("ropa1998");
+
+        assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.getUserReviews(UUID.randomUUID(), collaborator.get().getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void
+            Test024_ProjectServiceWhenNotProjectOwnerAsksForCollaboratorsReviewsShouldThrowException() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
+        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        val collaborator = userRepository.findByNickname("ropa1998");
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> projectService.getUserReviews(project.getId(), collaborator.get().getId()));
     }
 }

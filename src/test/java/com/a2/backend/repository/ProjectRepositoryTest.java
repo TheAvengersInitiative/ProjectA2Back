@@ -53,6 +53,7 @@ class ProjectRepositoryTest {
                     .owner(owner)
                     .applicants(List.of())
                     .collaborators(List.of())
+                    .reviews(List.of())
                     .build();
 
     @Test
@@ -127,6 +128,7 @@ class ProjectRepositoryTest {
                         .owner(owner)
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build());
         assertEquals(2, projectRepository.findAll().size());
 
@@ -157,6 +159,7 @@ class ProjectRepositoryTest {
                         .owner(owner2)
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build());
         assertEquals(2, projectRepository.findAll().size());
 
@@ -184,6 +187,7 @@ class ProjectRepositoryTest {
                         .forumTags(forumTags)
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build();
 
         Project project2 =
@@ -196,6 +200,7 @@ class ProjectRepositoryTest {
                         .forumTags(forumTags)
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build();
 
         Project project3 =
@@ -208,6 +213,7 @@ class ProjectRepositoryTest {
                         .forumTags(forumTags)
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build();
 
         projectRepository.save(project1);
@@ -246,6 +252,7 @@ class ProjectRepositoryTest {
                         .languages(Arrays.asList(language1, language2))
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build();
 
         Project project2 =
@@ -259,6 +266,7 @@ class ProjectRepositoryTest {
                         .languages(Arrays.asList(language3, language2))
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build();
 
         Project project3 =
@@ -272,6 +280,7 @@ class ProjectRepositoryTest {
                         .languages(Arrays.asList(language1, language3))
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build();
 
         projectRepository.save(project1);
@@ -302,6 +311,7 @@ class ProjectRepositoryTest {
                         .forumTags(forumTags)
                         .applicants(List.of())
                         .collaborators(List.of())
+                        .reviews(List.of())
                         .build();
         assertTrue(projectRepository.findAll().isEmpty());
         assertNull(project.getId());
