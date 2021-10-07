@@ -176,6 +176,7 @@ public class ProjectServiceImpl implements ProjectService {
         boolean nullTitle = projectSearchDTO.getTitle() == null;
         boolean nullTags = projectSearchDTO.getTags() == null;
         boolean nullLangs = projectSearchDTO.getLanguages() == null;
+        boolean nullPage = projectSearchDTO.getPage() == -1;
         List<String> upperCaseTagSearchFilters = new ArrayList<>();
         List<String> upperCaseLangSearchFilters = new ArrayList<>();
 
@@ -301,6 +302,16 @@ public class ProjectServiceImpl implements ProjectService {
                     i--;
                     continue;
                 }
+            }
+        }
+        if (!nullPage) {
+            int page = projectSearchDTO.getPage();
+            if (result.size() > 8 * (page)) {
+                result.removeAll(result.subList(0, 8 * page));
+                for (int i = 0; i < result.size(); i++) {}
+            }
+            if (result.size() > 8) {
+                result.removeAll(result.subList(8, result.size()));
             }
         }
 
