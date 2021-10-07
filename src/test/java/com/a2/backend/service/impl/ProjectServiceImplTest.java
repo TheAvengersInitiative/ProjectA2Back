@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Project;
@@ -15,6 +17,10 @@ import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.LanguageService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,23 +30,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class ProjectServiceImplTest extends AbstractTest {
 
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private ProjectService projectService;
 
-    @Autowired
-    private TagService tagService;
+    @Autowired private TagService tagService;
 
     @Autowired private LanguageService languageService;
 
@@ -430,7 +427,7 @@ class ProjectServiceImplTest extends AbstractTest {
                         .languages(languages2)
                         .build();
         ProjectSearchDTO projectSeached =
-                ProjectSearchDTO.builder().tags(tags2).languages(Arrays.asList("yTHoN")).build();
+                ProjectSearchDTO.builder().tags(tags2).languages(Arrays.asList("pyTHoN")).build();
         val project = projectService.createProject(projectToCreateWithRepeatedTag);
 
         assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
@@ -468,10 +465,10 @@ class ProjectServiceImplTest extends AbstractTest {
                         .forumTags(forumTagsUpdate)
                         .languages(languages2)
                         .build();
-        ProjectSearchDTO projectSeached =
-                ProjectSearchDTO.builder().tags(Arrays.asList("tAg5", "Ag6")).build();
-        val project = projectService.createProject(projectToCreateWithRepeatedTag);
-        val project2 = projectService.createProject(projectToCreate2);
+
+        projectService.createProject(projectToCreateWithRepeatedTag);
+        projectService.createProject(projectToCreate2);
+        ProjectSearchDTO projectSeached = ProjectSearchDTO.builder().title("ProjectT").build();
 
         assertEquals(projectService.searchProjectsByFilter(projectSeached).size(), 1);
         assertEquals(

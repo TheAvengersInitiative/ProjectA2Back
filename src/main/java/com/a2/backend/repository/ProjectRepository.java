@@ -2,6 +2,7 @@ package com.a2.backend.repository;
 
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,20 +15,39 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     void deleteByOwner(User owner);
 
-    @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(t.name) LIKE %?1% ")
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(t.name) = ?1 ")
     List<Project> findProjectsByTagName(String name);
 
-    @Query("SELECT DISTINCT p FROM Project p JOIN p.forumTags t WHERE UPPER(t.name) LIKE %?1% ")
-    List<Project> findProjectsByForumTagName(String name);
-
-    @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(l.name) LIKE %?1% ")
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(l.name) = ?1 ")
     List<Project> findProjectsByLanguageName(String name);
 
     List<Project> findByTitleContainingIgnoreCase(String title);
 
-    List<Project> findAllByFeaturedIsTrue();
+    @Query("SELECT DISTINCT p FROM Project p WHERE p.featured=?1 AND UPPER(p.title) LIKE %?2% ")
+    List<Project> findByTitleContainingIgnoreCaseAndFeatured(Boolean featured, String title);
+
+    @Query("SELECT DISTINCT p FROM Project p WHERE p.featured=?1")
+    List<Project> findAllByFeaturedIsTrue(Boolean featured);
 
     List<Project> findByOwner(User user);
 
     List<Project> findByCollaboratorsContaining(User user);
+
+    @Query(
+            "SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE p.featured=?1 AND UPPER(l.name) IN ?2 ")
+    List<Project> findProjectsByLanguagesIn(Boolean featured, Collection<String> languages);
+
+    @Query(
+            "SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE p.featured=?1 AND UPPER(t.name) IN ?2 ")
+    List<Project> findProjectsByTagsIn(Boolean featured, Collection<String> tags);
+
+    @Query(
+            "SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE p.featured=?1 AND UPPER(p.title) LIKE %?2% AND UPPER(t.name) IN ?3 ")
+    List<Project> findProjectsByTagsInAndTitle(
+            Boolean featured, String title, Collection<String> tags);
+
+    @Query(
+            "SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE p.featured=?1 AND UPPER(p.title) LIKE %?2% AND UPPER(l.name) IN ?3 ")
+    List<Project> findProjectsByLanguagesInAndTitle(
+            Boolean featured, String title, Collection<String> languages);
 }

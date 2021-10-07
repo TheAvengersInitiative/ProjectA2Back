@@ -1254,7 +1254,6 @@ class ProjectControllerTest extends AbstractTest {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .title("Project")
-                        .tags(Arrays.asList("tag"))
                         .languages(Arrays.asList("TypeScript"))
                         .build();
 
@@ -1369,10 +1368,7 @@ class ProjectControllerTest extends AbstractTest {
                         .build();
 
         ProjectSearchDTO projectToSearch =
-                ProjectSearchDTO.builder()
-                        .tags(Arrays.asList("tAg"))
-                        .languages(Arrays.asList("Script"))
-                        .build();
+                ProjectSearchDTO.builder().languages(Arrays.asList("JavAScript")).build();
 
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
@@ -1421,7 +1417,7 @@ class ProjectControllerTest extends AbstractTest {
                         .getContentAsString();
 
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(2, projects.length);
+        assertEquals(1, projects.length);
     }
 
     @Test
@@ -1489,7 +1485,7 @@ class ProjectControllerTest extends AbstractTest {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .featured(true)
-                        .languages(Arrays.asList("Script"))
+                        .languages(Arrays.asList("TypeScript"))
                         .build();
 
         mvc.perform(
@@ -1607,7 +1603,6 @@ class ProjectControllerTest extends AbstractTest {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .featured(true)
-                        .page(0)
                         .languages(Arrays.asList("scrIpT"))
                         .build();
 
@@ -1659,7 +1654,7 @@ class ProjectControllerTest extends AbstractTest {
 
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
-        assertEquals(1, projects.length);
+        assertEquals(0, projects.length);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
 import com.a2.backend.exception.InvalidUserException;
@@ -10,16 +12,13 @@ import com.a2.backend.model.ProjectUserDTO;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ProjectServiceActiveTest extends AbstractServiceTest {
 
