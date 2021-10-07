@@ -492,4 +492,5 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         assertEquals(description, project.getDescription());
     }
+
 }

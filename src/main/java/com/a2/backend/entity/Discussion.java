@@ -4,12 +4,14 @@ import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import com.a2.backend.model.DiscussionDTO;
+import java.util.List;
+import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
-import java.util.UUID;
+
 
 @Entity
 @Getter
@@ -45,4 +47,17 @@ public class Discussion {
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotNull
     private List<Comment> comments;
+
+    @ManyToOne(cascade = {CascadeType.MERGE})
+    private User owner;
+
+    public DiscussionDTO toDTO() {
+        return DiscussionDTO.builder()
+                .project(project)
+                .owner(owner)
+                .id(id)
+                .title(title)
+                .forumTags(forumTags)
+                .build();
+    }
 }

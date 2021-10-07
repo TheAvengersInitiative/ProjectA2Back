@@ -35,6 +35,7 @@ public class DemoRunner implements CommandLineRunner {
     @Autowired private ForumTagRepository forumTagRepository;
     @Autowired private PasswordEncoder passwordEncoder;
 
+
     public DemoRunner() {}
 
     @Override

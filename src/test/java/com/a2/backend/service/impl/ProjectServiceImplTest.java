@@ -489,4 +489,44 @@ class ProjectServiceImplTest extends AbstractTest {
 
         assertEquals("new description", updatedProject.getDescription());
     }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void Test020_SearchProjectsByTitleCaseInsensitive() {
+        userRepository.save(owner);
+
+        projectService.createProject(projectToCreate);
+
+        String title2 = "A Non Existent Project title";
+        List<String> tags2 = Arrays.asList("tag5", "tag6");
+        List<String> languages2 = Arrays.asList("Java", "Python");
+
+        ProjectCreateDTO projectToCreateWithRepeatedTag =
+                ProjectCreateDTO.builder()
+                        .title(title2)
+                        .description(description)
+                        .links(links)
+                        .tags(tags2)
+                        .forumTags(forumTags)
+                        .languages(languages2)
+                        .build();
+        ProjectCreateDTO projectToCreate2 =
+                ProjectCreateDTO.builder()
+                        .title("ProjectTitle")
+                        .description(description)
+                        .links(links)
+                        .tags(Arrays.asList("tag7", "tag8"))
+                        .forumTags(forumTagsUpdate)
+                        .languages(languages2)
+                        .build();
+
+        projectService.createProject(projectToCreateWithRepeatedTag);
+        projectService.createProject(projectToCreate2);
+        ProjectSearchDTO projectSeached = ProjectSearchDTO.builder().title("PRojecttItl").build();
+
+        assertEquals(projectService.searchProjectsByFilter(projectSeached).size(), 1);
+        assertEquals(
+                projectService.searchProjectsByFilter(projectSeached).get(0).getTitle(),
+                "ProjectTitle");
+    }
 }

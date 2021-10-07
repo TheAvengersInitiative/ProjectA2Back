@@ -635,10 +635,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ReviewCreateDTO.builder().collaboratorID(user.getId()).score(5).build();
 
         mvc.perform(
-                        MockMvcRequestBuilders.put(baseUrl + "/review/" + project.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(reviewCreateDTO))
-                                .accept(MediaType.APPLICATION_JSON))
+                MockMvcRequestBuilders.put(baseUrl + "/review/" + project.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         assertEquals(4, user.getReputation());
@@ -710,16 +710,68 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
 
         String errorMessage =
                 mvc.perform(
-                                MockMvcRequestBuilders.put(
-                                                baseUrl + "/comment/" + discussion.getId())
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(commentCreateDTO))
-                                        .accept(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.put(
+                                baseUrl + "/comment/" + discussion.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(commentCreateDTO))
+                                .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
 
         assert (Objects.requireNonNull(errorMessage).contains("Comment cannot be empty"));
+    }
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test0038_ProjectControllerWhenReceivesValidUpdateDiscussionDTOshouldReturnOK()
+            throws Exception {
+
+        val project = projectRepository.findByTitle("Renovate");
+        String discussionTitle = "Discussion title";
+        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+
+        DiscussionCreateDTO discussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title(discussionTitle)
+                        .build();
+
+        String discussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.get().getId().toString()
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isCreated())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+        DiscussionDTO createdDiscussion =
+                objectMapper.readValue(discussionAsString, DiscussionDTO.class);
+        DiscussionUpdateDTO discussionUpdateDTO =
+                DiscussionUpdateDTO.builder()
+                        .title("AnotherName")
+                        .forumTags(discussionTags)
+                        .build();
+
+        String updatedDiscussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                "/discussion/" + createdDiscussion.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
     }
 }

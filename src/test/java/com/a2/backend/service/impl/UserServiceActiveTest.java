@@ -42,10 +42,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
-        assertTrue(preferredProjectsId.contains(projects.get(2).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(3).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(4).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(5).getId()));
+        assertTrue(preferredProjects.size() == 0);
     }
 
     @Test
@@ -63,6 +60,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void Test003_GivenValidUserWhenUpdatingPreferencesThenTheyAreUpdated() {
+
         User loggedUser = userService.getLoggedUser();
 
         assertEquals(PrivacyConstant.PUBLIC, loggedUser.getTagsPrivacy());

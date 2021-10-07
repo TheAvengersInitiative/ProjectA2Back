@@ -134,4 +134,11 @@ public class DefaultExceptionHandler {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UserIsNotOwnerException.class)
+    protected ResponseEntity<?> handleUserIsNotOwner(UserIsNotOwnerException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
 }

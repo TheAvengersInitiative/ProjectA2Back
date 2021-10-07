@@ -7,13 +7,12 @@ import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.DiscussionWithThatTitleExistsInProjectException;
 import com.a2.backend.model.DiscussionCreateDTO;
+import com.a2.backend.model.DiscussionUpdateDTO;
 import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
-import com.a2.backend.service.DiscussionService;
-import com.a2.backend.service.LanguageService;
-import com.a2.backend.service.ProjectService;
-import com.a2.backend.service.TagService;
+import com.a2.backend.service.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +28,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-class DiscussionServiceImplTest extends AbstractTest {
+class DiscussionServiceImplTest {
 
     @Autowired private ProjectService projectService;
 
@@ -42,6 +41,8 @@ class DiscussionServiceImplTest extends AbstractTest {
     @Autowired private UserRepository userRepository;
 
     @Autowired private DiscussionService discussionService;
+
+    @Autowired private UserService userService;
 
     String title = "Project title";
     String discussiontitle = "Discussion title";
@@ -64,7 +65,6 @@ class DiscussionServiceImplTest extends AbstractTest {
 
     static List<String> linksUpdate = new ArrayList<>();
     static List<String> tagsUpdate = new ArrayList<>();
-    List<String> languagesUpdate = Arrays.asList("Java", "Ruby");
 
     ProjectCreateDTO projectToCreate =
             ProjectCreateDTO.builder()
@@ -149,7 +149,7 @@ class DiscussionServiceImplTest extends AbstractTest {
         assertEquals(owner.getNickname(), project.getOwner().getNickname());
         assertEquals(owner.getEmail(), project.getOwner().getEmail());
 
-        val discussion = discussionService.createDiscussion(project.getId(), discussionCreateDTO);
+        discussionService.createDiscussion(project.getId(), discussionCreateDTO);
         assertThrows(
                 DiscussionWithThatTitleExistsInProjectException.class,
                 () -> discussionService.createDiscussion(project.getId(), discussionCreateDTO));
@@ -184,5 +184,120 @@ class DiscussionServiceImplTest extends AbstractTest {
         val secondDiscussion =
                 discussionService.createDiscussion(secondProject.getId(), discussionCreateDTO);
         assertEquals(secondDiscussion.getTitle(), discussiontitle);
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void Test004_SuccesfulDiscussionUpdate() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        val projects = projectService.getAllProjects();
+        assertFalse(projects.isEmpty());
+        assertEquals(1, projects.size());
+        val project = projects.get(0);
+        assertEquals(projectToCreate.getTitle(), project.getTitle());
+        assertEquals(projectToCreate.getDescription(), project.getDescription());
+        assertEquals(tagService.findTagsByNames(projectToCreate.getTags()), project.getTags());
+        assertEquals(
+                languageService.findLanguagesByNames(projectToCreate.getLanguages()),
+                project.getLanguages());
+        assertEquals(projectToCreate.getLinks(), project.getLinks());
+        assertEquals(owner.getId(), project.getOwner().getId());
+        assertEquals(owner.getNickname(), project.getOwner().getNickname());
+        assertEquals(owner.getEmail(), project.getOwner().getEmail());
+        val discussion = discussionService.createDiscussion(project.getId(), discussionCreateDTO);
+        assertEquals(discussion.getTitle(), discussiontitle);
+        DiscussionUpdateDTO discussionUpdateDTO =
+                DiscussionUpdateDTO.builder()
+                        .forumTags(Arrays.asList("desctag1", "desctag3"))
+                        .title(discussiontitle)
+                        .build();
+        val updatedDisc =
+                discussionService.updateDiscussion(discussion.getId(), discussionUpdateDTO);
+
+        assertEquals(updatedDisc.getId(), discussion.getId());
+        assertEquals(updatedDisc.getForumTags().get(1).getName(), "desctag3");
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void Test005_TheSameDiscussionCanExistinDifferentProjects() {
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        Project projectCreated = projectService.createProject(projectToCreate);
+        Project secondProjectCreated = projectService.createProject(secondProjectToCreate);
+        val projects = projectService.getAllProjects();
+        assertFalse(projects.isEmpty());
+        assertEquals(2, projects.size());
+        val project = projects.get(0);
+        val secondProject = projects.get(1);
+        assertEquals(projectToCreate.getTitle(), project.getTitle());
+        assertEquals(projectToCreate.getDescription(), project.getDescription());
+        assertEquals(tagService.findTagsByNames(projectToCreate.getTags()), project.getTags());
+        assertEquals(
+                languageService.findLanguagesByNames(projectToCreate.getLanguages()),
+                project.getLanguages());
+        assertEquals(projectToCreate.getLinks(), project.getLinks());
+
+        assertEquals(owner.getId(), project.getOwner().getId());
+        assertEquals(owner.getNickname(), project.getOwner().getNickname());
+        assertEquals(owner.getEmail(), project.getOwner().getEmail());
+
+        val discussion = discussionService.createDiscussion(project.getId(), discussionCreateDTO);
+        assertEquals(discussion.getTitle(), discussiontitle);
+        val secondDiscussion =
+                discussionService.createDiscussion(secondProject.getId(), discussionCreateDTO);
+        assertEquals(secondDiscussion.getTitle(), discussiontitle);
+        val updatedDiscussion =
+                discussionService.updateDiscussion(
+                        secondDiscussion.getId(),
+                        DiscussionUpdateDTO.builder()
+                                .forumTags(discussionTags)
+                                .title(discussiontitle)
+                                .build());
+        assertEquals(updatedDiscussion.getTitle(), discussiontitle);
+    }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void Test006_UpdateDiscussionWithRepeatedTitleShouldreturnBadRequest() {
+        DiscussionCreateDTO secondDiscussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title("second discussion")
+                        .build();
+        userRepository.save(owner);
+        assertTrue(projectService.getAllProjects().isEmpty());
+        projectService.createProject(projectToCreate);
+        val projects = projectService.getAllProjects();
+        assertFalse(projects.isEmpty());
+        val project = projects.get(0);
+        assertEquals(projectToCreate.getTitle(), project.getTitle());
+        assertEquals(projectToCreate.getDescription(), project.getDescription());
+        assertEquals(tagService.findTagsByNames(projectToCreate.getTags()), project.getTags());
+        assertEquals(
+                languageService.findLanguagesByNames(projectToCreate.getLanguages()),
+                project.getLanguages());
+        assertEquals(projectToCreate.getLinks(), project.getLinks());
+
+        assertEquals(owner.getId(), project.getOwner().getId());
+        assertEquals(owner.getNickname(), project.getOwner().getNickname());
+        assertEquals(owner.getEmail(), project.getOwner().getEmail());
+
+        val discussion = discussionService.createDiscussion(project.getId(), discussionCreateDTO);
+        assertEquals(discussion.getTitle(), discussiontitle);
+        val secondDiscussion =
+                discussionService.createDiscussion(project.getId(), secondDiscussionCreateDTO);
+        assertEquals(secondDiscussion.getTitle(), "second discussion");
+        assertThrows(
+                DiscussionWithThatTitleExistsInProjectException.class,
+                () ->
+                        discussionService.updateDiscussion(
+                                secondDiscussion.getId(),
+                                DiscussionUpdateDTO.builder()
+                                        .forumTags(discussionTags)
+                                        .title(discussiontitle)
+                                        .build()));
     }
 }
