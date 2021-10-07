@@ -52,19 +52,17 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     List<Project> findProjectsByLanguagesInAndTitleAndFeatured(
             Boolean featured, String title, Collection<String> languages);
 
-    @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(l.name) IN ?2 ")
-    List<Project> findProjectsByLanguagesIn(Boolean featured, Collection<String> languages);
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(l.name) IN ?1 ")
+    List<Project> findProjectsByLanguagesIn(Collection<String> languages);
 
-    @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(t.name) IN ?2 ")
-    List<Project> findProjectsByTagsIn(Boolean featured, Collection<String> tags);
-
-    @Query(
-            "SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(p.title) LIKE %?2% AND UPPER(t.name) IN ?3 ")
-    List<Project> findProjectsByTagsInAndTitle(
-            Boolean featured, String title, Collection<String> tags);
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(t.name) IN ?1 ")
+    List<Project> findProjectsByTagsIn(Collection<String> tags);
 
     @Query(
-            "SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(p.title) LIKE %?2% AND UPPER(l.name) IN ?3 ")
-    List<Project> findProjectsByLanguagesInAndTitle(
-            Boolean featured, String title, Collection<String> languages);
+            "SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(p.title) LIKE %?1% AND UPPER(t.name) IN ?2 ")
+    List<Project> findProjectsByTagsInAndTitle(String title, Collection<String> tags);
+
+    @Query(
+            "SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(p.title) LIKE %?1% AND UPPER(l.name) IN ?2 ")
+    List<Project> findProjectsByLanguagesInAndTitle(String title, Collection<String> languages);
 }

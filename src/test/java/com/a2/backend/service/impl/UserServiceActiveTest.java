@@ -35,7 +35,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
         userService.getLoggedUser().setPreferredTags(Arrays.asList("Python", "C"));
         ProjectSearchDTO projectSearchDTO =
-                ProjectSearchDTO.builder().tags(Arrays.asList("Python", "C")).build();
+                ProjectSearchDTO.builder().languages(Arrays.asList("Python", "C")).build();
         List<ProjectDTO> preferredProjects =
                 projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
@@ -45,12 +45,10 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         for (int i = 0; i < preferredProjects.size(); i++) {
             preferredProjectsId.add(preferredProjects.get(i).getId());
         }
+
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
-        assertTrue(preferredProjectsId.contains(projects.get(2).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(3).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(4).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(5).getId()));
+        assertTrue(preferredProjects.size() == 0);
     }
 
     @Test
@@ -86,10 +84,8 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         for (int i = 0; i < preferredProjects.size(); i++) {
             preferredProjectsId.add(preferredProjects.get(i).getId());
         }
-        assertTrue(preferredProjectsId.contains(projects.get(2).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(3).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(4).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(5).getId()));
+        assertTrue(preferredProjectsId.size() == 0);
+        assertTrue(preferredProjects.size() == 0);
     }
 
     @Test

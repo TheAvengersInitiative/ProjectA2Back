@@ -1255,7 +1255,6 @@ class ProjectControllerTest extends AbstractTest {
                 ProjectSearchDTO.builder()
                         .title("Project")
                         .languages(Arrays.asList("TypeScript"))
-                        .featured(false)
                         .build();
 
         mvc.perform(

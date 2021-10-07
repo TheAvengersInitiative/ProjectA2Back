@@ -170,11 +170,12 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public List<ProjectDTO> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO) {
+
         ArrayList<Project> result = new ArrayList<>();
+        boolean featured = projectSearchDTO.isFeatured();
         boolean nullTitle = projectSearchDTO.getTitle() == null;
         boolean nullTags = projectSearchDTO.getTags() == null;
         boolean nullLangs = projectSearchDTO.getLanguages() == null;
-        boolean featured = projectSearchDTO.getFeatured() == null;
         List<String> upperCaseTagSearchFilters = new ArrayList<>();
         List<String> upperCaseLangSearchFilters = new ArrayList<>();
 
@@ -229,14 +230,12 @@ public class ProjectServiceImpl implements ProjectService {
                 if (!nullLangs) {
                     result.addAll(
                             projectRepository.findProjectsByLanguagesInAndTitle(
-                                    featured,
                                     projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
                                     upperCaseLangSearchFilters));
                 }
                 if (!nullTags) {
                     result.addAll(
                             projectRepository.findProjectsByTagsInAndTitle(
-                                    featured,
                                     projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
                                     upperCaseTagSearchFilters));
                 } else {
@@ -246,13 +245,10 @@ public class ProjectServiceImpl implements ProjectService {
                 }
             } else if (!nullLangs) {
                 result.addAll(
-                        projectRepository.findProjectsByLanguagesIn(
-                                featured, upperCaseLangSearchFilters));
+                        projectRepository.findProjectsByLanguagesIn(upperCaseLangSearchFilters));
             }
             if (!nullTags) {
-                result.addAll(
-                        projectRepository.findProjectsByTagsIn(
-                                featured, upperCaseTagSearchFilters));
+                result.addAll(projectRepository.findProjectsByTagsIn(upperCaseTagSearchFilters));
             }
             if (nullLangs && nullTags && nullTitle) {
                 result.addAll(projectRepository.findAllByFeaturedIsTrue(featured));

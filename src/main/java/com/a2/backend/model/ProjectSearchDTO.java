@@ -23,5 +23,5 @@ public class ProjectSearchDTO {
 
     @Builder.Default private int page = -1;
 
-    private  featured;
+    @Builder.Default private boolean featured = false;
 }
