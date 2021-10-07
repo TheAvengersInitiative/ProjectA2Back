@@ -1188,7 +1188,7 @@ class ProjectControllerTest extends AbstractTest {
                         .getContentAsString();
 
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(0, projects.length);
+        assertEquals(1, projects.length);
     }
 
     @Test
@@ -1255,6 +1255,7 @@ class ProjectControllerTest extends AbstractTest {
                 ProjectSearchDTO.builder()
                         .title("Project")
                         .languages(Arrays.asList("TypeScript"))
+                        .featured(false)
                         .build();
 
         mvc.perform(

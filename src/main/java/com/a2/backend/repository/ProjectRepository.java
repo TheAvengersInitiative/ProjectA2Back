@@ -35,19 +35,36 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     @Query(
             "SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE p.featured=?1 AND UPPER(l.name) IN ?2 ")
-    List<Project> findProjectsByLanguagesIn(Boolean featured, Collection<String> languages);
+    List<Project> findProjectsByLanguagesInAndFeatured(
+            Boolean featured, Collection<String> languages);
 
     @Query(
             "SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE p.featured=?1 AND UPPER(t.name) IN ?2 ")
-    List<Project> findProjectsByTagsIn(Boolean featured, Collection<String> tags);
+    List<Project> findProjectsByTagsInAndFeatured(Boolean featured, Collection<String> tags);
 
     @Query(
             "SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE p.featured=?1 AND UPPER(p.title) LIKE %?2% AND UPPER(t.name) IN ?3 ")
-    List<Project> findProjectsByTagsInAndTitle(
+    List<Project> findProjectsByTagsInAndTitleAndFeatured(
             Boolean featured, String title, Collection<String> tags);
 
     @Query(
             "SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE p.featured=?1 AND UPPER(p.title) LIKE %?2% AND UPPER(l.name) IN ?3 ")
+    List<Project> findProjectsByLanguagesInAndTitleAndFeatured(
+            Boolean featured, String title, Collection<String> languages);
+
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(l.name) IN ?2 ")
+    List<Project> findProjectsByLanguagesIn(Boolean featured, Collection<String> languages);
+
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(t.name) IN ?2 ")
+    List<Project> findProjectsByTagsIn(Boolean featured, Collection<String> tags);
+
+    @Query(
+            "SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(p.title) LIKE %?2% AND UPPER(t.name) IN ?3 ")
+    List<Project> findProjectsByTagsInAndTitle(
+            Boolean featured, String title, Collection<String> tags);
+
+    @Query(
+            "SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(p.title) LIKE %?2% AND UPPER(l.name) IN ?3 ")
     List<Project> findProjectsByLanguagesInAndTitle(
             Boolean featured, String title, Collection<String> languages);
 }

@@ -174,7 +174,7 @@ public class ProjectServiceImpl implements ProjectService {
         boolean nullTitle = projectSearchDTO.getTitle() == null;
         boolean nullTags = projectSearchDTO.getTags() == null;
         boolean nullLangs = projectSearchDTO.getLanguages() == null;
-        boolean featured = projectSearchDTO.isFeatured();
+        boolean featured = projectSearchDTO.getFeatured() == null;
         List<String> upperCaseTagSearchFilters = new ArrayList<>();
         List<String> upperCaseLangSearchFilters = new ArrayList<>();
 
@@ -190,37 +190,73 @@ public class ProjectServiceImpl implements ProjectService {
                         projectSearchDTO.getLanguages().get(j).toUpperCase(Locale.ROOT));
             }
         }
-
-        if (!nullTitle) {
-            if (!nullLangs) {
+        if (featured) {
+            if (!nullTitle) {
+                if (!nullLangs) {
+                    result.addAll(
+                            projectRepository.findProjectsByLanguagesInAndTitleAndFeatured(
+                                    featured,
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
+                                    upperCaseLangSearchFilters));
+                }
+                if (!nullTags) {
+                    result.addAll(
+                            projectRepository.findProjectsByTagsInAndTitleAndFeatured(
+                                    featured,
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
+                                    upperCaseTagSearchFilters));
+                } else {
+                    result.addAll(
+                            projectRepository.findByTitleContainingIgnoreCaseAndFeatured(
+                                    featured,
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT)));
+                }
+            } else if (!nullLangs) {
                 result.addAll(
-                        projectRepository.findProjectsByLanguagesInAndTitle(
-                                featured,
-                                projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
-                                upperCaseLangSearchFilters));
+                        projectRepository.findProjectsByLanguagesInAndFeatured(
+                                featured, upperCaseLangSearchFilters));
             }
             if (!nullTags) {
                 result.addAll(
-                        projectRepository.findProjectsByTagsInAndTitle(
-                                featured,
-                                projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
-                                upperCaseTagSearchFilters));
-            } else {
-                result.addAll(
-                        projectRepository.findByTitleContainingIgnoreCaseAndFeatured(
-                                featured, projectSearchDTO.getTitle()));
+                        projectRepository.findProjectsByTagsInAndFeatured(
+                                featured, upperCaseTagSearchFilters));
             }
-        } else if (!nullLangs) {
-            result.addAll(
-                    projectRepository.findProjectsByLanguagesIn(
-                            featured, upperCaseLangSearchFilters));
-        }
-        if (!nullTags) {
-            result.addAll(
-                    projectRepository.findProjectsByTagsIn(featured, upperCaseTagSearchFilters));
-        }
-        if (nullLangs && nullTags && nullTitle) {
-            result.addAll(projectRepository.findAllByFeaturedIsTrue(featured));
+            if (nullLangs && nullTags && nullTitle) {
+                result.addAll(projectRepository.findAllByFeaturedIsTrue(featured));
+            }
+        } else {
+            if (!nullTitle) {
+                if (!nullLangs) {
+                    result.addAll(
+                            projectRepository.findProjectsByLanguagesInAndTitle(
+                                    featured,
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
+                                    upperCaseLangSearchFilters));
+                }
+                if (!nullTags) {
+                    result.addAll(
+                            projectRepository.findProjectsByTagsInAndTitle(
+                                    featured,
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
+                                    upperCaseTagSearchFilters));
+                } else {
+                    result.addAll(
+                            projectRepository.findByTitleContainingIgnoreCase(
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT)));
+                }
+            } else if (!nullLangs) {
+                result.addAll(
+                        projectRepository.findProjectsByLanguagesIn(
+                                featured, upperCaseLangSearchFilters));
+            }
+            if (!nullTags) {
+                result.addAll(
+                        projectRepository.findProjectsByTagsIn(
+                                featured, upperCaseTagSearchFilters));
+            }
+            if (nullLangs && nullTags && nullTitle) {
+                result.addAll(projectRepository.findAllByFeaturedIsTrue(featured));
+            }
         }
 
         for (int i = 0; i < result.size() - 1; i++) {

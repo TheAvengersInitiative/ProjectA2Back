@@ -468,10 +468,11 @@ class ProjectServiceImplTest extends AbstractTest {
 
         projectService.createProject(projectToCreateWithRepeatedTag);
         projectService.createProject(projectToCreate2);
-        ProjectSearchDTO projectSeached = ProjectSearchDTO.builder().title("ProjectT").build();
+        ProjectSearchDTO projectSeached = ProjectSearchDTO.builder().title("ProjectTitle").build();
 
         assertEquals(projectService.searchProjectsByFilter(projectSeached).size(), 1);
         assertEquals(
-                projectService.searchProjectsByFilter(projectSeached).get(0).getTitle(), title2);
+                projectService.searchProjectsByFilter(projectSeached).get(0).getTitle(),
+                "ProjectTitle");
     }
 }
