@@ -14,13 +14,13 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     void deleteByOwner(User owner);
 
-    @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(t.name) LIKE %?1% ")
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.tags t WHERE UPPER(t.name)= ?1 ")
     List<Project> findProjectsByTagName(String name);
 
-    @Query("SELECT DISTINCT p FROM Project p JOIN p.forumTags t WHERE UPPER(t.name) LIKE %?1% ")
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.forumTags t WHERE UPPER(t.name)=?1 ")
     List<Project> findProjectsByForumTagName(String name);
 
-    @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(l.name) LIKE %?1% ")
+    @Query("SELECT DISTINCT p FROM Project p JOIN p.languages l WHERE UPPER(l.name)=?1 ")
     List<Project> findProjectsByLanguageName(String name);
 
     List<Project> findByTitleContainingIgnoreCase(String title);
