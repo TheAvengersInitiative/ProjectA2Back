@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.UserNotFoundException;
@@ -9,16 +11,14 @@ import com.a2.backend.model.UserPrivacyDTO;
 import com.a2.backend.model.UserProfileDTO;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 public class UserServiceActiveTest extends AbstractServiceTest {
     @Autowired private UserService userService;
@@ -33,8 +33,9 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         preferredTags.add("Python");
         preferredTags.add("C");
 
-        userService.getLoggedUser().setPreferredTags(preferredTags);
-        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
+        userService.getLoggedUser().setPreferredTags(Arrays.asList("Python", "C"));
+        ProjectSearchDTO projectSearchDTO =
+                ProjectSearchDTO.builder().languages(Arrays.asList("Python", "C")).build();
         List<ProjectDTO> preferredProjects =
                 projectService.searchProjectsByFilter(projectSearchDTO);
         List<ProjectDTO> projects = userService.getPreferredProjects();
@@ -44,12 +45,10 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         for (int i = 0; i < preferredProjects.size(); i++) {
             preferredProjectsId.add(preferredProjects.get(i).getId());
         }
+
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
-        assertTrue(preferredProjectsId.contains(projects.get(2).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(3).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(4).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(5).getId()));
+        assertTrue(preferredProjects.size() == 0);
     }
 
     @Test
@@ -85,10 +84,8 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         for (int i = 0; i < preferredProjects.size(); i++) {
             preferredProjectsId.add(preferredProjects.get(i).getId());
         }
-        assertTrue(preferredProjectsId.contains(projects.get(2).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(3).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(4).getId()));
-        assertTrue(preferredProjectsId.contains(projects.get(5).getId()));
+        assertTrue(preferredProjectsId.size() == 0);
+        assertTrue(preferredProjects.size() == 0);
     }
 
     @Test

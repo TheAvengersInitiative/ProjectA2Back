@@ -11,12 +11,11 @@ import com.a2.backend.repository.LanguageRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.*;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -75,6 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
                             .links(projectCreateDTO.getLinks())
                             .tags(tags)
                             .forumTags(forumTags)
+                            .featured(projectCreateDTO.isFeatured())
                             .languages(languages)
                             .owner(loggedUser)
                             .applicants(List.of())
@@ -170,39 +170,89 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public List<ProjectDTO> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO) {
-        ArrayList<String> validLanguages = new ArrayList<>();
-        ArrayList<String> validTags = new ArrayList<>();
-        ArrayList<String> validForumTags = new ArrayList<>();
+
         ArrayList<Project> result = new ArrayList<>();
-        boolean nullTitle = true;
-        boolean nullTags = true;
-        boolean nullLangs = true;
-        boolean nullForumTags = true;
         boolean featured = projectSearchDTO.isFeatured();
+        boolean nullTitle = projectSearchDTO.getTitle() == null;
+        boolean nullTags = projectSearchDTO.getTags() == null;
+        boolean nullLangs = projectSearchDTO.getLanguages() == null;
         boolean nullPage = projectSearchDTO.getPage() == -1;
-        if (projectSearchDTO.getTitle() != null) {
-            nullTitle = false;
-            result.addAll(
-                    projectRepository.findByTitleContainingIgnoreCase(projectSearchDTO.getTitle()));
-        }
-        if (projectSearchDTO.getLanguages() != null && !projectSearchDTO.getLanguages().isEmpty()) {
-            nullLangs = false;
-            List<String> languages = projectSearchDTO.getLanguages();
-            for (String language : languages) {
-                result.addAll(
-                        projectRepository.findProjectsByLanguageName(
-                                language.toUpperCase(Locale.ROOT)));
-                validLanguages.addAll(
-                        languageRepository.findLanguageName(language.toUpperCase(Locale.ROOT)));
+        List<String> upperCaseTagSearchFilters = new ArrayList<>();
+        List<String> upperCaseLangSearchFilters = new ArrayList<>();
+
+        if (!nullTags) {
+            for (int j = 0; j < projectSearchDTO.getTags().size(); j++) {
+                upperCaseTagSearchFilters.add(
+                        projectSearchDTO.getTags().get(j).toUpperCase(Locale.ROOT));
             }
         }
-        if (projectSearchDTO.getTags() != null && !projectSearchDTO.getTags().isEmpty()) {
-            nullTags = false;
-            List<String> tags = projectSearchDTO.getTags();
-            for (String tag : tags) {
+        if (!nullLangs) {
+            for (int j = 0; j < projectSearchDTO.getLanguages().size(); j++) {
+                upperCaseLangSearchFilters.add(
+                        projectSearchDTO.getLanguages().get(j).toUpperCase(Locale.ROOT));
+            }
+        }
+        if (featured) {
+            if (!nullTitle) {
+                if (!nullLangs) {
+                    result.addAll(
+                            projectRepository.findProjectsByLanguagesInAndTitleAndFeatured(
+                                    featured,
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
+                                    upperCaseLangSearchFilters));
+                }
+                if (!nullTags) {
+                    result.addAll(
+                            projectRepository.findProjectsByTagsInAndTitleAndFeatured(
+                                    featured,
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
+                                    upperCaseTagSearchFilters));
+                } else {
+                    result.addAll(
+                            projectRepository.findByTitleContainingIgnoreCaseAndFeatured(
+                                    featured,
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT)));
+                }
+            } else if (!nullLangs) {
                 result.addAll(
-                        projectRepository.findProjectsByTagName(tag.toUpperCase(Locale.ROOT)));
-                validTags.addAll(tagRepository.findTagName(tag.toUpperCase(Locale.ROOT)));
+                        projectRepository.findProjectsByLanguagesInAndFeatured(
+                                featured, upperCaseLangSearchFilters));
+            }
+            if (!nullTags) {
+                result.addAll(
+                        projectRepository.findProjectsByTagsInAndFeatured(
+                                featured, upperCaseTagSearchFilters));
+            }
+            if (nullLangs && nullTags && nullTitle) {
+                result.addAll(projectRepository.findAllByFeaturedIsTrue(featured));
+            }
+        } else {
+            if (!nullTitle) {
+                if (!nullLangs) {
+                    result.addAll(
+                            projectRepository.findProjectsByLanguagesInAndTitle(
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
+                                    upperCaseLangSearchFilters));
+                }
+                if (!nullTags) {
+                    result.addAll(
+                            projectRepository.findProjectsByTagsInAndTitle(
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
+                                    upperCaseTagSearchFilters));
+                } else {
+                    result.addAll(
+                            projectRepository.findByTitleContainingIgnoreCase(
+                                    projectSearchDTO.getTitle().toUpperCase(Locale.ROOT)));
+                }
+            } else if (!nullLangs) {
+                result.addAll(
+                        projectRepository.findProjectsByLanguagesIn(upperCaseLangSearchFilters));
+            }
+            if (!nullTags) {
+                result.addAll(projectRepository.findProjectsByTagsIn(upperCaseTagSearchFilters));
+            }
+            if (nullLangs && nullTags && nullTitle) {
+                result.addAll(projectRepository.findAllByFeaturedIsTrue(featured));
             }
         }
 
@@ -216,51 +266,44 @@ public class ProjectServiceImpl implements ProjectService {
             }
         }
         for (int i = 0; i < result.size(); i++) {
-            ArrayList<String> languageNames = new ArrayList<>();
-            ArrayList<String> tagNames = new ArrayList<>();
-            ArrayList<String> forumTagNames = new ArrayList<>();
-            if (!nullLangs) {
-                for (int j = 0; j < result.get(i).getLanguages().size(); j++) {
-                    languageNames.add(result.get(i).getLanguages().get(j).getName());
-                }
-            }
-            if (!nullTags) {
-                for (int j = 0; j < result.get(i).getTags().size(); j++) {
-                    tagNames.add(result.get(i).getTags().get(j).getName());
+            if (!nullTitle) {
+                if (!result.get(i)
+                        .getTitle()
+                        .toUpperCase(Locale.ROOT)
+                        .contains(projectSearchDTO.getTitle().toUpperCase(Locale.ROOT))) {
+                    result.remove(i);
+                    i--;
+                    continue;
                 }
             }
 
-            if (!nullTitle) {
-                if (!result.get(i).getTitle().contains(projectSearchDTO.getTitle())) {
-                    result.remove(i);
-                    i--;
-                    continue;
-                }
-            }
-            if (featured) {
-                if (!result.get(i).isFeatured()) result.remove(i);
-            }
             if (!nullLangs) {
-                if (Collections.disjoint(validLanguages, languageNames)) {
+                List<String> upperCaseResults = new ArrayList<>();
+                for (int j = 0; j < result.get(i).getLanguages().size(); j++) {
+                    upperCaseResults.add(
+                            result.get(i).getLanguages().get(j).getName().toUpperCase(Locale.ROOT));
+                }
+                if (result.get(i).getLanguages().size() < projectSearchDTO.getLanguages().size()
+                        || !upperCaseResults.containsAll(upperCaseLangSearchFilters)) {
                     result.remove(i);
                     i--;
                     continue;
                 }
             }
             if (!nullTags) {
-                if (Collections.disjoint(validTags, tagNames)) {
-                    result.remove(i);
-                    i--;
+                List<String> upperCaseResults = new ArrayList<>();
+                for (int j = 0; j < result.get(i).getTags().size(); j++) {
+                    upperCaseResults.add(
+                            result.get(i).getTags().get(j).getName().toUpperCase(Locale.ROOT));
                 }
-            }
-            if (!nullForumTags) {
-                if (Collections.disjoint(validForumTags, forumTagNames)) {
+                if (result.get(i).getTags().size() < projectSearchDTO.getTags().size()
+                        || !upperCaseResults.containsAll(upperCaseTagSearchFilters)) {
                     result.remove(i);
                     i--;
+                    continue;
                 }
             }
         }
-
         if (!nullPage) {
             int page = projectSearchDTO.getPage();
             if (result.size() > 8 * (page)) {
@@ -277,7 +320,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectDTO> getFeaturedProject() {
-        return projectRepository.findAllByFeaturedIsTrue().stream()
+        return projectRepository.findAllByFeaturedIsTrue(true).stream()
                 .map(Project::toDTO)
                 .collect(Collectors.toList());
     }

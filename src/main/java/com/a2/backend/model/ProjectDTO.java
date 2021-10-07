@@ -3,10 +3,9 @@ package com.a2.backend.model;
 import com.a2.backend.entity.ForumTag;
 import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Tag;
-import lombok.*;
-
 import java.util.List;
 import java.util.UUID;
+import lombok.*;
 
 @Getter
 @Setter
