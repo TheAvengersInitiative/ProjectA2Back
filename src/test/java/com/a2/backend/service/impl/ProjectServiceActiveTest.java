@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
 import com.a2.backend.exception.InvalidUserException;
+import com.a2.backend.exception.NotValidCollaboratorException;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectSearchDTO;
@@ -327,7 +328,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
     void Test019_ProjectServiceWhenNotProjectOwnerSubmitsReviewShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Geany").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         val collaborator = userRepository.findByNickname("Peltevis");
 
@@ -367,7 +368,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test021_ProjectServiceWithNotValidCollaboratorIdWhenSubmittingReviewShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Geany").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         val collaborator = userRepository.findByNickname("ropa1998");
 
@@ -379,7 +380,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
                         .build();
 
         assertThrows(
-                ProjectNotFoundException.class,
+                NotValidCollaboratorException.class,
                 () -> projectService.createReview(project.getId(), reviewCreateDTO));
     }
 
@@ -389,7 +390,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test022_ProjectServiceWithValidReviewCreateDTOWhenSubmittingReviewShouldUpdateReviewList() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Geany").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         val collaborator = userRepository.findByNickname("Peltevis");
 
@@ -403,7 +404,9 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         assertEquals(0, project.getReviews().size());
         val review = projectService.createReview(project.getId(), reviewCreateDTO);
 
-        assertEquals(1, project.getReviews().size());
+        val projectUpdated = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        assertEquals(1, projectUpdated.getReviews().size());
 
         assertEquals(review.getCollaborator().getId(), reviewCreateDTO.getCollaboratorID());
         assertEquals(review.getScore(), reviewCreateDTO.getScore());
@@ -415,7 +418,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
     void Test022_ProjectServiceWithValidProjectIdAndUserIdShouldReturnUserReviewsInGivenProject() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         val collaborator = userRepository.findByNickname("ropa1998");
 
@@ -444,7 +447,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
             Test024_ProjectServiceWhenNotProjectOwnerAsksForCollaboratorsReviewsShouldThrowException() {
 
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Node.js").build();
-        Project project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
         val collaborator = userRepository.findByNickname("ropa1998");
 
