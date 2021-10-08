@@ -39,4 +39,8 @@ public interface ProjectService {
     List<ProjectUserDTO> acceptApplicant(UUID projectId, UUID userId);
 
     List<ProjectUserDTO> rejectApplicant(UUID projectId, UUID userId);
+
+    ReviewDTO createReview(UUID id, ReviewCreateDTO reviewCreateDTO);
+
+    List<ReviewDTO> getUserReviews(UUID projectId, UUID userId);
 }

@@ -8,12 +8,14 @@ import com.a2.backend.entity.Project;
 import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.model.ProjectDTO;
 import com.a2.backend.model.ProjectUserDTO;
+import com.a2.backend.model.ReviewCreateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -351,6 +353,261 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                                                         discussionCreateDTO))
                                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isUnauthorized())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test033_ProjectControllerWhenReceivesInvalidProjectIdShouldReturnBadRequest()
+            throws Exception {
+
+        val collaborator = userRepository.findByNickname("Peltevis");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl + "/review",
+                                                        Objects.requireNonNull(UUID.randomUUID())))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("The project with that id"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test034_ProjectControllerWhenLoggedUserIsNotProjectOwnerWhenSubmittingReviewShouldReturnBadRequest()
+                    throws Exception {
+
+        val project = projectRepository.findByTitle("Geany");
+
+        val collaborator = userRepository.findByNickname("Peltevis");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl + "/review",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId())))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage)
+                .contains("Only project owners can submit reviews"));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void
+            Test035_ProjectControllerWhenTryingToReviewSomeoneWhoDoesNotCollaborateInProjectShouldReturnBadRequest()
+                    throws Exception {
+
+        val project = projectRepository.findByTitle("Geany");
+
+        val collaborator = userRepository.findByNickname("ropa1998");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl + "/review",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId())))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("does not collaborate in project"));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test035_ProjectControllerWhenTryingToReviewUserNotFoundShouldReturnBadRequest()
+            throws Exception {
+
+        val project = projectRepository.findByTitle("Geany");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(UUID.randomUUID())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl + "/review",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId())))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("does not collaborate in project"));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void
+            Test036_ProjectControllerWhenReceivingValidReviewCreateDTOAndValidProjectIDShouldReturnHttpOkTest()
+                    throws Exception {
+
+        val project = projectRepository.findByTitle("Geany");
+
+        val collaborator = userRepository.findByNickname("Peltevis");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                String.format(
+                                                        "%s/%s",
+                                                        baseUrl + "/review",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId())))
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void
+            Test037_ProjectControllerWithNotValidProjectIdWhenAskingForCollaboratorsReviewsShouldReturnBadRequest()
+                    throws Exception {
+
+        val collaborator = userRepository.findByNickname("ropa1998");
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                String.format(
+                                                        "%s/%s/%s",
+                                                        baseUrl + "/reviews",
+                                                        Objects.requireNonNull(UUID.randomUUID()),
+                                                        Objects.requireNonNull(
+                                                                collaborator.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("The project with that id"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test038_ProjectControllerWhenNotProjectOwnerAsksForCollaboratorsReviewsShouldReturnBadRequest()
+                    throws Exception {
+
+        val project = projectRepository.findByTitle("Node.js");
+
+        val collaborator = userRepository.findByNickname("ropa1998");
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                String.format(
+                                                        "%s/%s/%s",
+                                                        baseUrl + "/reviews",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId()),
+                                                        Objects.requireNonNull(
+                                                                collaborator.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage)
+                .contains("Only project owners can see collaborator reviews"));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void
+            Test037_ProjectControllerWithValidProjectIdAndUserIDWhenAskingForCollaboratorsReviewsShouldReturnHttpOkTest()
+                    throws Exception {
+
+        val project = projectRepository.findByTitle("Node.js");
+
+        val collaborator = userRepository.findByNickname("ropa1998");
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                String.format(
+                                                        "%s/%s/%s",
+                                                        baseUrl + "/reviews",
+                                                        Objects.requireNonNull(
+                                                                project.get().getId()),
+                                                        Objects.requireNonNull(
+                                                                collaborator.get().getId())))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
