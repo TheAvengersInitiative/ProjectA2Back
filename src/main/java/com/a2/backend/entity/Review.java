@@ -23,6 +23,7 @@ public class Review {
     @ManyToOne(cascade = {CascadeType.MERGE})
     private User collaborator;
 
+    @Column(length = 500)
     private String comment;
 
     private int score;
