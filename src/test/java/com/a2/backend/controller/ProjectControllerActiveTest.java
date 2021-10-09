@@ -5,10 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.entity.Project;
-import com.a2.backend.model.DiscussionCreateDTO;
-import com.a2.backend.model.ProjectDTO;
-import com.a2.backend.model.ProjectUserDTO;
-import com.a2.backend.model.ReviewCreateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -611,5 +608,9 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
+
+        ReviewDTO[] reviews = objectMapper.readValue(contentAsString, ReviewDTO[].class);
+        assertNotNull(reviews);
+        assertEquals(2, reviews.length);
     }
 }
