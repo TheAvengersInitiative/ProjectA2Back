@@ -529,9 +529,14 @@ public class ProjectServiceImpl implements ProjectService {
             throw new InvalidUserException("Only project owners can see collaborator reviews");
         }
 
-        return project.getReviews().stream()
-                .filter(r -> r.getCollaborator().getId() == userId)
-                .map(Review::toDTO)
-                .collect(Collectors.toList());
+        List<ReviewDTO> reviewDTOS = new ArrayList<>();
+
+        for (Review review : project.getReviews()) {
+            if (review.getCollaborator().getId().equals(userId)) {
+                reviewDTOS.add(review.toDTO());
+            }
+        }
+
+        return reviewDTOS;
     }
 }
