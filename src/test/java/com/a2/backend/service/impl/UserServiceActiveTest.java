@@ -1,24 +1,22 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.UserNotFoundException;
-import com.a2.backend.model.ProjectDTO;
-import com.a2.backend.model.ProjectSearchDTO;
-import com.a2.backend.model.UserPrivacyDTO;
-import com.a2.backend.model.UserProfileDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceActiveTest extends AbstractServiceTest {
     @Autowired private UserService userService;
@@ -149,5 +147,71 @@ public class UserServiceActiveTest extends AbstractServiceTest {
     void Test006_GivenANonExistentUserIdWhenGettingProfileThenExceptionIsThrown() {
         assertThrows(
                 UserNotFoundException.class, () -> userService.getUserProfile(UUID.randomUUID()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void
+    Test007_GivenAUserWithReputationWhenUpdatingReputationWithoutAddingAReviewThenItRemainsTheSame() {
+        User loggedUser = userService.getLoggedUser();
+
+        User updatedUser = userService.updateReputation(loggedUser.getId());
+
+        assertEquals(loggedUser.getReputation(), updatedUser.getReputation());
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test008_GivenAUserWithReputationWhenAddingAReviewThenItIsUpdated() {
+        ProjectDTO project =
+                projectService
+                        .searchProjectsByFilter(
+                                ProjectSearchDTO.builder().title("RedHatAnsible").build())
+                        .get(0);
+
+        User user = userService.getUser(project.getCollaborators().get(0).getId());
+        assertEquals(4, user.getReputation());
+
+        projectService.createReview(
+                project.getId(),
+                ReviewCreateDTO.builder().collaboratorID(user.getId()).score(5).build());
+
+        assertEquals(4.5, user.getReputation());
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void
+    Test009_GivenAUserWithAReviewWhenAddingAReviewOnSameProjectThenReputationIsUpdatedDiscardingOldReview() {
+        ProjectDTO project =
+                projectService
+                        .searchProjectsByFilter(ProjectSearchDTO.builder().title("Django").build())
+                        .get(0);
+
+        User user = userService.getUser(project.getCollaborators().get(0).getId());
+        assertEquals(2.5, user.getReputation());
+
+        projectService.createReview(
+                project.getId(),
+                ReviewCreateDTO.builder().collaboratorID(user.getId()).score(5).build());
+
+        assertEquals(4, user.getReputation());
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test010_GivenAValidUserIdWhenGettingReviewsThenTheyAreReturnedSortedByDate() {
+        User user = userService.getLoggedUser();
+        List<ReviewDTO> reviews = userService.getUserReviews(user.getId());
+        assertEquals(3, reviews.size());
+        assertTrue(reviews.get(0).getDate().isAfter(reviews.get(1).getDate()));
+        assertTrue(reviews.get(1).getDate().isAfter(reviews.get(2).getDate()));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test011_GivenAnInvalidUserIdWhenGettingReviewsThenExceptionIsThrown() {
+        assertThrows(
+                UserNotFoundException.class, () -> userService.getUserReviews(UUID.randomUUID()));
     }
 }

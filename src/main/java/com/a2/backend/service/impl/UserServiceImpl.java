@@ -10,14 +10,15 @@ import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import com.a2.backend.utils.RandomStringUtils;
 import com.a2.backend.utils.SecurityUtils;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -138,6 +139,7 @@ public class UserServiceImpl implements UserService {
                     .preferredLanguages(loggedUser.getPreferredLanguages())
                     .ownedProjects(projectService.getProjectsByOwner(loggedUser))
                     .collaboratedProjects(projectService.getCollaboratingProjects(loggedUser))
+                    .reputation(loggedUser.getReputation())
                     .build();
         }
 
@@ -150,6 +152,7 @@ public class UserServiceImpl implements UserService {
                 UserProfileDTO.builder()
                         .nickname(user.getNickname())
                         .biography(user.getBiography())
+                        .reputation(user.getReputation())
                         .build();
 
         if (user.getTagsPrivacy().equals(PrivacyConstant.PUBLIC))
@@ -297,5 +300,63 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(UUID id) {
         return userRepository.getById(id);
+    }
+
+    @Override
+    public User updateReputation(UUID id) {
+        List<ReviewDTO> latestReviewForEveryProject = new ArrayList<>();
+
+        User user = userRepository.getById(id);
+        List<ProjectDTO> collaboratingProjects = projectService.getCollaboratingProjects(user);
+
+        for (ProjectDTO collaboratingProject : collaboratingProjects) {
+            List<ReviewDTO> reviewsForProject =
+                    collaboratingProject.getReviews().stream()
+                            .filter(r -> r.getCollaborator().getId().equals(id))
+                            .collect(Collectors.toList());
+            if (reviewsForProject.isEmpty()) continue;
+            if (reviewsForProject.size() > 1) {
+                reviewsForProject.sort(Comparator.comparing(ReviewDTO::getDate));
+                Collections.reverse(reviewsForProject);
+            }
+            latestReviewForEveryProject.add(reviewsForProject.get(0));
+        }
+
+        double reputation =
+                latestReviewForEveryProject.stream()
+                        .mapToDouble(ReviewDTO::getScore)
+                        .average()
+                        .orElse(0);
+
+        user.setReputation(reputation);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public List<ReviewDTO> getUserReviews(UUID id) {
+        List<ReviewDTO> reviews = new ArrayList<>();
+
+        val user =
+                userRepository
+                        .findById(id)
+                        .orElseThrow(
+                                () ->
+                                        new UserNotFoundException(
+                                                String.format("User with id %s not found ", id)));
+        List<ProjectDTO> collaboratingProjects = projectService.getCollaboratingProjects(user);
+
+        for (ProjectDTO collaboratingProject : collaboratingProjects) {
+            List<ReviewDTO> reviewsForProject =
+                    collaboratingProject.getReviews().stream()
+                            .filter(r -> r.getCollaborator().getId().equals(id))
+                            .collect(Collectors.toList());
+            if (reviewsForProject.isEmpty()) continue;
+            reviews.addAll(reviewsForProject);
+        }
+
+        reviews.sort(Comparator.comparing(ReviewDTO::getDate));
+        Collections.reverse(reviews);
+
+        return reviews;
     }
 }
