@@ -7,13 +7,11 @@ import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
 import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.exception.NotValidCollaboratorException;
 import com.a2.backend.exception.ProjectNotFoundException;
-import com.a2.backend.model.ProjectDTO;
-import com.a2.backend.model.ProjectSearchDTO;
-import com.a2.backend.model.ProjectUserDTO;
-import com.a2.backend.model.ReviewCreateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -116,7 +114,7 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         List<ProjectDTO> ownedProjects =
                 projectService.getProjectsByOwner(userService.getLoggedUser());
 
-        assertEquals(4, ownedProjects.size());
+        assertEquals(5, ownedProjects.size());
         List<String> ownedProjectTitles =
                 ownedProjects.stream().map(ProjectDTO::getTitle).collect(Collectors.toList());
         assertTrue(ownedProjectTitles.contains("TensorFlow"));
@@ -454,5 +452,44 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         assertThrows(
                 InvalidUserException.class,
                 () -> projectService.getUserReviews(project.getId(), collaborator.get().getId()));
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void
+            Test025_ProjectServiceWhenWantToUpdateProjectWithoutUpdatingTheTitleThenShouldUpdateTheProject() {
+        String description = "wololo wololo wololo";
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Flask").build();
+
+        ProjectDTO projectDTO = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+        List<String> tags = new ArrayList<>();
+        List<String> langs = new ArrayList<>();
+        List<String> forumTags = new ArrayList<>();
+
+        for (int i = 0; i < projectDTO.getTags().size(); i++) {
+            tags.add(projectDTO.getTags().get(i).getName());
+        }
+        for (int i = 0; i < projectDTO.getLanguages().size(); i++) {
+            langs.add(projectDTO.getLanguages().get(i).getName());
+        }
+        for (int i = 0; i < projectDTO.getForumTags().size(); i++) {
+            forumTags.add(projectDTO.getForumTags().get(i).getName());
+        }
+
+        ProjectUpdateDTO projectUpdateDTO =
+                ProjectUpdateDTO.builder()
+                        .title(projectDTO.getTitle())
+                        .description(description)
+                        .links(projectDTO.getLinks())
+                        .tags(tags)
+                        .languages(langs)
+                        .forumTags(forumTags)
+                        .links(projectDTO.getLinks())
+                        .build();
+
+        ProjectDTO project = projectService.updateProject(projectUpdateDTO, projectDTO.getId());
+
+        assertEquals(description, project.getDescription());
     }
 }

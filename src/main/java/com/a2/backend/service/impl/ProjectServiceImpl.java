@@ -106,7 +106,8 @@ public class ProjectServiceImpl implements ProjectService {
                     String.format(
                             "The project with that id: %s does not exist!", projectToBeUpdatedID));
         }
-        if (projectRepository.findByTitle(projectUpdateDTO.getTitle()).isPresent())
+        if (projectRepository.findByTitle(projectUpdateDTO.getTitle()).isPresent()
+                && !projectToModifyOptional.get().getTitle().equals(projectUpdateDTO.getTitle()))
             throw new ProjectWithThatTitleExistsException(
                     String.format(
                             "There is an existing project named %s", projectUpdateDTO.getTitle()));

@@ -85,7 +85,7 @@ public class UserControllerActiveTest extends AbstractControllerTest {
         assertNotNull(userProfile.getPreferredTags());
         assertTrue(user.getPreferredTags().containsAll(userProfile.getPreferredTags()));
         assertNotNull(userProfile.getOwnedProjects());
-        assertEquals(4, userProfile.getOwnedProjects().size());
+        assertEquals(5, userProfile.getOwnedProjects().size());
         assertNotNull(userProfile.getCollaboratedProjects());
         assertEquals(2, userProfile.getCollaboratedProjects().size());
         assertNotNull(userProfile.getPreferredLanguages());

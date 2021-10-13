@@ -48,7 +48,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
         assertNotNull(projects);
-        assertEquals(10, projects.length);
+        assertEquals(11, projects.length);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
         assertNotNull(projects);
-        assertEquals(4, projects.length);
+        assertEquals(5, projects.length);
     }
 
     @Test
