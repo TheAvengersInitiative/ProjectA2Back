@@ -4,6 +4,8 @@ import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.model.*;
+import com.a2.backend.repository.ProjectRepository;
+import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -19,20 +21,19 @@ public class UserServiceActiveTest extends AbstractServiceTest {
     @Autowired private UserService userService;
 
     @Autowired private ProjectService projectService;
+    @Autowired private ProjectRepository projectRepository;
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
             Test001_GivenValidUserAndValidProjectsWhenWantToGetThePreferredProjectsThenReturnProjectList() {
-        List<String> preferredTags = new ArrayList<>();
-        preferredTags.add("Python");
-        preferredTags.add("C");
 
-        userService.getLoggedUser().setPreferredTags(Arrays.asList("Python", "C"));
+        userService.getLoggedUser().setPreferredLanguages(Arrays.asList("Python"));
         ProjectSearchDTO projectSearchDTO =
-                ProjectSearchDTO.builder().languages(Arrays.asList("Python", "C")).build();
+                ProjectSearchDTO.builder().languages(Arrays.asList("Python")).build();
         List<ProjectDTO> preferredProjects =
                 projectService.searchProjectsByFilter(projectSearchDTO);
+        assertNotNull(preferredProjects);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         assertEquals(6, projects.size());
 
@@ -43,7 +44,10 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
-        assertTrue(preferredProjects.size() == 0);
+        assertTrue(preferredProjectsId.contains(projects.get(2).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(3).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(4).getId()));
+        assertTrue(preferredProjectsId.contains(projects.get(5).getId()));
     }
 
     @Test
@@ -60,32 +64,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void Test003_GivenNoFeaturedProjectsWhenWantPreferredProjectsThenFillWithNonFeaturedProjects() {
-        List<String> preferredTags = new ArrayList<>();
-        preferredTags.add("Python");
-        preferredTags.add("C");
-        userService.getLoggedUser().setPreferredTags(preferredTags);
-        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().tags(preferredTags).build();
-        List<ProjectDTO> preferredProjects =
-                projectService.searchProjectsByFilter(projectSearchDTO);
-        List<ProjectDTO> projects = userService.getPreferredProjects();
-        for (int i = 0; i < projects.size(); i++) {
-            projects.get(i).setFeatured(false);
-        }
-        assertFalse(projects.get(0).isFeatured());
-        assertFalse(projects.get(1).isFeatured());
-
-        List<UUID> preferredProjectsId = new ArrayList<>();
-        for (int i = 0; i < preferredProjects.size(); i++) {
-            preferredProjectsId.add(preferredProjects.get(i).getId());
-        }
-        assertTrue(preferredProjectsId.size() == 0);
-        assertTrue(preferredProjects.size() == 0);
-    }
-
-    @Test
-    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void Test004_GivenValidUserWhenUpdatingPreferencesThenTheyAreUpdated() {
+    void Test003_GivenValidUserWhenUpdatingPreferencesThenTheyAreUpdated() {
         User loggedUser = userService.getLoggedUser();
 
         assertEquals(PrivacyConstant.PUBLIC, loggedUser.getTagsPrivacy());
@@ -111,7 +90,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test005_WhenGettingProfileForLoggedUserThenEveryFieldIsReturnedRegardlessOfPrivacy() {
+    void Test004_WhenGettingProfileForLoggedUserThenEveryFieldIsReturnedRegardlessOfPrivacy() {
         User loggedUser = userService.getLoggedUser();
         UserProfileDTO userProfile = userService.getUserProfile(loggedUser.getId());
 
@@ -141,7 +120,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test006_GivenANonExistentUserIdWhenGettingProfileThenExceptionIsThrown() {
+    void Test005_GivenANonExistentUserIdWhenGettingProfileThenExceptionIsThrown() {
         assertThrows(
                 UserNotFoundException.class, () -> userService.getUserProfile(UUID.randomUUID()));
     }
