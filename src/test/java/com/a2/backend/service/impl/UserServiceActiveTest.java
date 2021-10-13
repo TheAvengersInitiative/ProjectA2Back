@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -204,6 +201,9 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         User user = userService.getLoggedUser();
         List<ReviewDTO> reviews = userService.getUserReviews(user.getId());
         assertEquals(3, reviews.size());
+
+        assert (Objects.requireNonNull(reviews.get(2).getComment()).contains("Did a great job"));
+
         assertTrue(reviews.get(0).getDate().isAfter(reviews.get(1).getDate()));
         assertTrue(reviews.get(1).getDate().isAfter(reviews.get(2).getDate()));
     }

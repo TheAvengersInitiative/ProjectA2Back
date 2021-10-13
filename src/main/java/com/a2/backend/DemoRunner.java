@@ -31,9 +31,11 @@ public class DemoRunner implements CommandLineRunner {
     private ProjectRepository projectRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public DemoRunner() {}
+    public DemoRunner() {
+    }
 
     @Override
     public void run(String... args) {

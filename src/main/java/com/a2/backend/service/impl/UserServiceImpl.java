@@ -350,7 +350,6 @@ public class UserServiceImpl implements UserService {
                     collaboratingProject.getReviews().stream()
                             .filter(r -> r.getCollaborator().getId().equals(id))
                             .collect(Collectors.toList());
-            if (reviewsForProject.isEmpty()) continue;
             reviews.addAll(reviewsForProject);
         }
 
