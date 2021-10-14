@@ -1,5 +1,8 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.ReviewDTO;
@@ -8,6 +11,9 @@ import com.a2.backend.model.UserProfileDTO;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,13 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 public class UserControllerActiveTest extends AbstractControllerTest {
@@ -161,8 +160,7 @@ public class UserControllerActiveTest extends AbstractControllerTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        List<ReviewDTO> reviews = objectMapper.readValue(contentAsString, new TypeReference<>() {
-        });
+        List<ReviewDTO> reviews = objectMapper.readValue(contentAsString, new TypeReference<>() {});
 
         assertEquals(3, reviews.size());
         assertTrue(reviews.get(0).getDate().isAfter(reviews.get(1).getDate()));

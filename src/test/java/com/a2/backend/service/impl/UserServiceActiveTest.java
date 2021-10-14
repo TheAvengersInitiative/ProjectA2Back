@@ -1,21 +1,19 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.UserNotFoundException;
 import com.a2.backend.model.*;
 import com.a2.backend.repository.ProjectRepository;
-import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceActiveTest extends AbstractServiceTest {
     @Autowired private UserService userService;
@@ -128,7 +126,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-    Test007_GivenAUserWithReputationWhenUpdatingReputationWithoutAddingAReviewThenItRemainsTheSame() {
+            Test007_GivenAUserWithReputationWhenUpdatingReputationWithoutAddingAReviewThenItRemainsTheSame() {
         User loggedUser = userService.getLoggedUser();
 
         User updatedUser = userService.updateReputation(loggedUser.getId());
@@ -158,7 +156,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-    Test009_GivenAUserWithAReviewWhenAddingAReviewOnSameProjectThenReputationIsUpdatedDiscardingOldReview() {
+            Test009_GivenAUserWithAReviewWhenAddingAReviewOnSameProjectThenReputationIsUpdatedDiscardingOldReview() {
         ProjectDTO project =
                 projectService
                         .searchProjectsByFilter(ProjectSearchDTO.builder().title("Django").build())
