@@ -1,31 +1,35 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class UserServiceImplTest extends AbstractTest {
 
-    @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
 
-    @Autowired private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
     @Autowired private PasswordEncoder passwordEncoder;
 
@@ -399,5 +403,21 @@ class UserServiceImplTest extends AbstractTest {
         assertThrows(
                 LanguageNotValidException.class,
                 () -> userService.updatePreferences(preferencesUpdateDTO));
+    }
+
+    @Test
+    void Test021_GivenA501CharLongDescriptionWhenCratingUserThenItExceptionIsThrown() {
+        userCreateDTO.setBiography(
+                "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempo");
+        assertThrows(
+                DataIntegrityViolationException.class, () -> userService.createUser(userCreateDTO));
+    }
+
+    @Test
+    void Test022_GivenA500CharLongDescriptionWhenCratingUserThenItIsCreated() {
+        userCreateDTO.setBiography(
+                "ed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempo");
+        User user = userService.createUser(userCreateDTO);
+        assertEquals(userCreateDTO.getBiography(), user.getBiography());
     }
 }
