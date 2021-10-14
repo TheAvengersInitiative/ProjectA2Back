@@ -4,7 +4,6 @@ import com.a2.backend.annotation.Generated;
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.*;
 import com.a2.backend.repository.*;
-import com.a2.backend.repository.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -197,7 +196,7 @@ public class DemoRunner implements CommandLineRunner {
                                                                 .findByNickname("ropa1998")
                                                                 .get())
                                                 .score(3)
-                                                .date(LocalDateTime.now())
+                                                .date(LocalDateTime.now().plusMinutes(1))
                                                 .comment(null)
                                                 .build(),
                                         Review.builder()
@@ -206,7 +205,7 @@ public class DemoRunner implements CommandLineRunner {
                                                                 .findByNickname("Peltevis")
                                                                 .get())
                                                 .score(4)
-                                                .date(LocalDateTime.now())
+                                                .date(LocalDateTime.now().plusMinutes(2))
                                                 .comment(null)
                                                 .build()))
                         .build();
