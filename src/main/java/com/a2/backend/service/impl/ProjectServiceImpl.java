@@ -8,15 +8,14 @@ import com.a2.backend.repository.LanguageRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.*;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -112,10 +111,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
         if (projectRepository.findByTitle(projectUpdateDTO.getTitle()).isPresent()
                 && !projectRepository
-                .findByTitle(projectUpdateDTO.getTitle())
-                .get()
-                .getId()
-                .equals(projectToBeUpdatedID))
+                        .findByTitle(projectUpdateDTO.getTitle())
+                        .get()
+                        .getId()
+                        .equals(projectToBeUpdatedID))
             throw new ProjectWithThatTitleExistsException(
                     String.format(
                             "There is an existing project named %s", projectUpdateDTO.getTitle()));

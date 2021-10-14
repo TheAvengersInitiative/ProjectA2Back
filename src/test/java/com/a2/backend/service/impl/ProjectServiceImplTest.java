@@ -475,4 +475,18 @@ class ProjectServiceImplTest extends AbstractTest {
                 projectService.searchProjectsByFilter(projectSeached).get(0).getTitle(),
                 "ProjectTitle");
     }
+
+    @Test
+    @WithMockUser(username = "some@email.com")
+    void
+            Test019_GivenProjectToUpdateWhenWantingToUpdateSomethingOtherThanTitleThenUpdateThatProject() {
+        userRepository.save(owner);
+        val projectToUpdate = projectService.createProject(projectToCreate);
+        projectUpdateDTO.setTitle(projectToCreate.getTitle());
+
+        val updatedProject =
+                projectService.updateProject(projectUpdateDTO, projectToUpdate.getId());
+
+        assertEquals("new description", updatedProject.getDescription());
+    }
 }

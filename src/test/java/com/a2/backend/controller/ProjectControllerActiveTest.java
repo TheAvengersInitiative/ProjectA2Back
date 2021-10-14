@@ -1,11 +1,19 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,26 +23,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @AutoConfigureMockMvc
 public class ProjectControllerActiveTest extends AbstractControllerTest {
 
-    @Autowired
-    MockMvc mvc;
+    @Autowired MockMvc mvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
+    @Autowired ObjectMapper objectMapper;
 
-    @Autowired
-    ProjectRepository projectRepository;
+    @Autowired ProjectRepository projectRepository;
 
     @Autowired UserRepository userRepository;
 
@@ -53,7 +49,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
         assertNotNull(projects);
-        assertEquals(10, projects.length);
+        assertEquals(11, projects.length);
     }
 
     @Test
@@ -71,7 +67,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
 
         assertNotNull(projects);
-        assertEquals(4, projects.length);
+        assertEquals(5, projects.length);
     }
 
     @Test
@@ -622,8 +618,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-    Test038_ProjectControllerWithValidReviewCreateDTOWhenCreatingReviewThenUserReputationIsUpdated()
-            throws Exception {
+            Test038_ProjectControllerWithValidReviewCreateDTOWhenCreatingReviewThenUserReputationIsUpdated()
+                    throws Exception {
         val project = projectRepository.findByTitle("Django").get();
 
         User user = userRepository.findByNickname("ropa1998").get();
