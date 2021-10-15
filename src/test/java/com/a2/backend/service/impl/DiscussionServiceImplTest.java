@@ -2,7 +2,6 @@ package com.a2.backend.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.a2.backend.AbstractTest;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.DiscussionWithThatTitleExistsInProjectException;
@@ -12,7 +11,6 @@ import com.a2.backend.model.ProjectCreateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.*;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

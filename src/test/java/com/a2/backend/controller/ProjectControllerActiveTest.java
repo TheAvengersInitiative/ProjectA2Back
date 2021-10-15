@@ -635,10 +635,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ReviewCreateDTO.builder().collaboratorID(user.getId()).score(5).build();
 
         mvc.perform(
-                MockMvcRequestBuilders.put(baseUrl + "/review/" + project.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCreateDTO))
-                        .accept(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.put(baseUrl + "/review/" + project.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(reviewCreateDTO))
+                                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         assertEquals(4, user.getReputation());
