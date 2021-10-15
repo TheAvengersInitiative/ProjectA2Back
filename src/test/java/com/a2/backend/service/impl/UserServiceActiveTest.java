@@ -42,7 +42,8 @@ public class UserServiceActiveTest extends AbstractServiceTest {
 
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
-        assertTrue(preferredProjects.size() == 0);
+        System.out.println(preferredProjects);
+        assertTrue(preferredProjects.size() != 0);
     }
 
     @Test
