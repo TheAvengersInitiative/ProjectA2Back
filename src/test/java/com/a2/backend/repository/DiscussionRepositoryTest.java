@@ -1,12 +1,7 @@
 package com.a2.backend.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.*;
-import java.util.Collections;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +13,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 @AutoConfigureWebClient
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -25,7 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class DiscussionRepositoryTest {
-    @Autowired private ProjectRepository projectRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Autowired private UserRepository userRepository;
 
@@ -56,7 +57,12 @@ public class DiscussionRepositoryTest {
                     .build();
 
     Discussion discussion =
-            Discussion.builder().title("Discussion").project(project).forumTags(forumTags).build();
+            Discussion.builder()
+                    .title("Discussion")
+                    .project(project)
+                    .forumTags(forumTags)
+                    .comments(List.of())
+                    .build();
 
     @Test
     void Test001_DiscussionRepositoryShouldSaveDiscussions() {

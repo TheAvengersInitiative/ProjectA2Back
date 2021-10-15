@@ -1,20 +1,24 @@
 package com.a2.backend.service.impl;
 
-import com.a2.backend.entity.*;
-import com.a2.backend.exception.DiscussionWithThatTitleExistsInProjectException;
-import com.a2.backend.exception.ProjectNotFoundException;
-import com.a2.backend.exception.UserIsNotCollaboratorNorOwnerException;
+import com.a2.backend.entity.Discussion;
+import com.a2.backend.entity.ForumTag;
+import com.a2.backend.entity.User;
+import com.a2.backend.exception.*;
+import com.a2.backend.model.CommentCreateDTO;
+import com.a2.backend.model.CommentDTO;
 import com.a2.backend.model.DiscussionCreateDTO;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
+import com.a2.backend.service.CommentService;
 import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.UserService;
-import java.util.List;
-import java.util.UUID;
-import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class DiscussionServiceImpl implements DiscussionService {
@@ -23,16 +27,19 @@ public class DiscussionServiceImpl implements DiscussionService {
     private final DiscussionRepository discussionRepository;
     private final ForumTagService forumTagService;
     private final UserService userService;
+    private final CommentService commentService;
 
     public DiscussionServiceImpl(
             ProjectRepository projectRepository,
             DiscussionRepository discussionRepository,
             ForumTagService forumTagService,
-            UserService userService) {
+            UserService userService,
+            CommentService commentService) {
         this.forumTagService = forumTagService;
         this.projectRepository = projectRepository;
         this.userService = userService;
         this.discussionRepository = discussionRepository;
+        this.commentService = commentService;
     }
 
     @Override
@@ -60,6 +67,7 @@ public class DiscussionServiceImpl implements DiscussionService {
                             .title(discussionCreateDTO.getTitle())
                             .project(projectRepository.findById(projectId).get())
                             .forumTags(tags)
+                            .comments(List.of())
                             .build();
             return discussionRepository.save(discussion);
         }
@@ -68,5 +76,34 @@ public class DiscussionServiceImpl implements DiscussionService {
                 String.format(
                         "There is an existing discussion named %s in this project",
                         discussionCreateDTO.getTitle()));
+    }
+
+    @Override
+    public CommentDTO createComment(UUID discussionId, CommentCreateDTO commentCreateDTO) {
+        User loggedUser = userService.getLoggedUser();
+        val discussionOptional = discussionRepository.findById(discussionId);
+
+        if (discussionOptional.isEmpty()) {
+            throw new DiscussionNotFoundException(
+                    String.format("The discussion with id: %s does not exist!", discussionId));
+        }
+
+        val discussion = discussionOptional.get();
+        val project = discussion.getProject();
+
+        if (!project.getOwner().equals(loggedUser)
+                && !project.getCollaborators().contains(loggedUser)) {
+            throw new InvalidUserException(
+                    "Only project owners and collaborators can submit comments");
+        }
+
+        val comments = discussionOptional.get().getComments();
+        val comment = commentService.createComment(commentCreateDTO);
+        comments.add(comment);
+
+        discussion.setComments(comments);
+        discussionRepository.save(discussion);
+
+        return comment.toDTO();
     }
 }

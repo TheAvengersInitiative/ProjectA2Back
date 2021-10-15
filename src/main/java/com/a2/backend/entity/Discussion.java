@@ -1,14 +1,15 @@
 package com.a2.backend.entity;
 
-import java.util.List;
-import java.util.UUID;
+import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.*;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -39,4 +40,9 @@ public class Discussion {
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotNull
     private Project project;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @NotNull
+    private List<Comment> comments;
 }
