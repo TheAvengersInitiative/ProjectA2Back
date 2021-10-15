@@ -4,10 +4,6 @@ import com.a2.backend.annotation.Generated;
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.*;
 import com.a2.backend.repository.*;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +13,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component("DemoRunner")
 @Transactional
 @Generated
 public class DemoRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DemoRunner.class);
 
-    @Autowired private Environment env;
-    @Autowired private ProjectRepository projectRepository;
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private Environment env;
+    @Autowired
+    private ProjectRepository projectRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired private LanguageRepository languageRepository;
     @Autowired private TagRepository tagRepository;
     @Autowired private ForumTagRepository forumTagRepository;
@@ -102,12 +106,32 @@ public class DemoRunner implements CommandLineRunner {
                         .ownedProjectsPrivacy(PrivacyConstant.PRIVATE)
                         .tagsPrivacy(PrivacyConstant.PRIVATE)
                         .build();
+        User franz =
+                User.builder()
+                        .nickname("Franz")
+                        .email("franz.sotoleal@ing.austral.edu.ar")
+                        .password(passwordEncoder.encode("password"))
+                        .confirmationToken("token004")
+                        .preferredTags(List.of("AI", "Open-source"))
+                        .preferredLanguages(List.of("Go", "Rust", "C++"))
+                        .languagesPrivacy(PrivacyConstant.PRIVATE)
+                        .collaboratedProjectsPrivacy(PrivacyConstant.PRIVATE)
+                        .ownedProjectsPrivacy(PrivacyConstant.PRIVATE)
+                        .tagsPrivacy(PrivacyConstant.PRIVATE)
+                        .isActive(true)
+                        .build();
         userRepository.save(agustin);
         userRepository.save(rodrigo);
         userRepository.save(fabrizio);
+        userRepository.save(franz);
     }
 
     private void loadProjects() {
+        User peltevis = userRepository.findByNickname("Peltevis").get();
+        User fabriDS23 = userRepository.findByNickname("FabriDS23").get();
+        User ropa1998 = userRepository.findByNickname("ropa1998").get();
+        User franz = userRepository.findByNickname("Franz").get();
+
         Project linux =
                 Project.builder()
                         .title("GNU/Linux")
@@ -118,7 +142,7 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         tagRepository.findByName("GNU").get(),
                                         tagRepository.findByName("linux").get()))
-                        .owner(userRepository.findByNickname("Peltevis").get())
+                        .owner(peltevis)
                         .languages(
                                 listOf(
                                         languageRepository.findByName("C").get(),
@@ -141,7 +165,7 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         tagRepository.findByName("AI").get(),
                                         tagRepository.findByName("Machine Learning").get()))
-                        .owner(userRepository.findByNickname("ropa1998").get())
+                        .owner(ropa1998)
                         .languages(
                                 listOf(
                                         languageRepository.findByName("Python").get(),
@@ -151,7 +175,7 @@ public class DemoRunner implements CommandLineRunner {
                                         forumTagRepository.findByName("Great").get(),
                                         forumTagRepository.findByName("software library").get()))
                         .collaborators(List.of())
-                        .applicants(List.of(userRepository.findByNickname("Peltevis").get()))
+                        .applicants(List.of(peltevis))
                         .reviews(List.of())
                         .build();
         Project node =
@@ -164,7 +188,7 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         tagRepository.findByName("Frontend").get(),
                                         tagRepository.findByName("Cross-Platform").get()))
-                        .owner(userRepository.findByNickname("FabriDS23").get())
+                        .owner(fabriDS23)
                         .languages(
                                 listOf(
                                         languageRepository.findByName("JavaScript").get(),
@@ -174,36 +198,24 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         forumTagRepository.findByName("help").get(),
                                         forumTagRepository.findByName("help please").get()))
-                        .collaborators(
-                                List.of(
-                                        userRepository.findByNickname("ropa1998").get(),
-                                        userRepository.findByNickname("Peltevis").get()))
+                        .collaborators(List.of(ropa1998, peltevis))
                         .applicants(List.of())
                         .reviews(
                                 List.of(
                                         Review.builder()
-                                                .collaborator(
-                                                        userRepository
-                                                                .findByNickname("ropa1998")
-                                                                .get())
+                                                .collaborator(ropa1998)
                                                 .score(5)
                                                 .date(LocalDateTime.now())
                                                 .comment("Did a great job")
                                                 .build(),
                                         Review.builder()
-                                                .collaborator(
-                                                        userRepository
-                                                                .findByNickname("ropa1998")
-                                                                .get())
+                                                .collaborator(ropa1998)
                                                 .score(3)
                                                 .date(LocalDateTime.now().plusMinutes(1))
                                                 .comment(null)
                                                 .build(),
                                         Review.builder()
-                                                .collaborator(
-                                                        userRepository
-                                                                .findByNickname("Peltevis")
-                                                                .get())
+                                                .collaborator(peltevis)
                                                 .score(4)
                                                 .date(LocalDateTime.now().plusMinutes(2))
                                                 .comment(null)
@@ -220,13 +232,13 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         tagRepository.findByName("IDE").get(),
                                         tagRepository.findByName("linux").get()))
-                        .owner(userRepository.findByNickname("FabriDS23").get())
+                        .owner(fabriDS23)
                         .languages(
                                 listOf(
                                         languageRepository.findByName("C").get(),
                                         languageRepository.findByName("C++").get()))
                         .forumTags(listOf(forumTagRepository.findByName("advice").get()))
-                        .collaborators(List.of(userRepository.findByNickname("Peltevis").get()))
+                        .collaborators(List.of(peltevis))
                         .applicants(List.of())
                         .reviews(List.of())
                         .build();
@@ -240,21 +252,18 @@ public class DemoRunner implements CommandLineRunner {
                                 listOf(
                                         tagRepository.findByName("Backend").get(),
                                         tagRepository.findByName("Framework").get()))
-                        .owner(userRepository.findByNickname("Peltevis").get())
+                        .owner(peltevis)
                         .languages(listOf(languageRepository.findByName("Python").get()))
                         .forumTags(
                                 listOf(
                                         forumTagRepository.findByName("framework").get(),
                                         forumTagRepository.findByName("Great").get()))
-                        .collaborators(List.of(userRepository.findByNickname("ropa1998").get()))
-                        .applicants(List.of(userRepository.findByNickname("FabriDS23").get()))
+                        .collaborators(List.of(ropa1998))
+                        .applicants(List.of(fabriDS23))
                         .reviews(
                                 List.of(
                                         Review.builder()
-                                                .collaborator(
-                                                        userRepository
-                                                                .findByNickname("ropa1998")
-                                                                .get())
+                                                .collaborator(ropa1998)
                                                 .score(2)
                                                 .date(LocalDateTime.now())
                                                 .comment(null)
@@ -267,7 +276,7 @@ public class DemoRunner implements CommandLineRunner {
                                 "Sakai is a free, community source, educational software platform designed to support teaching, research and collaboration.")
                         .links(listOf("https://www.sakailms.org/"))
                         .tags(listOf(tagRepository.findByName("Education").get()))
-                        .owner(userRepository.findByNickname("Peltevis").get())
+                        .owner(peltevis)
                         .languages(listOf(languageRepository.findByName("Java").get()))
                         .forumTags(listOf(forumTagRepository.findByName("help please").get()))
                         .collaborators(List.of())
@@ -281,7 +290,7 @@ public class DemoRunner implements CommandLineRunner {
                                 "Apache Cassandra is a distributed and decentralized database designed to manage massive amounts of structured and unstructured data across the world.")
                         .links(listOf("https://cassandra.apache.org/"))
                         .tags(listOf(tagRepository.findByName("Big Data").get()))
-                        .owner(userRepository.findByNickname("FabriDS23").get())
+                        .owner(fabriDS23)
                         .languages(listOf(languageRepository.findByName("Java").get()))
                         .forumTags(
                                 listOf(
@@ -289,7 +298,7 @@ public class DemoRunner implements CommandLineRunner {
                                         forumTagRepository.findByName("framework").get()))
                         .featured(true)
                         .collaborators(List.of())
-                        .applicants(List.of(userRepository.findByNickname("ropa1998").get()))
+                        .applicants(List.of(ropa1998))
                         .reviews(List.of())
                         .build();
         Project renovate =
@@ -299,7 +308,7 @@ public class DemoRunner implements CommandLineRunner {
                                 "Renovate is the essential “keep absolutely everything up-to-date” code maintenance tool.")
                         .links(listOf("https://www.whitesourcesoftware.com/"))
                         .tags(listOf(tagRepository.findByName("Dependency").get()))
-                        .owner(userRepository.findByNickname("ropa1998").get())
+                        .owner(ropa1998)
                         .languages(
                                 listOf(
                                         languageRepository.findByName("JavaScript").get(),
@@ -317,11 +326,11 @@ public class DemoRunner implements CommandLineRunner {
                                 "Kubernetes, also known as K8s, is an open-source system for automating deployment, scaling, and management of containerized applications.")
                         .links(listOf("https://kubernetes.io/"))
                         .tags(listOf(tagRepository.findByName("Automation").get()))
-                        .owner(userRepository.findByNickname("ropa1998").get())
+                        .owner(ropa1998)
                         .languages(listOf(languageRepository.findByName("GO").get()))
                         .forumTags(listOf(forumTagRepository.findByName("help").get()))
                         .featured(true)
-                        .collaborators(List.of())
+                        .collaborators(List.of(peltevis, fabriDS23, franz))
                         .applicants(List.of())
                         .reviews(List.of())
                         .build();
@@ -332,11 +341,11 @@ public class DemoRunner implements CommandLineRunner {
                                 "Ansible is an IT automation tool that “loves the repetitive work your people hate.” ")
                         .links(listOf("https://www.ansible.com/"))
                         .tags(listOf(tagRepository.findByName("Tool").get()))
-                        .owner(userRepository.findByNickname("ropa1998").get())
+                        .owner(ropa1998)
                         .languages(listOf(languageRepository.findByName("Python").get()))
                         .forumTags(listOf(forumTagRepository.findByName("help").get()))
                         .featured(true)
-                        .collaborators(List.of(userRepository.findByNickname("Peltevis").get()))
+                        .collaborators(List.of(peltevis))
                         .applicants(List.of())
                         .reviews(List.of())
                         .build();
@@ -353,6 +362,58 @@ public class DemoRunner implements CommandLineRunner {
                         .applicants(List.of())
                         .reviews(List.of())
                         .build();
+
+        tensorFlow.setDiscussions(
+                List.of(
+                        Discussion.builder()
+                                .title("Bug US-2.1.1")
+                                .forumTags(List.of(forumTagRepository.findByName("help").get()))
+                                .project(tensorFlow)
+                                .comments(List.of())
+                                .build()));
+        django.setDiscussions(
+                List.of(
+                        Discussion.builder()
+                                .title("Issue with User ViewSet")
+                                .forumTags(
+                                        List.of(
+                                                forumTagRepository.findByName("help").get(),
+                                                forumTagRepository.findByName("advice").get()))
+                                .project(django)
+                                .comments(
+                                        List.of(
+                                                Comment.builder()
+                                                        .comment(
+                                                                "A ViewSet class is simply a type of class-based View, that does not provide any method handlers such as .get() or .post(), and instead provides actions such as .list() and .create().")
+                                                        .user(peltevis)
+                                                        .date(LocalDateTime.now())
+                                                        .build()))
+                                .build()));
+        kubernetes.setDiscussions(
+                List.of(
+                        Discussion.builder()
+                                .title("Not working on MacOS")
+                                .forumTags(List.of(forumTagRepository.findByName("help").get()))
+                                .project(kubernetes)
+                                .comments(
+                                        List.of(
+                                                Comment.builder()
+                                                        .comment("You should try a reinstall")
+                                                        .user(franz)
+                                                        .date(LocalDateTime.now())
+                                                        .build(),
+                                                Comment.builder()
+                                                        .comment("Or maybe just a reboot first...")
+                                                        .user(ropa1998)
+                                                        .date(LocalDateTime.now().plusNanos(1))
+                                                        .build()))
+                                .build(),
+                        Discussion.builder()
+                                .title("Bug US-5.4")
+                                .forumTags(List.of(forumTagRepository.findByName("advice").get()))
+                                .project(kubernetes)
+                                .comments(List.of())
+                                .build()));
 
         projectRepository.save(linux);
         projectRepository.save(tensorFlow);
