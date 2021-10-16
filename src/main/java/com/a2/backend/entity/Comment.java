@@ -1,11 +1,10 @@
 package com.a2.backend.entity;
 
 import com.a2.backend.model.CommentDTO;
-import lombok.*;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import javax.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter

@@ -1,8 +1,11 @@
 package com.a2.backend.repository;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.BackendApplication;
 import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.User;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +16,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @AutoConfigureWebClient
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -25,11 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class CommentRepositoryTest {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private CommentRepository commentRepository;
+    @Autowired private CommentRepository commentRepository;
 
     User user =
             User.builder()

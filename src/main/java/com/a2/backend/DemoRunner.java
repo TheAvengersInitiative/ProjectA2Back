@@ -4,6 +4,10 @@ import com.a2.backend.annotation.Generated;
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.*;
 import com.a2.backend.repository.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,23 +17,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component("DemoRunner")
 @Transactional
 @Generated
 public class DemoRunner implements CommandLineRunner {
     private static final Logger logger = LoggerFactory.getLogger(DemoRunner.class);
 
-    @Autowired
-    private Environment env;
-    @Autowired
-    private ProjectRepository projectRepository;
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private Environment env;
+    @Autowired private ProjectRepository projectRepository;
+    @Autowired private UserRepository userRepository;
     @Autowired private LanguageRepository languageRepository;
     @Autowired private TagRepository tagRepository;
     @Autowired private ForumTagRepository forumTagRepository;
@@ -380,6 +376,7 @@ public class DemoRunner implements CommandLineRunner {
                                                 forumTagRepository.findByName("help").get(),
                                                 forumTagRepository.findByName("advice").get()))
                                 .project(django)
+                                .owner(peltevis)
                                 .comments(
                                         List.of(
                                                 Comment.builder()

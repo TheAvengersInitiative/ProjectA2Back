@@ -15,12 +15,11 @@ import com.a2.backend.service.CommentService;
 import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.UserService;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
+import javax.transaction.Transactional;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DiscussionServiceImpl implements DiscussionService {

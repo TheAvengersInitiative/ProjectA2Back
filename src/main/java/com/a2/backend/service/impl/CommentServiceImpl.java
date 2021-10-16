@@ -4,9 +4,8 @@ import com.a2.backend.entity.Comment;
 import com.a2.backend.model.CommentCreateDTO;
 import com.a2.backend.service.CommentService;
 import com.a2.backend.service.UserService;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
+import org.springframework.stereotype.Service;
 
 @Service
 public class CommentServiceImpl implements CommentService {

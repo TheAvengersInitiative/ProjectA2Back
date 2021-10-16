@@ -1,13 +1,22 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.Discussion;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
+import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,26 +26,16 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @AutoConfigureMockMvc
 public class ProjectControllerActiveTest extends AbstractControllerTest {
 
-    @Autowired
-    MockMvc mvc;
+    @Autowired MockMvc mvc;
 
-    @Autowired
-    ObjectMapper objectMapper;
+    @Autowired ObjectMapper objectMapper;
 
-    @Autowired
-    ProjectRepository projectRepository;
+    @Autowired DiscussionRepository discussionRepository;
+
+    @Autowired ProjectRepository projectRepository;
 
     @Autowired UserRepository userRepository;
 
@@ -332,8 +331,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test0013_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNotAuthorizedUserShouldReturnUnauthorized()
-            throws Exception {
+            Test0013_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNotAuthorizedUserShouldReturnUnauthorized()
+                    throws Exception {
 
         val project = projectRepository.findByTitle("GNU/Linux");
         String discussionTitle = "Discussion title";
@@ -397,8 +396,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test015_ProjectControllerWhenLoggedUserIsNotProjectOwnerWhenSubmittingReviewShouldReturnBadRequest()
-            throws Exception {
+            Test015_ProjectControllerWhenLoggedUserIsNotProjectOwnerWhenSubmittingReviewShouldReturnBadRequest()
+                    throws Exception {
 
         val project = projectRepository.findByTitle("Geany");
 
@@ -434,8 +433,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
     void
-    Test016_ProjectControllerWhenTryingToReviewSomeoneWhoDoesNotCollaborateInProjectShouldReturnBadRequest()
-            throws Exception {
+            Test016_ProjectControllerWhenTryingToReviewSomeoneWhoDoesNotCollaborateInProjectShouldReturnBadRequest()
+                    throws Exception {
 
         val project = projectRepository.findByTitle("Geany");
 
@@ -503,8 +502,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
     void
-    Test018_ProjectControllerWhenReceivingValidReviewCreateDTOAndValidProjectIDShouldReturnHttpOkTest()
-            throws Exception {
+            Test018_ProjectControllerWhenReceivingValidReviewCreateDTOAndValidProjectIDShouldReturnHttpOkTest()
+                    throws Exception {
 
         val project = projectRepository.findByTitle("Geany");
 
@@ -537,8 +536,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
     void
-    Test019_ProjectControllerWithNotValidProjectIdWhenAskingForCollaboratorsReviewsShouldReturnBadRequest()
-            throws Exception {
+            Test019_ProjectControllerWithNotValidProjectIdWhenAskingForCollaboratorsReviewsShouldReturnBadRequest()
+                    throws Exception {
 
         val collaborator = userRepository.findByNickname("ropa1998");
 
@@ -563,8 +562,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test020_ProjectControllerWhenNotProjectOwnerAsksForCollaboratorsReviewsShouldReturnBadRequest()
-            throws Exception {
+            Test020_ProjectControllerWhenNotProjectOwnerAsksForCollaboratorsReviewsShouldReturnBadRequest()
+                    throws Exception {
 
         val project = projectRepository.findByTitle("Node.js");
 
@@ -593,8 +592,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
     void
-    Test021_ProjectControllerWithValidProjectIdAndUserIDWhenAskingForCollaboratorsReviewsShouldReturnHttpOkTest()
-            throws Exception {
+            Test021_ProjectControllerWithValidProjectIdAndUserIDWhenAskingForCollaboratorsReviewsShouldReturnHttpOkTest()
+                    throws Exception {
 
         val project = projectRepository.findByTitle("Node.js");
 
@@ -624,8 +623,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-    Test022_ProjectControllerWithValidReviewCreateDTOWhenCreatingReviewThenUserReputationIsUpdated()
-            throws Exception {
+            Test022_ProjectControllerWithValidReviewCreateDTOWhenCreatingReviewThenUserReputationIsUpdated()
+                    throws Exception {
         val project = projectRepository.findByTitle("Django").get();
 
         User user = userRepository.findByNickname("ropa1998").get();
@@ -647,8 +646,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test023_ProjectControllerWithValidCommentCreateDTOAndDiscussionIdWhenCreatingCommentThenStatusIsOk()
-            throws Exception {
+            Test023_ProjectControllerWithValidCommentCreateDTOAndDiscussionIdWhenCreatingCommentThenStatusIsOk()
+                    throws Exception {
         Discussion discussion =
                 projectRepository.findByTitle("TensorFlow").get().getDiscussions().get(0);
 
@@ -710,11 +709,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
 
         String errorMessage =
                 mvc.perform(
-                        MockMvcRequestBuilders.put(
-                                baseUrl + "/comment/" + discussion.getId())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(commentCreateDTO))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.put(
+                                                baseUrl + "/comment/" + discussion.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(commentCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest())
                         .andReturn()
                         .getResponse()
@@ -722,6 +721,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
 
         assert (Objects.requireNonNull(errorMessage).contains("Comment cannot be empty"));
     }
+
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void Test0038_ProjectControllerWhenReceivesValidUpdateDiscussionDTOshouldReturnOK()
@@ -735,6 +735,12 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
                         .title(discussionTitle)
+                        .build();
+
+        DiscussionCreateDTO updatedDiscussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .forumTags(discussionTags)
+                        .title("AnotherName")
                         .build();
 
         String discussionAsString =
@@ -764,6 +770,85 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 mvc.perform(
                                 MockMvcRequestBuilders.put(
                                                 "/discussion/" + createdDiscussion.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        String changedDiscussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post(
+                                                "/project/"
+                                                        + project.get().getId().toString()
+                                                        + "/discussion")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        updatedDiscussionCreateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test0039_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
+                    throws Exception {
+        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+        DiscussionUpdateDTO discussionUpdateDTO =
+                DiscussionUpdateDTO.builder()
+                        .title("AnotherName")
+                        .forumTags(discussionTags)
+                        .build();
+
+        String updatedDiscussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                "/discussion/"
+                                                        + discussionRepository
+                                                                .findByTitle(
+                                                                        "Issue with User ViewSet")
+                                                                .get()
+                                                                .getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        discussionUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isUnauthorized())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void
+            Test0040_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
+                    throws Exception {
+        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+        DiscussionUpdateDTO discussionUpdateDTO =
+                DiscussionUpdateDTO.builder()
+                        .title("AnotherName")
+                        .forumTags(discussionTags)
+                        .build();
+        String updatedDiscussionAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                "/discussion/"
+                                                        + discussionRepository
+                                                                .findByTitle(
+                                                                        "Issue with User ViewSet")
+                                                                .get()
+                                                                .getId())
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .content(
                                                 objectMapper.writeValueAsString(

@@ -1,9 +1,8 @@
 package com.a2.backend.model;
 
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.*;
 
 @Getter
 @Setter
