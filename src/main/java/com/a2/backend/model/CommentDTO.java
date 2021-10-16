@@ -19,4 +19,8 @@ public class CommentDTO {
     private String comment;
 
     private LocalDateTime date;
+
+    private boolean hidden;
+
+    private boolean highlighted;
 }

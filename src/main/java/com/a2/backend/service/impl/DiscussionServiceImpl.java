@@ -1,5 +1,6 @@
 package com.a2.backend.service.impl;
 
+import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.Discussion;
 import com.a2.backend.entity.ForumTag;
 import com.a2.backend.entity.User;
@@ -15,11 +16,14 @@ import com.a2.backend.service.CommentService;
 import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.UserService;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class DiscussionServiceImpl implements DiscussionService {
@@ -181,5 +185,115 @@ public class DiscussionServiceImpl implements DiscussionService {
         }
         project.get().getDiscussions().remove(discussionToDelete.get());
         discussionRepository.deleteById(discussionID);
+    }
+
+    @Override
+    public CommentDTO changeCommentHighlight(UUID commentId) {
+        User loggedUser = userService.getLoggedUser();
+        val discussionOptional = discussionRepository.findDiscussionByCommentId(commentId);
+
+        if (discussionOptional.isEmpty()) {
+            throw new DiscussionNotFoundException(
+                    String.format("Discussion with comment id: %s not found", commentId));
+        }
+
+        val discussion = discussionOptional.get();
+        val project = discussion.getProject();
+
+        if (!project.getOwner().equals(loggedUser)) {
+            throw new InvalidUserException("Only project owners can highlight comments");
+        }
+
+        val comments = discussionOptional.get().getComments();
+
+        val updatedComment = commentService.changeHighlight(commentId);
+
+        discussion.setComments(comments);
+        discussionRepository.save(discussion);
+
+        return updatedComment.toDTO();
+    }
+
+    @Override
+    public CommentDTO changeCommentHidden(UUID commentId) {
+        User loggedUser = userService.getLoggedUser();
+        val discussionOptional = discussionRepository.findDiscussionByCommentId(commentId);
+
+        if (discussionOptional.isEmpty()) {
+            throw new DiscussionNotFoundException(
+                    String.format("Discussion with comment id: %s not found", commentId));
+        }
+
+        val discussion = discussionOptional.get();
+        val project = discussion.getProject();
+
+        if (!project.getOwner().equals(loggedUser)) {
+            throw new InvalidUserException("Only project owners can hide comments");
+        }
+
+        val comments = discussionOptional.get().getComments();
+
+        val updatedComment = commentService.changeHidden(commentId);
+
+        discussion.setComments(comments);
+        discussionRepository.save(discussion);
+
+        return updatedComment.toDTO();
+    }
+
+    @Override
+    public List<CommentDTO> getComments(UUID discussionId) {
+        User loggedUser = userService.getLoggedUser();
+        val discussionOptional = discussionRepository.findById(discussionId);
+
+        if (discussionOptional.isEmpty()) {
+            throw new DiscussionNotFoundException(
+                    String.format("The discussion with id: %s does not exist!", discussionId));
+        }
+
+        val discussion = discussionOptional.get();
+        val project = discussion.getProject();
+
+        if (!project.getOwner().equals(loggedUser)) {
+            throw new InvalidUserException("Only project owners can see all comments");
+        }
+
+        List<CommentDTO> comments =
+                discussionOptional.get().getComments().stream()
+                        .map(Comment::toDTO)
+                        .collect(Collectors.toList());
+
+        comments.sort(Comparator.comparing(CommentDTO::getDate));
+
+        return comments;
+    }
+
+    // returns comments without hidden ones and highlighted at the top
+    @Override
+    public List<CommentDTO> getFilteredComments(UUID discussionId) {
+        val discussionOptional = discussionRepository.findById(discussionId);
+
+        if (discussionOptional.isEmpty()) {
+            throw new DiscussionNotFoundException(
+                    String.format("The discussion with id: %s does not exist!", discussionId));
+        }
+
+        List<CommentDTO> comments =
+                discussionOptional.get().getComments().stream()
+                        .map(Comment::toDTO)
+                        .collect(Collectors.toList());
+
+        List<CommentDTO> highlighted =
+                comments.stream().filter(CommentDTO::isHighlighted).collect(Collectors.toList());
+        highlighted.sort(Comparator.comparing(CommentDTO::getDate));
+        List<CommentDTO> others =
+                comments.stream()
+                        .filter(c -> !c.isHighlighted() && !c.isHidden())
+                        .collect(Collectors.toList());
+        others.sort(Comparator.comparing(CommentDTO::getDate));
+
+        highlighted.addAll(others);
+
+        return highlighted;
     }
 }

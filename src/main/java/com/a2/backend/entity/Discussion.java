@@ -1,9 +1,9 @@
 package com.a2.backend.entity;
 
-import com.a2.backend.model.DiscussionDTO;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.List;
 import java.util.UUID;
+import com.a2.backend.model.DiscussionDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

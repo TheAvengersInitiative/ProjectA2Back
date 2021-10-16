@@ -28,7 +28,18 @@ public class Comment {
 
     private LocalDateTime date;
 
+    private boolean hidden;
+
+    private boolean highlighted;
+
     public CommentDTO toDTO() {
-        return CommentDTO.builder().id(id).user(user.toDTO()).comment(comment).date(date).build();
+        return CommentDTO.builder()
+                .id(id)
+                .user(user.toDTO())
+                .comment(comment)
+                .date(date)
+                .hidden(hidden)
+                .highlighted(highlighted)
+                .build();
     }
 }
