@@ -1,9 +1,8 @@
 package com.a2.backend.model;
 
-import lombok.*;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import lombok.*;
 
 @Getter
 @Setter

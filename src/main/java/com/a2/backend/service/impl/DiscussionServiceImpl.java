@@ -7,18 +7,19 @@ import com.a2.backend.exception.*;
 import com.a2.backend.model.CommentCreateDTO;
 import com.a2.backend.model.CommentDTO;
 import com.a2.backend.model.DiscussionCreateDTO;
+import com.a2.backend.model.DiscussionDTO;
+import com.a2.backend.model.DiscussionUpdateDTO;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.CommentService;
 import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.UserService;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
+import javax.transaction.Transactional;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DiscussionServiceImpl implements DiscussionService {
@@ -44,7 +45,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
     @Override
     @Transactional
-    public Discussion createDiscussion(UUID projectId, DiscussionCreateDTO discussionCreateDTO) {
+    public DiscussionDTO createDiscussion(UUID projectId, DiscussionCreateDTO discussionCreateDTO) {
         User loggedUser = userService.getLoggedUser();
         val project = projectRepository.findById(projectId);
         if (!project.isPresent()) {
@@ -68,8 +69,11 @@ public class DiscussionServiceImpl implements DiscussionService {
                             .project(projectRepository.findById(projectId).get())
                             .forumTags(tags)
                             .comments(List.of())
+                            .owner(loggedUser)
                             .build();
-            return discussionRepository.save(discussion);
+            Discussion updatedDiscussion = discussionRepository.save(discussion);
+
+            return updatedDiscussion.toDTO();
         }
 
         throw new DiscussionWithThatTitleExistsInProjectException(
@@ -105,5 +109,58 @@ public class DiscussionServiceImpl implements DiscussionService {
         discussionRepository.save(discussion);
 
         return comment.toDTO();
+    }
+
+    public DiscussionDTO updateDiscussion(
+            UUID discussionID, DiscussionUpdateDTO discussionUpdateDTO) {
+        User loggedUser = userService.getLoggedUser();
+
+        val discussionToModifyOptional = discussionRepository.findById(discussionID);
+        if (discussionToModifyOptional.isEmpty()) {
+            throw new DiscussionNotFoundException(
+                    String.format("Discussion with id %s does not exist!", discussionID));
+        }
+        if (!discussionToModifyOptional.get().getOwner().getId().equals(loggedUser.getId())) {
+            throw new UserIsNotOwnerException("User must be the discussion owner to modify it");
+        }
+
+        val existingDiscussionWithTitleInProject =
+                discussionRepository.findByProjectIdAndTitle(
+                        discussionToModifyOptional.get().getProject().getId(),
+                        discussionUpdateDTO.getTitle());
+
+        if (existingDiscussionWithTitleInProject != null
+                && !existingDiscussionWithTitleInProject
+                        .getTitle()
+                        .equals(discussionToModifyOptional.get().getTitle()))
+            throw new DiscussionWithThatTitleExistsInProjectException(
+                    String.format(
+                            "There is an existing discussion named %s",
+                            discussionUpdateDTO.getTitle()));
+
+        List<ForumTag> removedForumTags =
+                forumTagService.getRemovedTags(
+                        discussionUpdateDTO.getForumTags(),
+                        getDiscussionDetails(discussionID).getForumTags());
+
+        val discussion = discussionToModifyOptional.get();
+        discussion.setTitle(discussionUpdateDTO.getTitle());
+        discussion.setForumTags(
+                forumTagService.findOrCreateTag(discussionUpdateDTO.getForumTags()));
+        Discussion updatedDiscussion = discussionRepository.save(discussion);
+        forumTagService.deleteUnusedTags(removedForumTags);
+        return updatedDiscussion.toDTO();
+    }
+
+    @Override
+    public DiscussionDTO getDiscussionDetails(UUID discussionID) {
+        return discussionRepository
+                .findById(discussionID)
+                .map(Discussion::toDTO)
+                .orElseThrow(
+                        () ->
+                                new DiscussionNotFoundException(
+                                        String.format(
+                                                "No discussion found for id: %s", discussionID)));
     }
 }

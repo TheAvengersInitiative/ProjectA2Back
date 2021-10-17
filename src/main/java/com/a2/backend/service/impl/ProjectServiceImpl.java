@@ -516,7 +516,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         project.setReviews(reviews);
         projectRepository.save(project);
-
         userService.updateReputation(reviewCreateDTO.getCollaboratorID());
 
         return review.toDTO();

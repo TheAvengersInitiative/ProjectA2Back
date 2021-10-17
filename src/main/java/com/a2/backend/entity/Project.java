@@ -1,6 +1,7 @@
 package com.a2.backend.entity;
 
 import com.a2.backend.model.ProjectDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +43,7 @@ public class Project implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonManagedReference
     private List<Discussion> discussions;
 
     @ManyToMany(cascade = CascadeType.ALL)
