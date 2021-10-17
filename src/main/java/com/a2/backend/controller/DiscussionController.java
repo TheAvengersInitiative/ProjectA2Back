@@ -27,4 +27,11 @@ public class DiscussionController {
         val updatedDiscussion = discussionService.updateDiscussion(id, discussionUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedDiscussion);
     }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteDiscussion(@PathVariable UUID id) {
+        discussionService.deleteDiscussion(id);
+        return ResponseEntity.noContent().build();
+    }
 }
