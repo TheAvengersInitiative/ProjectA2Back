@@ -159,4 +159,33 @@ public class DiscussionRepositoryTest {
         Discussion savedDiscussion =
                 discussionRepository.findByProjectIdAndTitle(savedProject.getId(), "NotDiscussion");
     }
+
+    @Test
+    void Test005_DiscussionRepositoryShouldDeleteDiscussion() {
+        userRepository.save(owner);
+
+        assertTrue(projectRepository.findAll().isEmpty());
+
+        assertNull(project.getId());
+        assertEquals(project.getTitle(), title);
+        assertEquals(project.getDescription(), description);
+        assertEquals(project.getOwner(), owner);
+
+        projectRepository.save(project);
+
+        assertFalse(projectRepository.findAll().isEmpty());
+
+        List<Project> projects = projectRepository.findAll();
+
+        assertEquals(1, projects.size());
+
+        val savedProject = projects.get(0);
+
+        discussionRepository.save(discussion);
+        assertFalse(discussionRepository.findAll().isEmpty());
+
+        discussionRepository.deleteById(discussion.getId());
+
+        assertTrue(discussionRepository.findAll().isEmpty());
+    }
 }

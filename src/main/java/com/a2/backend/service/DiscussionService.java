@@ -17,4 +17,6 @@ public interface DiscussionService {
             UUID discussionId, DiscussionUpdateDTO discussionUpdateDTO);
 
     public DiscussionDTO getDiscussionDetails(UUID discussionID);
+
+    void deleteDiscussion(UUID discussionID);
 }

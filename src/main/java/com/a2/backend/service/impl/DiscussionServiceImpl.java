@@ -163,4 +163,23 @@ public class DiscussionServiceImpl implements DiscussionService {
                                         String.format(
                                                 "No discussion found for id: %s", discussionID)));
     }
+
+    @Override
+    public void deleteDiscussion(UUID discussionID) {
+        val loggedUser = userService.getLoggedUser();
+        val discussionToDelete = discussionRepository.findById(discussionID);
+        val project = projectRepository.findById(discussionToDelete.get().getProject().getId());
+        if (discussionToDelete.isEmpty()) {
+            throw new DiscussionNotFoundException("Discussion not found!");
+        }
+        if (!discussionRepository.getById(discussionID).getOwner().equals(loggedUser)) {
+            throw new UserIsNotOwnerException(
+                    String.format("User: %s is not the owner!", loggedUser.getNickname()));
+        }
+        if (project.isEmpty()) {
+            throw new ProjectNotFoundException("Project does not exist!");
+        }
+        project.get().getDiscussions().remove(discussionToDelete.get());
+        discussionRepository.deleteById(discussionID);
+    }
 }

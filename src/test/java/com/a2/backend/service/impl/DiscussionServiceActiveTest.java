@@ -6,6 +6,7 @@ import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.Discussion;
 import com.a2.backend.exception.DiscussionNotFoundException;
 import com.a2.backend.exception.InvalidUserException;
+import com.a2.backend.exception.UserIsNotOwnerException;
 import com.a2.backend.model.CommentCreateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.DiscussionService;
@@ -86,5 +87,26 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
         assertTrue(comments.get(0).getDate().isBefore(comments.get(1).getDate()));
         assertTrue(comments.get(1).getDate().isBefore(comments.get(2).getDate()));
+    }
+
+    @Test
+    @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
+    void Test005_GivenValidIDAndOwnerWhenWantToDeleteADiscussionThenDeleteDiscussion() {
+        Discussion discussion =
+                projectRepository.findByTitle("Django").get().getDiscussions().get(0);
+        assertNotNull(discussion);
+        discussionService.deleteDiscussion(discussion.getId());
+        assertTrue(projectRepository.findByTitle("Django").get().getDiscussions().isEmpty());
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test006_GivenAWrongOwnerWhenWantToDeleteADiscussionThenThrowException() {
+        Discussion discussion =
+                projectRepository.findByTitle("Django").get().getDiscussions().get(0);
+        assertNotNull(discussion);
+        assertThrows(
+                UserIsNotOwnerException.class,
+                () -> discussionService.deleteDiscussion(discussion.getId()));
     }
 }
