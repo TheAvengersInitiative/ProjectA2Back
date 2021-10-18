@@ -24,7 +24,6 @@ import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class DiscussionServiceImpl implements DiscussionService {
 

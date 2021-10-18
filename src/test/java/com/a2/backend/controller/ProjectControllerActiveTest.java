@@ -940,7 +940,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void Test0038_ProjectControllerWhenReceivesValidUpdateDiscussionDTOshouldReturnOK()
+    void Test0035_ProjectControllerWhenReceivesValidUpdateDiscussionDTOshouldReturnOK()
             throws Exception {
 
         val project = projectRepository.findByTitle("Renovate");
@@ -1016,7 +1016,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test0039_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
+            Test0036_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
                     throws Exception {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
         DiscussionUpdateDTO discussionUpdateDTO =
@@ -1048,7 +1048,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-            Test0040_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
+            Test0037_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
                     throws Exception {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
         DiscussionUpdateDTO discussionUpdateDTO =
