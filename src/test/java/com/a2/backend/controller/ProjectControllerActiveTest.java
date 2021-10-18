@@ -13,9 +13,7 @@ import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.*;
-
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -866,10 +864,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().title("KaI").build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -891,10 +889,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().title("KuBER").featured(true).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -915,10 +913,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().languages(Arrays.asList("Java")).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -940,10 +938,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().languages(Arrays.asList("java")).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -962,10 +960,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().languages(Arrays.asList("Jav")).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -984,10 +982,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().languages(Arrays.asList("Jav")).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1009,10 +1007,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().languages(Arrays.asList("java", "javascript")).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1034,10 +1032,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().tags(Arrays.asList("tOol")).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1056,10 +1054,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().tags(Arrays.asList("tOo")).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1081,10 +1079,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().tags(Arrays.asList("tOol", "automation")).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1109,10 +1107,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1137,10 +1135,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1166,10 +1164,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1195,10 +1193,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1224,10 +1222,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1253,10 +1251,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1274,10 +1272,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().page(1).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1295,10 +1293,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().page(0).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1317,10 +1315,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().featured(true).page(1).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1337,10 +1335,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 ProjectSearchDTO.builder().featured(true).page(0).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -1356,10 +1354,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().featured(true).build();
         String contentAsString =
                 mvc.perform(
-                        MockMvcRequestBuilders.post("/project/search")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(projectToSearch))
-                                .accept(MediaType.APPLICATION_JSON))
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()

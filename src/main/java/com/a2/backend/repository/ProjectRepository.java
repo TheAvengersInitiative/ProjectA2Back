@@ -27,7 +27,7 @@ public interface ProjectRepository extends JpaRepository<Project, UUID> {
     List<Project> findByTitleContainingIgnoreCaseAndFeatured(Boolean featured, String title);
 
     @Query("SELECT DISTINCT p FROM Project p WHERE p.featured=?1")
-    List<Project> findAllByFeaturedIsTrue(Boolean featured);
+    List<Project> findAllByFeatured(Boolean featured);
 
     List<Project> findByOwner(User user);
 
