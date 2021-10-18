@@ -192,16 +192,9 @@ public class ProjectController {
     }
 
     @Secured({SecurityConstants.USER_ROLE})
-    @GetMapping("/all-comments/{discussionId}")
+    @GetMapping("/comments/{discussionId}")
     public ResponseEntity<?> getCommentsInDiscussion(@PathVariable UUID discussionId) {
         val comments = discussionService.getComments(discussionId);
-        return ResponseEntity.status(HttpStatus.OK).body(comments);
-    }
-
-    @Secured({SecurityConstants.USER_ROLE})
-    @GetMapping("/filtered-comments/{discussionId}")
-    public ResponseEntity<?> getFilteredCommentsInDiscussion(@PathVariable UUID discussionId) {
-        val comments = discussionService.getFilteredComments(discussionId);
         return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 }

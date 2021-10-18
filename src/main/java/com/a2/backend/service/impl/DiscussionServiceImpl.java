@@ -254,46 +254,31 @@ public class DiscussionServiceImpl implements DiscussionService {
         val discussion = discussionOptional.get();
         val project = discussion.getProject();
 
-        if (!project.getOwner().equals(loggedUser)) {
-            throw new InvalidUserException("Only project owners can see all comments");
-        }
-
         List<CommentDTO> comments =
                 discussionOptional.get().getComments().stream()
                         .map(Comment::toDTO)
                         .collect(Collectors.toList());
 
-        comments.sort(Comparator.comparing(CommentDTO::getDate));
+        if (project.getOwner().equals(loggedUser)) {
 
-        return comments;
-    }
+            comments.sort(Comparator.comparing(CommentDTO::getDate));
+            return comments;
 
-    // returns comments without hidden ones and highlighted at the top
-    @Override
-    public List<CommentDTO> getFilteredComments(UUID discussionId) {
-        val discussionOptional = discussionRepository.findById(discussionId);
+        } else {
+            List<CommentDTO> highlighted =
+                    comments.stream()
+                            .filter(CommentDTO::isHighlighted)
+                            .collect(Collectors.toList());
+            highlighted.sort(Comparator.comparing(CommentDTO::getDate));
+            List<CommentDTO> others =
+                    comments.stream()
+                            .filter(c -> !c.isHighlighted() && !c.isHidden())
+                            .collect(Collectors.toList());
+            others.sort(Comparator.comparing(CommentDTO::getDate));
 
-        if (discussionOptional.isEmpty()) {
-            throw new DiscussionNotFoundException(
-                    String.format("The discussion with id: %s does not exist!", discussionId));
+            highlighted.addAll(others);
+
+            return highlighted;
         }
-
-        List<CommentDTO> comments =
-                discussionOptional.get().getComments().stream()
-                        .map(Comment::toDTO)
-                        .collect(Collectors.toList());
-
-        List<CommentDTO> highlighted =
-                comments.stream().filter(CommentDTO::isHighlighted).collect(Collectors.toList());
-        highlighted.sort(Comparator.comparing(CommentDTO::getDate));
-        List<CommentDTO> others =
-                comments.stream()
-                        .filter(c -> !c.isHighlighted() && !c.isHidden())
-                        .collect(Collectors.toList());
-        others.sort(Comparator.comparing(CommentDTO::getDate));
-
-        highlighted.addAll(others);
-
-        return highlighted;
     }
 }

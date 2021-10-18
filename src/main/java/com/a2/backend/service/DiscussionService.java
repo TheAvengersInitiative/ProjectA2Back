@@ -26,6 +26,4 @@ public interface DiscussionService {
     CommentDTO changeCommentHidden(UUID commentId);
 
     List<CommentDTO> getComments(UUID discussionId);
-
-    List<CommentDTO> getFilteredComments(UUID discussionId);
 }

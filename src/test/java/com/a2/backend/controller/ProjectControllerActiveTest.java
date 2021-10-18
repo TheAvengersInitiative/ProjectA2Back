@@ -871,39 +871,16 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 .contains("Only project owners can hide comments"));
     }
 
-    ////
-    @Test
-    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void
-            Test032_ProjectControllerWithValidDiscussionIdButNotOwnerWhenGettingAllCommentsShouldReturnBadRequest()
-                    throws Exception {
-
-        val discussion = projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
-
-        String errorMessage =
-                mvc.perform(
-                                MockMvcRequestBuilders.get(
-                                                baseUrl + "/all-comments/" + discussion.getId())
-                                        .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
-
-        assert (Objects.requireNonNull(errorMessage)
-                .contains("Only project owners can see all comments"));
-    }
-
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test033_ProjectControllerWithNotValidDiscussionIdWhenGettingAllCommentsShouldReturnBadRequest()
+            Test032_ProjectControllerWithNotValidDiscussionIdWhenGettingAllCommentsShouldReturnBadRequest()
                     throws Exception {
 
         String errorMessage =
                 mvc.perform(
                                 MockMvcRequestBuilders.get(
-                                                baseUrl + "/all-comments/" + UUID.randomUUID())
+                                                baseUrl + "/comments/" + UUID.randomUUID())
                                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isBadRequest())
                         .andReturn()
@@ -916,7 +893,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test034_ProjectControllerWithValidDiscussionIdWhenGettingAllCommentsShouldReturnHttpOkTest()
+            Test033_ProjectControllerWithValidDiscussionIdWhenGettingCommentsAsOwnerShouldReturnHttpOkTest()
                     throws Exception {
 
         val discussion = projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
@@ -924,7 +901,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         String contentAsString =
                 mvc.perform(
                                 MockMvcRequestBuilders.get(
-                                                baseUrl + "/all-comments/" + discussion.getId())
+                                                baseUrl + "/comments/" + discussion.getId())
                                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()
@@ -940,26 +917,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test035_ProjectControllerWithNotValidDiscussionIdWhenGettingFilteredCommentsShouldReturnBadRequest()
-                    throws Exception {
-
-        String errorMessage =
-                mvc.perform(
-                                MockMvcRequestBuilders.get(
-                                                baseUrl + "/filtered-comments/" + UUID.randomUUID())
-                                        .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isBadRequest())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
-
-        assert (Objects.requireNonNull(errorMessage).contains("The discussion with id"));
-    }
-
-    @Test
-    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void
-            Test036_ProjectControllerWithValidDiscussionIdWhenGettingFilteredCommentsShouldReturnHttpOkTest()
+            Test034_ProjectControllerWithValidDiscussionIdWhenGettingCommentsAsCollaboratorShouldReturnHttpOkTest()
                     throws Exception {
 
         val discussion = projectRepository.findByTitle("Django").get().getDiscussions().get(0);
@@ -967,9 +925,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         String contentAsString =
                 mvc.perform(
                                 MockMvcRequestBuilders.get(
-                                                baseUrl
-                                                        + "/filtered-comments/"
-                                                        + discussion.getId())
+                                                baseUrl + "/comments/" + discussion.getId())
                                         .accept(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn()

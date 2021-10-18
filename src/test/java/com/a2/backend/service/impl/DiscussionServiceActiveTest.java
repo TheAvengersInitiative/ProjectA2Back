@@ -222,7 +222,8 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
-    void Test012_DiscussionServiceWithValidCommentIdWhenGettingCommentShouldReturnCommentList() {
+    void
+            Test012_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsOwnerShouldReturnListWithAllComments() {
 
         val discussion = projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
 
@@ -230,33 +231,35 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
         assertNotNull(comments);
         assertEquals(2, comments.size());
-        assertEquals(-1, comments.get(0).getDate().compareTo(comments.get(1).getDate()));
+        assertTrue(comments.get(0).getDate().isBefore(comments.get(1).getDate()));
     }
 
     @Test
     @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
     void
-            Test011_DiscussionServiceWithNotValidDiscussionIdWhenGettingCommentsInOrderShouldThrowException() {
+            Test013_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsCollaboratorShouldReturnListWithFilteredComments() {
 
-        assertThrows(
-                DiscussionNotFoundException.class,
-                () -> discussionService.getFilteredComments(UUID.randomUUID()));
+        val discussion = projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
+
+        val comments = discussionService.getComments(discussion.getId());
+
+        assertNotNull(comments);
+        assertEquals(1, comments.size());
     }
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test012_DiscussionServiceWithValidCommentIdWhenGettingCommentsInOrderShouldReturnCommentList() {
+            Test014_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsCollaboratorShouldReturnFilteredCommentListInOrder() {
 
         val discussion = projectRepository.findByTitle("Django").get().getDiscussions().get(0);
 
-        val comments = discussionService.getFilteredComments(discussion.getId());
+        val comments = discussionService.getComments(discussion.getId());
 
         assertNotNull(comments);
         assertEquals(3, comments.size());
         assertTrue(comments.get(0).getComment().contains("The method handlers for a ViewSet"));
         assertTrue(comments.get(1).getComment().contains("The ViewSet class inherits"));
         assertTrue(comments.get(2).getComment().contains("A ViewSet class is simply"));
-
     }
 }
