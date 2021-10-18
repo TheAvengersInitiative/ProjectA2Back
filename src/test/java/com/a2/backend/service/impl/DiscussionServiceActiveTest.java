@@ -101,7 +101,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
     }
 
     @Test
-    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    @WithMockUser("franz.sotoleal@ing.austral.edu.ar")
     void Test006_GivenAWrongOwnerWhenWantToDeleteADiscussionThenThrowException() {
         Discussion discussion =
                 projectRepository.findByTitle("Django").get().getDiscussions().get(0);
@@ -109,6 +109,18 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
         assertThrows(
                 UserIsNotOwnerException.class,
                 () -> discussionService.deleteDiscussion(discussion.getId()));
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test007_GivenProjectOwnerWhenWantToDeleteADiscussionInHisProjectThenDeleteThatProject() {
+
+        assertEquals(2, projectRepository.findByTitle("Kubernetes").get().getDiscussions().size());
+        Discussion discussion =
+                projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
+        assertNotNull(discussion);
+        discussionService.deleteDiscussion(discussion.getId());
+        assertEquals(1, projectRepository.findByTitle("Kubernetes").get().getDiscussions().size());
     }
 
     @Test

@@ -418,6 +418,7 @@ public class DemoRunner implements CommandLineRunner {
                                 .title("Not working on MacOS")
                                 .forumTags(List.of(forumTagRepository.findByName("help").get()))
                                 .project(kubernetes)
+                                .owner(franz)
                                 .comments(
                                         List.of(
                                                 Comment.builder()

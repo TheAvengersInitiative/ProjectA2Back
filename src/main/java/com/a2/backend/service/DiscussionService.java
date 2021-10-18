@@ -12,12 +12,11 @@ public interface DiscussionService {
 
     CommentDTO createComment(UUID discussionId, CommentCreateDTO commentCreateDTO);
 
-    public DiscussionDTO createDiscussion(UUID projectId, DiscussionCreateDTO discussionCreateDTO);
+    DiscussionDTO createDiscussion(UUID projectId, DiscussionCreateDTO discussionCreateDTO);
 
-    public DiscussionDTO updateDiscussion(
-            UUID discussionId, DiscussionUpdateDTO discussionUpdateDTO);
+    DiscussionDTO updateDiscussion(UUID discussionId, DiscussionUpdateDTO discussionUpdateDTO);
 
-    public DiscussionDTO getDiscussionDetails(UUID discussionID);
+    DiscussionDTO getDiscussionDetails(UUID discussionID);
 
     void deleteDiscussion(UUID discussionID);
 
