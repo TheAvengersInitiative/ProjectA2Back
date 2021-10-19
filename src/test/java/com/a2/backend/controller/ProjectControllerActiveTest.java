@@ -1,7 +1,6 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.a2.backend.entity.Comment;
@@ -724,7 +723,224 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void Test0038_ProjectControllerWhenReceivesValidUpdateDiscussionDTOshouldReturnOK()
+    void Test026_ProjectControllerWithValidCommentIdWhenHighlightingShouldReturnHttpOkTest()
+            throws Exception {
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(0);
+
+        assertFalse(comment.isHighlighted());
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                baseUrl + "/highlight/" + comment.getId())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        val updatedComment = objectMapper.readValue(contentAsString, CommentDTO.class);
+
+        assertEquals(comment.getId(), updatedComment.getId());
+        assertTrue(updatedComment.isHighlighted());
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test027_ProjectControllerWithNotValidCommentIdWhenHighlightingShouldReturnBadRequest()
+            throws Exception {
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                baseUrl + "/highlight/" + UUID.randomUUID())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("Discussion with comment id"));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void
+            Test028_ProjectControllerWithValidCommentIdButNotOwnerWhenHighlightingShouldReturnBadRequest()
+                    throws Exception {
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(0);
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                baseUrl + "/highlight/" + comment.getId())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage)
+                .contains("Only project owners can highlight comments"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test029_ProjectControllerWithValidCommentIdWhenHidingShouldReturnHttpOkTest()
+            throws Exception {
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(0);
+
+        assertFalse(comment.isHidden());
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl + "/hide/" + comment.getId())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        val updatedComment = objectMapper.readValue(contentAsString, CommentDTO.class);
+
+        assertEquals(comment.getId(), updatedComment.getId());
+        assertTrue(updatedComment.isHidden());
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test030_ProjectControllerWithNotValidCommentIdWhenHidingShouldReturnBadRequest()
+            throws Exception {
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl + "/hide/" + UUID.randomUUID())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("Discussion with comment id"));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test031_ProjectControllerWithValidCommentIdButNotOwnerWhenHidingShouldReturnBadRequest()
+            throws Exception {
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(0);
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl + "/hide/" + comment.getId())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage)
+                .contains("Only project owners can hide comments"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test032_ProjectControllerWithNotValidDiscussionIdWhenGettingAllCommentsShouldReturnBadRequest()
+                    throws Exception {
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                baseUrl + "/comments/" + UUID.randomUUID())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("The discussion with id"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test033_ProjectControllerWithValidDiscussionIdWhenGettingCommentsAsOwnerShouldReturnHttpOkTest()
+                    throws Exception {
+
+        val discussion = projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                baseUrl + "/comments/" + discussion.getId())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        val comments = objectMapper.readValue(contentAsString, CommentDTO[].class);
+
+        assertNotNull(comments);
+        assertEquals(2, comments.length);
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test034_ProjectControllerWithValidDiscussionIdWhenGettingCommentsAsCollaboratorShouldReturnHttpOkTest()
+                    throws Exception {
+
+        val discussion = projectRepository.findByTitle("Django").get().getDiscussions().get(0);
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                baseUrl + "/comments/" + discussion.getId())
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        val comments = objectMapper.readValue(contentAsString, CommentDTO[].class);
+
+        assertNotNull(comments);
+        assertEquals(3, comments.length);
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test0035_ProjectControllerWhenReceivesValidUpdateDiscussionDTOshouldReturnOK()
             throws Exception {
 
         val project = projectRepository.findByTitle("Renovate");
@@ -800,7 +1016,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test0039_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
+            Test0036_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
                     throws Exception {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
         DiscussionUpdateDTO discussionUpdateDTO =
@@ -832,7 +1048,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-            Test0040_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
+            Test0037_ProjectControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
                     throws Exception {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
         DiscussionUpdateDTO discussionUpdateDTO =

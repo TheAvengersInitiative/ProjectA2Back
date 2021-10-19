@@ -384,6 +384,32 @@ public class DemoRunner implements CommandLineRunner {
                                                                 "A ViewSet class is simply a type of class-based View, that does not provide any method handlers such as .get() or .post(), and instead provides actions such as .list() and .create().")
                                                         .user(peltevis)
                                                         .date(LocalDateTime.now())
+                                                        .highlighted(false)
+                                                        .hidden(false)
+                                                        .build(),
+                                                Comment.builder()
+                                                        .comment(
+                                                                "The method handlers for a ViewSet are only bound to the corresponding actions at the point of finalizing the view, using the .as_view() method.")
+                                                        .user(peltevis)
+                                                        .date(LocalDateTime.now().plusNanos(1))
+                                                        .highlighted(true)
+                                                        .hidden(false)
+                                                        .build(),
+                                                Comment.builder()
+                                                        .comment(
+                                                                "An advantage of using a ViewSet class over using a View class is that repeated logic can be combined into a single class.")
+                                                        .user(peltevis)
+                                                        .date(LocalDateTime.now().plusNanos(2))
+                                                        .highlighted(false)
+                                                        .hidden(true)
+                                                        .build(),
+                                                Comment.builder()
+                                                        .comment(
+                                                                "The ViewSet class inherits from APIView. You can use any of the standard attributes such as permission_classes, authentication_classes in order to control the API policy on the viewset.")
+                                                        .user(peltevis)
+                                                        .date(LocalDateTime.now().plusNanos(3))
+                                                        .highlighted(true)
+                                                        .hidden(false)
                                                         .build()))
                                 .build()));
         kubernetes.setDiscussions(
@@ -398,11 +424,15 @@ public class DemoRunner implements CommandLineRunner {
                                                         .comment("You should try a reinstall")
                                                         .user(franz)
                                                         .date(LocalDateTime.now())
+                                                        .highlighted(false)
+                                                        .hidden(false)
                                                         .build(),
                                                 Comment.builder()
                                                         .comment("Or maybe just a reboot first...")
                                                         .user(ropa1998)
                                                         .date(LocalDateTime.now().plusNanos(1))
+                                                        .highlighted(false)
+                                                        .hidden(true)
                                                         .build()))
                                 .build(),
                         Discussion.builder()

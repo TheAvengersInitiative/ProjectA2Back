@@ -10,5 +10,8 @@ public interface DiscussionRepository extends JpaRepository<Discussion, UUID> {
     @Query("SELECT d FROM Discussion d WHERE d.title LIKE ?2 AND d.project.id=?1")
     Discussion findByProjectIdAndTitle(UUID id, String title);
 
+    @Query("SELECT DISTINCT d FROM Discussion d JOIN d.comments c WHERE UPPER(c.id) = ?1 ")
+    Optional<Discussion> findDiscussionByCommentId(UUID commentId);
+
     Optional<Discussion> findByTitle(String title);
 }

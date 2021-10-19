@@ -176,4 +176,25 @@ public class ProjectController {
         val comment = discussionService.createComment(discussionId, commentCreateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/highlight/{commentId}")
+    public ResponseEntity<?> highlightComment(@PathVariable UUID commentId) {
+        val comment = discussionService.changeCommentHighlight(commentId);
+        return ResponseEntity.status(HttpStatus.OK).body(comment);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/hide/{commentId}")
+    public ResponseEntity<?> hideComment(@PathVariable UUID commentId) {
+        val comment = discussionService.changeCommentHidden(commentId);
+        return ResponseEntity.status(HttpStatus.OK).body(comment);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @GetMapping("/comments/{discussionId}")
+    public ResponseEntity<?> getCommentsInDiscussion(@PathVariable UUID discussionId) {
+        val comments = discussionService.getComments(discussionId);
+        return ResponseEntity.status(HttpStatus.OK).body(comments);
+    }
 }

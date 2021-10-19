@@ -17,7 +17,7 @@ public class ReviewCreateDTO {
 
     @NotNull private UUID collaboratorID;
 
-    @Size(min = 10, max = 500, message = "Comment should be between 10 and 500 characters")
+    @Size(max = 500, message = "Comment should be between 10 and 500 characters")
     private String comment;
 
     @NotNull
