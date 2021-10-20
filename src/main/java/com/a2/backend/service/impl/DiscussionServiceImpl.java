@@ -175,7 +175,8 @@ public class DiscussionServiceImpl implements DiscussionService {
         if (discussionToDelete.isEmpty()) {
             throw new DiscussionNotFoundException("Discussion not found!");
         }
-        if (!discussionRepository.getById(discussionID).getOwner().equals(loggedUser)) {
+        if (!discussionRepository.getById(discussionID).getOwner().equals(loggedUser)
+                && !project.get().getOwner().equals(loggedUser)) {
             throw new UserIsNotOwnerException(
                     String.format("User: %s is not the owner!", loggedUser.getNickname()));
         }
