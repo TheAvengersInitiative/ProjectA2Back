@@ -372,6 +372,8 @@ public class DemoRunner implements CommandLineRunner {
                                 .forumTags(List.of(forumTagRepository.findByName("help").get()))
                                 .project(tensorFlow)
                                 .comments(List.of())
+                                .body(
+                                        "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                                 .build()));
         django.setDiscussions(
                 List.of(
@@ -383,6 +385,8 @@ public class DemoRunner implements CommandLineRunner {
                                                 forumTagRepository.findByName("advice").get()))
                                 .project(django)
                                 .owner(peltevis)
+                                .body(
+                                        "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                                 .comments(
                                         List.of(
                                                 Comment.builder()
@@ -421,6 +425,8 @@ public class DemoRunner implements CommandLineRunner {
         kubernetes.setDiscussions(
                 List.of(
                         Discussion.builder()
+                                .body(
+                                        "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                                 .title("Not working on MacOS")
                                 .forumTags(List.of(forumTagRepository.findByName("help").get()))
                                 .project(kubernetes)
@@ -443,6 +449,8 @@ public class DemoRunner implements CommandLineRunner {
                                                         .build()))
                                 .build(),
                         Discussion.builder()
+                                .body(
+                                        "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                                 .title("Bug US-5.4")
                                 .forumTags(List.of(forumTagRepository.findByName("advice").get()))
                                 .project(kubernetes)

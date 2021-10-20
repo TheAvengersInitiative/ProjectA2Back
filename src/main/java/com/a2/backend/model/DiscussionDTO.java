@@ -15,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 public class DiscussionDTO {
     private String title;
-
+    private String body;
     private UUID id;
     private List<ForumTag> forumTags;
     private User owner;

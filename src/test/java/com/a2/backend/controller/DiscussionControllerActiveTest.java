@@ -343,6 +343,8 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
         DiscussionCreateDTO discussionCreateDTO =
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .title(discussionTitle)
                         .build();
 
@@ -350,6 +352,8 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
                         .title("AnotherName")
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .build();
 
         String discussionAsString =
@@ -372,6 +376,8 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
         DiscussionUpdateDTO discussionUpdateDTO =
                 DiscussionUpdateDTO.builder()
                         .title("AnotherName")
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .forumTags(discussionTags)
                         .build();
 
@@ -415,6 +421,8 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
         DiscussionUpdateDTO discussionUpdateDTO =
                 DiscussionUpdateDTO.builder()
                         .title("AnotherName")
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .forumTags(discussionTags)
                         .build();
 
@@ -447,6 +455,8 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
         DiscussionUpdateDTO discussionUpdateDTO =
                 DiscussionUpdateDTO.builder()
                         .title("AnotherName")
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .forumTags(discussionTags)
                         .build();
         String updatedDiscussionAsString =

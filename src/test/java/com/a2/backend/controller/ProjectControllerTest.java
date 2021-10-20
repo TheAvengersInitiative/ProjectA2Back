@@ -8,6 +8,7 @@ import com.a2.backend.entity.Discussion;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
+import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ class ProjectControllerTest extends AbstractTest {
     @Autowired ObjectMapper objectMapper;
 
     @Autowired private UserRepository userRepository;
+    @Autowired private DiscussionRepository discussionRepository;
 
     private final String baseUrl = "/project";
 
@@ -1673,6 +1675,8 @@ class ProjectControllerTest extends AbstractTest {
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
                         .title(discussionTitle)
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .build();
 
         ProjectCreateDTO projectToCreate =
@@ -1728,6 +1732,7 @@ class ProjectControllerTest extends AbstractTest {
                 discussion.getForumTags().get(0).getName(),
                 discussionCreateDTO.getForumTags().get(0));
         assertEquals(discussion.getProject().getId(), project.getId());
+        assertTrue(!discussionRepository.findById(discussion.getId()).isEmpty());
     }
 
     @Test
@@ -1750,6 +1755,8 @@ class ProjectControllerTest extends AbstractTest {
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
                         .title(discussionTitle)
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .build();
 
         ProjectCreateDTO projectToCreate =
@@ -1819,6 +1826,8 @@ class ProjectControllerTest extends AbstractTest {
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
                         .title(discussionTitle)
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .build();
 
         ProjectCreateDTO projectToCreate =
@@ -1911,11 +1920,15 @@ class ProjectControllerTest extends AbstractTest {
         DiscussionCreateDTO discussionCreateDTO =
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .title(discussionTitle)
                         .build();
         DiscussionCreateDTO secondDiscussionCreateDTO =
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .title(discussionTitle + "2")
                         .build();
 
@@ -2022,6 +2035,8 @@ class ProjectControllerTest extends AbstractTest {
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
                         .title(discussionTitle)
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .build();
 
         ProjectCreateDTO projectToCreate =

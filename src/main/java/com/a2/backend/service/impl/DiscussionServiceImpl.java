@@ -68,6 +68,7 @@ public class DiscussionServiceImpl implements DiscussionService {
                             .project(projectRepository.findById(projectId).get())
                             .forumTags(tags)
                             .comments(List.of())
+                            .body(discussionCreateDTO.getBody())
                             .owner(loggedUser)
                             .build();
             Discussion updatedDiscussion = discussionRepository.save(discussion);
@@ -144,6 +145,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         val discussion = discussionToModifyOptional.get();
         discussion.setTitle(discussionUpdateDTO.getTitle());
+        discussion.setBody(discussionUpdateDTO.getBody());
         discussion.setForumTags(
                 forumTagService.findOrCreateTag(discussionUpdateDTO.getForumTags()));
         Discussion updatedDiscussion = discussionRepository.save(discussion);

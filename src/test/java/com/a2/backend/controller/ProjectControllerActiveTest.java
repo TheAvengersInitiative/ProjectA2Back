@@ -337,6 +337,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
 
         DiscussionCreateDTO discussionCreateDTO =
                 DiscussionCreateDTO.builder()
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .forumTags(discussionTags)
                         .title(discussionTitle)
                         .build();
