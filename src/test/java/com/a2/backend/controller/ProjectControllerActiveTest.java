@@ -1,5 +1,8 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
@@ -7,6 +10,10 @@ import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 public class ProjectControllerActiveTest extends AbstractControllerTest {
@@ -339,6 +337,8 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
 
         DiscussionCreateDTO discussionCreateDTO =
                 DiscussionCreateDTO.builder()
+                        .body(
+                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .forumTags(discussionTags)
                         .title(discussionTitle)
                         .build();
@@ -640,5 +640,531 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                 .andExpect(status().isOk());
 
         assertEquals(4, user.getReputation());
+    }
+
+    // Search projects by title only with value "KaI" should return only Sakai project
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0041_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().title("KaI").build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertTrue(projects[0].getTitle().equals("Sakai"));
+        assertEquals(1, projects.length);
+    }
+
+    /**
+     * Search projects by title only with value "KuBER" and featured should return only Kubernetes
+     * project *
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0042_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().title("KuBER").featured(true).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertTrue(projects[0].getTitle().equals("Kubernetes"));
+        assertEquals(1, projects.length);
+    }
+    /**
+     * Search projects only by languages with value Java should return projects sakai, apache, and
+     * renovate project *
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0043_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().languages(Arrays.asList("Java")).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        for (Project project : projects) {
+            assertTrue(
+                    project.getTitle().equals("Sakai")
+                            || project.getTitle().equals("ApacheCassandra")
+                            || project.getTitle().equals("Renovate"));
+        }
+        assertEquals(3, projects.length);
+    }
+
+    /**
+     * Search projects only by languages with value java should return projects sakai, apache and
+     * renovate
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0044_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().languages(Arrays.asList("java")).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(3, projects.length);
+        for (Project project : projects) {
+            assertTrue(
+                    project.getTitle().equals("Sakai")
+                            || project.getTitle().equals("ApacheCassandra")
+                            || project.getTitle().equals("Renovate"));
+        }
+    }
+
+    /** Search projects only by languages with value Jav should return empty project list */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0045_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().languages(Arrays.asList("Jav")).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+
+        assertEquals(0, projects.length);
+    }
+
+    /** Search projects only by languages with value Java and should return empty project list */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0046_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().languages(Arrays.asList("Jav")).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+
+        assertEquals(0, projects.length);
+    }
+
+    /**
+     * Search projects only by languages with value java and javascript should return project
+     * renovate
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0047_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().languages(Arrays.asList("java", "javascript")).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertTrue(projects[0].getTitle().equals("Renovate"));
+        assertEquals(1, projects.length);
+    }
+
+    /**
+     * Search projects only by tags with value tOol should return projects ansible and flask
+     * renovate
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0048_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().tags(Arrays.asList("tOol")).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(2, projects.length);
+        for (Project project : projects) {
+            assertTrue(
+                    project.getTitle().equals("RedHatAnsible")
+                            || project.getTitle().equals("Flask"));
+        }
+    }
+
+    /** Search projects only by tags with value tOo should return empty project list */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0049_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().tags(Arrays.asList("tOo")).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+
+        assertEquals(0, projects.length);
+    }
+
+    /** Search projects only by tags with value tOol and automation should return project ansible */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0050_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().tags(Arrays.asList("tOol", "automation")).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertTrue(
+                projects[0]
+                        .getTitle()
+                        .equals(projectRepository.findByTitle("RedHatAnsible").get().getTitle()));
+        assertEquals(1, projects.length);
+    }
+
+    /**
+     * Search projects only by tags and languages with values java and bigdata should return project
+     * apachecassandra
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0051_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .tags(Arrays.asList("big data"))
+                        .languages(Arrays.asList("java"))
+                        .build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertTrue(projects[0].getTitle().equals("ApacheCassandra"));
+        assertEquals(1, projects.length);
+    }
+
+    /**
+     * Search projects only by tags and languages with values java and bigdata should return project
+     * apachecassandra
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0052_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .tags(Arrays.asList("big data"))
+                        .languages(Arrays.asList("java"))
+                        .build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertTrue(projects[0].getTitle().equals("ApacheCassandra"));
+        assertEquals(1, projects.length);
+    }
+
+    /**
+     * Search projects by tags, languages and title with values java and dependency and title "A"
+     * should return projects apache cassandra and renovate
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0053_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .tags(Arrays.asList("dependency"))
+                        .languages(Arrays.asList("java"))
+                        .title("A")
+                        .build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        for (Project project : projects) {
+            assertTrue(
+                    project.getTitle().equals("ApacheCassandra")
+                            || project.getTitle().equals("Renovate"));
+        }
+        assertEquals(2, projects.length);
+    }
+
+    /**
+     * Search projects by tags, languages and title with values java and dependency and title
+     * "flask" should return nothing
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0054_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .tags(Arrays.asList("dependency"))
+                        .languages(Arrays.asList("java"))
+                        .title("flask")
+                        .build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(0, projects.length);
+    }
+
+    /**
+     * Search projects by tags, languages and title with values java and dependency and title
+     * "apache" should return project apache
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0055_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .tags(Arrays.asList("dependency"))
+                        .languages(Arrays.asList("java"))
+                        .title("apache")
+                        .build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertTrue(projects[0].getTitle().equals("ApacheCassandra"));
+        assertEquals(1, projects.length);
+    }
+
+    /**
+     * Search projects by tags, languages and featured with values python and tool and true should
+     * return project Ansible
+     */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0056_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder()
+                        .tags(Arrays.asList("tool"))
+                        .languages(Arrays.asList("python"))
+                        .featured(true)
+                        .build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(projects[0].getTitle(), "RedHatAnsible");
+        assertEquals(1, projects.length);
+    }
+
+    /** Search all project with page value 1 should return 3 projects */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0057_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().page(1).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+
+        assertEquals(3, projects.length);
+    }
+
+    /** Search all project with page value 0 should return 8 projects */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0058_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().page(0).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+
+        assertEquals(8, projects.length);
+    }
+
+    /** Search all featured project with page value 1 should return 0 projects */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0059_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().featured(true).page(1).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(0, projects.length);
+    }
+
+    /** Test pagination when searching for featured projects */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0060_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch =
+                ProjectSearchDTO.builder().featured(true).page(0).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(4, projects.length);
+    }
+
+    /** search for featured projects should return four projects */
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test0061_ProjectSearch() throws Exception {
+        ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().featured(true).build();
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.post("/project/search")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(projectToSearch))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(4, projects.length);
     }
 }

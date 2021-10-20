@@ -20,6 +20,10 @@ public class DiscussionUpdateDTO {
     private String title;
 
     @NotNull
+    @Size(min = 10, max = 750, message = "body must be between 10 and 750 characters")
+    private String body;
+
+    @NotNull
     @NotEmpty
     @Size(min = 1, max = 5, message = "Number of tags must be between 1 and 5")
     @UniqueElements

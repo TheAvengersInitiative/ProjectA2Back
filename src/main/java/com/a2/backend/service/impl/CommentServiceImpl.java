@@ -8,12 +8,11 @@ import com.a2.backend.model.CommentCreateDTO;
 import com.a2.backend.repository.CommentRepository;
 import com.a2.backend.service.CommentService;
 import com.a2.backend.service.UserService;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class CommentServiceImpl implements CommentService {

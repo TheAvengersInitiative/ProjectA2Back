@@ -71,6 +71,7 @@ public class DiscussionRepositoryTest {
                     .title("Discussion")
                     .project(project)
                     .forumTags(forumTags)
+                    .body("aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                     .comments(List.of(comment))
                     .build();
 

@@ -30,6 +30,11 @@ public class Discussion {
     @Size(min = 3, max = 32)
     private String title;
 
+    @NotNull
+    @NotEmpty
+    @Size(min = 10, max = 750)
+    private String body;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotNull

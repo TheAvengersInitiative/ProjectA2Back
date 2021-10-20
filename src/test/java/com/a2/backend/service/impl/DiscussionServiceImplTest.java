@@ -83,7 +83,11 @@ class DiscussionServiceImplTest {
                     .languages(languages)
                     .build();
     DiscussionCreateDTO discussionCreateDTO =
-            DiscussionCreateDTO.builder().forumTags(discussionTags).title(discussiontitle).build();
+            DiscussionCreateDTO.builder()
+                    .body("aaaaaaaaaaakakakakakakakskjposjcqowihjown3rnwhoavvvvvvvvvvvvvv")
+                    .forumTags(discussionTags)
+                    .title(discussiontitle)
+                    .build();
 
     @BeforeAll
     static void setUp() {
@@ -210,6 +214,7 @@ class DiscussionServiceImplTest {
                 DiscussionUpdateDTO.builder()
                         .forumTags(Arrays.asList("desctag1", "desctag3"))
                         .title(discussiontitle)
+                        .body("aaaaaaaaaaakakakakakakakskjposjcqowihjown3rnwhoavvvvvvvvvvvvvv")
                         .build();
         val updatedDisc =
                 discussionService.updateDiscussion(discussion.getId(), discussionUpdateDTO);
@@ -251,6 +256,8 @@ class DiscussionServiceImplTest {
                 discussionService.updateDiscussion(
                         secondDiscussion.getId(),
                         DiscussionUpdateDTO.builder()
+                                .body(
+                                        "aaaaaaaaaaakakakakakakakskjposjcqowihjown3rnwhoavvvvvvvvvvvvvv")
                                 .forumTags(discussionTags)
                                 .title(discussiontitle)
                                 .build());
@@ -264,6 +271,7 @@ class DiscussionServiceImplTest {
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
                         .title("second discussion")
+                        .body("aaaaaaaaaaakakakakakakakskjposjcqowihjown3rnwhoavvvvvvvvvvvvvv")
                         .build();
         userRepository.save(owner);
         assertTrue(projectService.getAllProjects().isEmpty());

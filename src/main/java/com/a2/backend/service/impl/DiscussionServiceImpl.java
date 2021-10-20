@@ -12,14 +12,13 @@ import com.a2.backend.service.CommentService;
 import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.UserService;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DiscussionServiceImpl implements DiscussionService {
@@ -69,6 +68,7 @@ public class DiscussionServiceImpl implements DiscussionService {
                             .project(projectRepository.findById(projectId).get())
                             .forumTags(tags)
                             .comments(List.of())
+                            .body(discussionCreateDTO.getBody())
                             .owner(loggedUser)
                             .build();
             Discussion updatedDiscussion = discussionRepository.save(discussion);
@@ -145,6 +145,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         val discussion = discussionToModifyOptional.get();
         discussion.setTitle(discussionUpdateDTO.getTitle());
+        discussion.setBody(discussionUpdateDTO.getBody());
         discussion.setForumTags(
                 forumTagService.findOrCreateTag(discussionUpdateDTO.getForumTags()));
         Discussion updatedDiscussion = discussionRepository.save(discussion);

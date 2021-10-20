@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.Discussion;
 import com.a2.backend.exception.DiscussionNotFoundException;
@@ -8,16 +10,13 @@ import com.a2.backend.exception.UserIsNotOwnerException;
 import com.a2.backend.model.CommentCreateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.DiscussionService;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
