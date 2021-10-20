@@ -317,8 +317,6 @@ public class ProjectServiceImpl implements ProjectService {
         }
         if (!nullPage) {
             int page = projectSearchDTO.getPage();
-            System.out.println("page " + page);
-
             if (result.size() <= 8 * page) {
                 return new ArrayList<ProjectDTO>();
             }
