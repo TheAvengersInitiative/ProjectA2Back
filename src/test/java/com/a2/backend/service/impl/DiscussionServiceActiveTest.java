@@ -1,7 +1,5 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.Discussion;
 import com.a2.backend.exception.DiscussionNotFoundException;
@@ -10,18 +8,22 @@ import com.a2.backend.exception.UserIsNotOwnerException;
 import com.a2.backend.model.CommentCreateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.DiscussionService;
-import java.util.List;
-import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
     @Autowired DiscussionService discussionService;
 
-    // Use these to find discussions
+    // Use projectRepository to find discussions
     @Autowired ProjectRepository projectRepository;
 
     @Test
@@ -275,4 +277,44 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
         assertTrue(comments.get(2).getComment().contains("A ViewSet class is simply"));
     }
 
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test018_DiscussionServiceWhenDeletingCommentThenItIsDeleted() {
+        Discussion discussion =
+                projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
+
+        String commentText = "Or maybe just a reboot first...";
+        assertTrue(
+                discussion.getComments().stream()
+                        .map(Comment::getComment)
+                        .collect(Collectors.toList())
+                        .contains(commentText));
+
+        discussionService.deleteComment(discussion.getComments().get(1).getId());
+
+        assertFalse(
+                discussion.getComments().stream()
+                        .map(Comment::getComment)
+                        .collect(Collectors.toList())
+                        .contains(commentText));
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test019_DiscussionServiceWithInvalidCommentIdWhenDeletingCommentThenExceptionIsThrown() {
+        assertThrows(
+                DiscussionNotFoundException.class,
+                () -> discussionService.deleteComment(UUID.randomUUID()));
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test020_DiscussionServiceWithInvalidUserWhenDeletingCommentThenExceptionIsThrown() {
+        Discussion discussion =
+                projectRepository.findByTitle("Django").get().getDiscussions().get(0);
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> discussionService.deleteComment(discussion.getComments().get(0).getId()));
+    }
 }

@@ -1,15 +1,19 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Comment;
+import com.a2.backend.entity.User;
 import com.a2.backend.exception.CommentNotFoundException;
+import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.model.CommentCreateDTO;
 import com.a2.backend.repository.CommentRepository;
 import com.a2.backend.service.CommentService;
 import com.a2.backend.service.UserService;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.val;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -70,6 +74,19 @@ public class CommentServiceImpl implements CommentService {
             comment.setHighlighted(!comment.isHighlighted());
         }
 
+        return comment;
+    }
+
+    @Override
+    public Comment deleteComment(UUID id) {
+        User loggedUser = userService.getLoggedUser();
+        Optional<Comment> optionalComment = commentRepository.findById(id);
+        if (optionalComment.isEmpty())
+            throw new CommentNotFoundException(String.format("Comment with id: %s not found", id));
+        Comment comment = optionalComment.get();
+        if (!comment.getUser().equals(loggedUser))
+            throw new InvalidUserException("Only comment owners can delete comments");
+        commentRepository.deleteById(id);
         return comment;
     }
 }
