@@ -274,4 +274,5 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
         assertTrue(comments.get(1).getComment().contains("The ViewSet class inherits"));
         assertTrue(comments.get(2).getComment().contains("A ViewSet class is simply"));
     }
+
 }
