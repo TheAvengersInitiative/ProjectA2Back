@@ -126,7 +126,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test005_DiscussionServiceWithInvalidCommentIdWhenHighlightingCommentShouldThrowException() {
+            Test008_DiscussionServiceWithInvalidCommentIdWhenHighlightingCommentShouldThrowException() {
         assertThrows(
                 DiscussionNotFoundException.class,
                 () -> discussionService.changeCommentHighlight(UUID.randomUUID()));
@@ -135,7 +135,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
     void
-            Test006_DiscussionServiceWithValidCommentIdButNotProjectOwnerWhenHighlightingCommentShouldThrowException() {
+            Test009_DiscussionServiceWithValidCommentIdButNotProjectOwnerWhenHighlightingCommentShouldThrowException() {
 
         val comment =
                 projectRepository
@@ -153,7 +153,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
-    void Test007_DiscussionServiceWithValidCommentIdWhenHighlightingCommentShouldUpdateComment() {
+    void Test010_DiscussionServiceWithValidCommentIdWhenHighlightingCommentShouldUpdateComment() {
 
         val comment =
                 projectRepository
@@ -175,7 +175,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
-    void Test008_DiscussionServiceWithInvalidCommentIdWhenHidingCommentShouldThrowException() {
+    void Test011_DiscussionServiceWithInvalidCommentIdWhenHidingCommentShouldThrowException() {
         assertThrows(
                 DiscussionNotFoundException.class,
                 () -> discussionService.changeCommentHidden(UUID.randomUUID()));
@@ -184,7 +184,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
     void
-            Test009_DiscussionServiceWithValidCommentIdButNotProjectOwnerWhenHidingCommentShouldThrowException() {
+            Test012_DiscussionServiceWithValidCommentIdButNotProjectOwnerWhenHidingCommentShouldThrowException() {
 
         val comment =
                 projectRepository
@@ -202,7 +202,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
-    void Test010_DiscussionServiceWithValidCommentIdWhenHidingCommentShouldUpdateComment() {
+    void Test013_DiscussionServiceWithValidCommentIdWhenHidingCommentShouldUpdateComment() {
 
         val comment =
                 projectRepository
@@ -225,7 +225,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
     void
-            Test011_DiscussionServiceWithNotValidDiscussionIdWhenGettingCommentsShouldThrowException() {
+            Test014_DiscussionServiceWithNotValidDiscussionIdWhenGettingCommentsShouldThrowException() {
 
         assertThrows(
                 DiscussionNotFoundException.class,
@@ -235,7 +235,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test012_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsOwnerShouldReturnListWithAllComments() {
+            Test015_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsOwnerShouldReturnListWithAllComments() {
 
         val discussion = projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
 
@@ -249,7 +249,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
     void
-            Test013_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsCollaboratorShouldReturnListWithFilteredComments() {
+            Test016_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsCollaboratorShouldReturnListWithFilteredComments() {
 
         val discussion = projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
 
@@ -262,7 +262,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test014_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsCollaboratorShouldReturnFilteredCommentListInOrder() {
+            Test017_DiscussionServiceWithValidCommentIdWhenGettingCommentsAsCollaboratorShouldReturnFilteredCommentListInOrder() {
 
         val discussion = projectRepository.findByTitle("Django").get().getDiscussions().get(0);
 
