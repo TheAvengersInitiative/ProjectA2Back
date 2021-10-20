@@ -285,7 +285,10 @@ public class DemoRunner implements CommandLineRunner {
                         .description(
                                 "Apache Cassandra is a distributed and decentralized database designed to manage massive amounts of structured and unstructured data across the world.")
                         .links(listOf("https://cassandra.apache.org/"))
-                        .tags(listOf(tagRepository.findByName("Big Data").get()))
+                        .tags(
+                                listOf(
+                                        tagRepository.findByName("Big Data").get(),
+                                        tagRepository.findByName("Dependency").get()))
                         .owner(fabriDS23)
                         .languages(listOf(languageRepository.findByName("Java").get()))
                         .forumTags(
@@ -308,6 +311,7 @@ public class DemoRunner implements CommandLineRunner {
                         .languages(
                                 listOf(
                                         languageRepository.findByName("JavaScript").get(),
+                                        languageRepository.findByName("Java").get(),
                                         languageRepository.findByName("TypeScript").get()))
                         .forumTags(listOf(forumTagRepository.findByName("maintenance tool").get()))
                         .featured(true)
@@ -336,7 +340,10 @@ public class DemoRunner implements CommandLineRunner {
                         .description(
                                 "Ansible is an IT automation tool that “loves the repetitive work your people hate.” ")
                         .links(listOf("https://www.ansible.com/"))
-                        .tags(listOf(tagRepository.findByName("Tool").get()))
+                        .tags(
+                                listOf(
+                                        tagRepository.findByName("Tool").get(),
+                                        tagRepository.findByName("Automation").get()))
                         .owner(ropa1998)
                         .languages(listOf(languageRepository.findByName("Python").get()))
                         .forumTags(listOf(forumTagRepository.findByName("help").get()))
@@ -358,7 +365,6 @@ public class DemoRunner implements CommandLineRunner {
                         .applicants(List.of())
                         .reviews(List.of())
                         .build();
-
         tensorFlow.setDiscussions(
                 List.of(
                         Discussion.builder()

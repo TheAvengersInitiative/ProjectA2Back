@@ -180,7 +180,6 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     public List<ProjectDTO> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO) {
-
         ArrayList<Project> result = new ArrayList<>();
         boolean featured = projectSearchDTO.isFeatured();
         boolean nullTitle = projectSearchDTO.getTitle() == null;
@@ -217,7 +216,8 @@ public class ProjectServiceImpl implements ProjectService {
                                     featured,
                                     projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
                                     upperCaseTagSearchFilters));
-                } else {
+                }
+                if (nullLangs && nullTags) {
                     result.addAll(
                             projectRepository.findByTitleContainingIgnoreCaseAndFeatured(
                                     featured,
@@ -233,8 +233,8 @@ public class ProjectServiceImpl implements ProjectService {
                         projectRepository.findProjectsByTagsInAndFeatured(
                                 featured, upperCaseTagSearchFilters));
             }
-            if (nullLangs && nullTags && nullTitle) {
-                result.addAll(projectRepository.findAllByFeaturedIsTrue(featured));
+            if (nullLangs && nullTags) {
+                result.addAll(projectRepository.findAllByFeatured(featured));
             }
         } else {
             if (!nullTitle) {
@@ -249,7 +249,8 @@ public class ProjectServiceImpl implements ProjectService {
                             projectRepository.findProjectsByTagsInAndTitle(
                                     projectSearchDTO.getTitle().toUpperCase(Locale.ROOT),
                                     upperCaseTagSearchFilters));
-                } else {
+                }
+                if (nullLangs && nullTags) {
                     result.addAll(
                             projectRepository.findByTitleContainingIgnoreCase(
                                     projectSearchDTO.getTitle().toUpperCase(Locale.ROOT)));
@@ -261,8 +262,8 @@ public class ProjectServiceImpl implements ProjectService {
             if (!nullTags) {
                 result.addAll(projectRepository.findProjectsByTagsIn(upperCaseTagSearchFilters));
             }
-            if (nullLangs && nullTags && nullTitle) {
-                result.addAll(projectRepository.findAllByFeaturedIsTrue(featured));
+            if (nullLangs && nullTags) {
+                result.addAll(projectRepository.findAll());
             }
         }
 
@@ -316,6 +317,11 @@ public class ProjectServiceImpl implements ProjectService {
         }
         if (!nullPage) {
             int page = projectSearchDTO.getPage();
+            System.out.println("page " + page);
+
+            if (result.size() <= 8 * page) {
+                return new ArrayList<ProjectDTO>();
+            }
             if (result.size() > 8 * (page)) {
                 result.removeAll(result.subList(0, 8 * page));
                 for (int i = 0; i < result.size(); i++) {}
@@ -330,7 +336,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectDTO> getFeaturedProject() {
-        return projectRepository.findAllByFeaturedIsTrue(true).stream()
+        return projectRepository.findAllByFeatured(true).stream()
                 .map(Project::toDTO)
                 .collect(Collectors.toList());
     }
