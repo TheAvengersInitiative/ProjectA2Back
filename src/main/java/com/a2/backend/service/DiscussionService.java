@@ -1,10 +1,7 @@
 package com.a2.backend.service;
 
-import com.a2.backend.model.CommentCreateDTO;
-import com.a2.backend.model.CommentDTO;
-import com.a2.backend.model.DiscussionCreateDTO;
-import com.a2.backend.model.DiscussionDTO;
-import com.a2.backend.model.DiscussionUpdateDTO;
+import com.a2.backend.model.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -25,4 +22,6 @@ public interface DiscussionService {
     CommentDTO changeCommentHidden(UUID commentId);
 
     List<CommentDTO> getComments(UUID discussionId);
+
+    void deleteComment(UUID id);
 }

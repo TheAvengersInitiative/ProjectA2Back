@@ -8,14 +8,15 @@ import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.TagService;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/project")
@@ -166,35 +167,5 @@ public class ProjectController {
             @PathVariable UUID projectId, @PathVariable UUID userId) {
         val reviews = projectService.getUserReviews(projectId, userId);
         return ResponseEntity.status(HttpStatus.OK).body(reviews);
-    }
-
-    @Secured({SecurityConstants.USER_ROLE})
-    @PutMapping("/comment/{discussionId}")
-    public ResponseEntity<?> createComment(
-            @PathVariable UUID discussionId,
-            @Valid @RequestBody CommentCreateDTO commentCreateDTO) {
-        val comment = discussionService.createComment(discussionId, commentCreateDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(comment);
-    }
-
-    @Secured({SecurityConstants.USER_ROLE})
-    @PutMapping("/highlight/{commentId}")
-    public ResponseEntity<?> highlightComment(@PathVariable UUID commentId) {
-        val comment = discussionService.changeCommentHighlight(commentId);
-        return ResponseEntity.status(HttpStatus.OK).body(comment);
-    }
-
-    @Secured({SecurityConstants.USER_ROLE})
-    @PutMapping("/hide/{commentId}")
-    public ResponseEntity<?> hideComment(@PathVariable UUID commentId) {
-        val comment = discussionService.changeCommentHidden(commentId);
-        return ResponseEntity.status(HttpStatus.OK).body(comment);
-    }
-
-    @Secured({SecurityConstants.USER_ROLE})
-    @GetMapping("/comments/{discussionId}")
-    public ResponseEntity<?> getCommentsInDiscussion(@PathVariable UUID discussionId) {
-        val comments = discussionService.getComments(discussionId);
-        return ResponseEntity.status(HttpStatus.OK).body(comments);
     }
 }

@@ -5,24 +5,21 @@ import com.a2.backend.entity.Discussion;
 import com.a2.backend.entity.ForumTag;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
-import com.a2.backend.model.CommentCreateDTO;
-import com.a2.backend.model.CommentDTO;
-import com.a2.backend.model.DiscussionCreateDTO;
-import com.a2.backend.model.DiscussionDTO;
-import com.a2.backend.model.DiscussionUpdateDTO;
+import com.a2.backend.model.*;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.CommentService;
 import com.a2.backend.service.DiscussionService;
 import com.a2.backend.service.ForumTagService;
 import com.a2.backend.service.UserService;
+import lombok.val;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import lombok.val;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DiscussionServiceImpl implements DiscussionService {
@@ -280,5 +277,24 @@ public class DiscussionServiceImpl implements DiscussionService {
 
             return highlighted;
         }
+    }
+
+    @Override
+    public void deleteComment(UUID id) {
+        val discussionOptional = discussionRepository.findDiscussionByCommentId(id);
+
+        if (discussionOptional.isEmpty()) {
+            throw new DiscussionNotFoundException(
+                    String.format("Discussion with comment id: %s not found", id));
+        }
+
+        val discussion = discussionOptional.get();
+        val comments = discussion.getComments();
+
+        Comment comment = commentService.deleteComment(id);
+        comments.remove(comment);
+        discussion.setComments(comments);
+
+        discussionRepository.save(discussion);
     }
 }
