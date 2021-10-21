@@ -38,4 +38,6 @@ public class ProjectDTO {
     private List<ProjectUserDTO> applicants;
 
     private List<ReviewDTO> reviews;
+
+    private List<DiscussionDTO> discussions;
 }

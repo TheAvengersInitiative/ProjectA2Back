@@ -71,9 +71,12 @@ public class DiscussionServiceImpl implements DiscussionService {
                             .body(discussionCreateDTO.getBody())
                             .owner(loggedUser)
                             .build();
-            Discussion updatedDiscussion = discussionRepository.save(discussion);
-
-            return updatedDiscussion.toDTO();
+            val discussions = project.get().getDiscussions();
+            discussions.add(discussion);
+            project.get().setDiscussions(discussions);
+            Discussion createdDiscussion = discussionRepository.save(discussion);
+            projectRepository.save(project.get());
+            return createdDiscussion.toDTO();
         }
 
         throw new DiscussionWithThatTitleExistsInProjectException(

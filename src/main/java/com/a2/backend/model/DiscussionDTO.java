@@ -20,4 +20,5 @@ public class DiscussionDTO {
     private List<ForumTag> forumTags;
     private User owner;
     private Project project;
+    private List<CommentDTO> comments;
 }

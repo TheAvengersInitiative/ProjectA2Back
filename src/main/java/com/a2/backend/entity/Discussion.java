@@ -4,6 +4,7 @@ import com.a2.backend.model.DiscussionDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -63,6 +64,7 @@ public class Discussion {
                 .id(id)
                 .title(title)
                 .forumTags(forumTags)
+                .comments(comments.stream().map(Comment::toDTO).collect(Collectors.toList()))
                 .build();
     }
 }
