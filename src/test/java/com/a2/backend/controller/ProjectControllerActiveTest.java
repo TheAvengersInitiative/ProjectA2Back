@@ -645,7 +645,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     // Search projects by title only with value "KaI" should return only Sakai project
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0041_ProjectSearch() throws Exception {
+    void Test0023_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().title("KaI").build();
         String contentAsString =
                 mvc.perform(
@@ -669,7 +669,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0042_ProjectSearch() throws Exception {
+    void Test0024_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().title("KuBER").featured(true).build();
         String contentAsString =
@@ -693,7 +693,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0043_ProjectSearch() throws Exception {
+    void Test0025_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().languages(Arrays.asList("Java")).build();
         String contentAsString =
@@ -723,7 +723,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0044_ProjectSearch() throws Exception {
+    void Test0026_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().languages(Arrays.asList("java")).build();
         String contentAsString =
@@ -750,7 +750,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** Search projects only by languages with value Jav should return empty project list */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0045_ProjectSearch() throws Exception {
+    void Test0027_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().languages(Arrays.asList("Jav")).build();
         String contentAsString =
@@ -772,7 +772,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** Search projects only by languages with value Java and should return empty project list */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0046_ProjectSearch() throws Exception {
+    void Test0028_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().languages(Arrays.asList("Jav")).build();
         String contentAsString =
@@ -797,7 +797,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0047_ProjectSearch() throws Exception {
+    void Test0029_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().languages(Arrays.asList("java", "javascript")).build();
         String contentAsString =
@@ -822,7 +822,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0048_ProjectSearch() throws Exception {
+    void Test0030_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().tags(Arrays.asList("tOol")).build();
         String contentAsString =
@@ -848,7 +848,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** Search projects only by tags with value tOo should return empty project list */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0049_ProjectSearch() throws Exception {
+    void Test0031_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().tags(Arrays.asList("tOo")).build();
         String contentAsString =
@@ -870,7 +870,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** Search projects only by tags with value tOol and automation should return project ansible */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0050_ProjectSearch() throws Exception {
+    void Test0032_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().tags(Arrays.asList("tOol", "automation")).build();
         String contentAsString =
@@ -898,7 +898,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0051_ProjectSearch() throws Exception {
+    void Test0033_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .tags(Arrays.asList("big data"))
@@ -926,7 +926,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0052_ProjectSearch() throws Exception {
+    void Test0034_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .tags(Arrays.asList("big data"))
@@ -954,7 +954,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0053_ProjectSearch() throws Exception {
+    void Test0035_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .tags(Arrays.asList("dependency"))
@@ -987,7 +987,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0054_ProjectSearch() throws Exception {
+    void Test0036_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .tags(Arrays.asList("dependency"))
@@ -1015,7 +1015,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0055_ProjectSearch() throws Exception {
+    void Test0037_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .tags(Arrays.asList("dependency"))
@@ -1044,7 +1044,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
      */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0056_ProjectSearch() throws Exception {
+    void Test0038_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
                         .tags(Arrays.asList("tool"))
@@ -1070,7 +1070,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** Search all project with page value 1 should return 3 projects */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0057_ProjectSearch() throws Exception {
+    void Test0039_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().page(1).build();
         String contentAsString =
                 mvc.perform(
@@ -1091,7 +1091,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** Search all project with page value 0 should return 8 projects */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0058_ProjectSearch() throws Exception {
+    void Test0040_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().page(0).build();
         String contentAsString =
                 mvc.perform(
@@ -1112,7 +1112,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** Search all featured project with page value 1 should return 0 projects */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0059_ProjectSearch() throws Exception {
+    void Test0041_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().featured(true).page(1).build();
         String contentAsString =
@@ -1132,7 +1132,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** Test pagination when searching for featured projects */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0060_ProjectSearch() throws Exception {
+    void Test0042_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().featured(true).page(0).build();
         String contentAsString =
@@ -1152,7 +1152,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
     /** search for featured projects should return four projects */
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0061_ProjectSearch() throws Exception {
+    void Test0043_ProjectSearch() throws Exception {
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().featured(true).build();
         String contentAsString =
                 mvc.perform(

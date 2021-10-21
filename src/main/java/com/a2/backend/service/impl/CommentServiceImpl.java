@@ -5,6 +5,7 @@ import com.a2.backend.entity.User;
 import com.a2.backend.exception.CommentNotFoundException;
 import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.model.CommentCreateDTO;
+import com.a2.backend.model.CommentUpdateDTO;
 import com.a2.backend.repository.CommentRepository;
 import com.a2.backend.service.CommentService;
 import com.a2.backend.service.UserService;
@@ -86,6 +87,27 @@ public class CommentServiceImpl implements CommentService {
         if (!comment.getUser().equals(loggedUser))
             throw new InvalidUserException("Only comment owners can delete comments");
         commentRepository.deleteById(id);
+        return comment;
+    }
+
+    @Override
+    public Comment updateComment(UUID commentId, CommentUpdateDTO commentUpdateDTO) {
+        User loggedUser = userService.getLoggedUser();
+        val commentOptional = commentRepository.findById(commentId);
+
+        if (commentOptional.isEmpty()) {
+            throw new CommentNotFoundException(
+                    String.format("Comment with id: %s not found", commentId));
+        }
+
+        val comment = commentOptional.get();
+
+        if (!comment.getUser().equals(loggedUser)) {
+            throw new InvalidUserException("Only comment creator can update comment");
+        }
+
+        comment.setComment(commentUpdateDTO.getComment());
+
         return comment;
     }
 }

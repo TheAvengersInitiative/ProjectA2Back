@@ -230,7 +230,7 @@ class ProjectRepositoryTest {
 
     @Test
     void
-            Test007_ProjectRepositoryWhenGivenLanguageNameShouldReturnAllProjectsThatHaveThatLanguage() {
+            Test008_ProjectRepositoryWhenGivenLanguageNameShouldReturnAllProjectsThatHaveThatLanguage() {
         userRepository.save(owner);
 
         Tag tag1 = Tag.builder().name("tag1").build();
@@ -296,7 +296,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    public void Test008_GivenTitleFilterSearchisSuccesfull() {
+    public void Test009_GivenTitleFilterSearchisSuccesfull() {
         Tag tag1 = Tag.builder().name("tag1").build();
         Tag tag2 = Tag.builder().name("tag2").build();
         Tag tag3 = Tag.builder().name("tag3").build();

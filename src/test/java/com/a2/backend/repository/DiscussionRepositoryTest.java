@@ -174,7 +174,7 @@ public class DiscussionRepositoryTest {
     }
 
     @Test
-    void Test003_DiscussionRepositoryShouldGetDiscussionByCommentId() {
+    void Test004_DiscussionRepositoryShouldGetDiscussionByCommentId() {
         userRepository.save(owner);
 
         assertTrue(projectRepository.findAll().isEmpty());

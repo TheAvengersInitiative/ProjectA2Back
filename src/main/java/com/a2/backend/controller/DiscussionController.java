@@ -2,6 +2,7 @@ package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.model.CommentCreateDTO;
+import com.a2.backend.model.CommentUpdateDTO;
 import com.a2.backend.model.DiscussionUpdateDTO;
 import com.a2.backend.service.DiscussionService;
 import java.util.UUID;
@@ -71,5 +72,13 @@ public class DiscussionController {
     public ResponseEntity<?> deleteComment(@PathVariable UUID id) {
         discussionService.deleteComment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/comment-update/{commentId}")
+    public ResponseEntity<?> updateComment(
+            @PathVariable UUID commentId, @Valid @RequestBody CommentUpdateDTO commentUpdateDTO) {
+        val comment = discussionService.updateComment(commentId, commentUpdateDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(comment);
     }
 }

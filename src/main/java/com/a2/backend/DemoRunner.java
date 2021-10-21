@@ -372,8 +372,7 @@ public class DemoRunner implements CommandLineRunner {
                                 .forumTags(List.of(forumTagRepository.findByName("help").get()))
                                 .project(tensorFlow)
                                 .comments(List.of())
-                                .body(
-                                        "I am having this bug with in my code. How  do I fix it?")
+                                .body("I am having this bug with in my code. How  do I fix it?")
                                 .build()));
         django.setDiscussions(
                 List.of(
@@ -385,8 +384,7 @@ public class DemoRunner implements CommandLineRunner {
                                                 forumTagRepository.findByName("advice").get()))
                                 .project(django)
                                 .owner(peltevis)
-                                .body(
-                                        "I am having this problem with viewset. How  do I fix it?")
+                                .body("I am having this problem with viewset. How  do I fix it?")
                                 .comments(
                                         List.of(
                                                 Comment.builder()
@@ -425,8 +423,7 @@ public class DemoRunner implements CommandLineRunner {
         kubernetes.setDiscussions(
                 List.of(
                         Discussion.builder()
-                                .body(
-                                        "How do I make Kubernetes work on MacOS")
+                                .body("How do I make Kubernetes work on MacOS")
                                 .title("Not working on MacOS")
                                 .forumTags(List.of(forumTagRepository.findByName("help").get()))
                                 .project(kubernetes)
@@ -449,8 +446,7 @@ public class DemoRunner implements CommandLineRunner {
                                                         .build()))
                                 .build(),
                         Discussion.builder()
-                                .body(
-                                        "How do I fix this bug")
+                                .body("How do I fix this bug")
                                 .title("Bug US-5.4")
                                 .forumTags(List.of(forumTagRepository.findByName("advice").get()))
                                 .project(kubernetes)

@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.a2.backend.entity.Comment;
 import com.a2.backend.exception.CommentNotFoundException;
+import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.model.CommentCreateDTO;
+import com.a2.backend.model.CommentUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.CommentService;
 import com.a2.backend.service.UserService;
@@ -188,5 +190,57 @@ public class CommentServiceActiveTest extends AbstractServiceTest {
         assertEquals(updatedComment.getId(), comment.getId());
         assertFalse(comment.isHighlighted());
         assertTrue(comment.isHidden());
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test010_CommentServiceWhenReceiveNotValidCommentIdToUpdateShouldThrowException() {
+        CommentUpdateDTO commentUpdateDTO =
+                CommentUpdateDTO.builder().comment("updated comment").build();
+        assertThrows(
+                CommentNotFoundException.class,
+                () -> commentService.updateComment(UUID.randomUUID(), commentUpdateDTO));
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test011_CommentServiceWhenReceiveValidCommentIdToUpdateButLoggedUserIsNotOwnerShouldUpdateComment() {
+        CommentUpdateDTO commentUpdateDTO =
+                CommentUpdateDTO.builder().comment("updated comment").build();
+
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(0);
+
+        assertThrows(
+                InvalidUserException.class,
+                () -> commentService.updateComment(comment.getId(), commentUpdateDTO));
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void
+            Test012_CommentServiceWhenReceiveValidCommentIdToUpdateAndLoggedUserIsNotOwnerShouldThrowException() {
+        CommentUpdateDTO commentUpdateDTO =
+                CommentUpdateDTO.builder().comment("updated comment").build();
+
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(1);
+
+        assertEquals("Or maybe just a reboot first...", comment.getComment());
+        commentService.updateComment(comment.getId(), commentUpdateDTO);
+        assertEquals("updated comment", comment.getComment());
     }
 }
