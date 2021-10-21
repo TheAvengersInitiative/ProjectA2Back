@@ -410,6 +410,10 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
+
+        assertEquals(
+                projectRepository.findByTitle("Renovate").get().getDiscussions().get(0).getTitle(),
+                "AnotherName");
     }
 
     @Test

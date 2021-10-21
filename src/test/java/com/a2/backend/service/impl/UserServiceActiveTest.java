@@ -34,15 +34,12 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         assertNotNull(preferredProjects);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         assertEquals(6, projects.size());
-
         List<UUID> preferredProjectsId = new ArrayList<>();
         for (int i = 0; i < preferredProjects.size(); i++) {
             preferredProjectsId.add(preferredProjects.get(i).getId());
         }
-
         assertTrue(projects.get(0).isFeatured());
         assertTrue(projects.get(1).isFeatured());
-        System.out.println(preferredProjects);
         assertTrue(preferredProjects.size() != 0);
     }
 

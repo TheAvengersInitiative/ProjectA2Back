@@ -85,6 +85,8 @@ public class Project implements Serializable {
     public ProjectDTO toDTO() {
         return ProjectDTO.builder()
                 .id(id)
+                .discussions(
+                        discussions.stream().map(Discussion::toDTO).collect(Collectors.toList()))
                 .title(title)
                 .featured(featured)
                 .languages(languages)

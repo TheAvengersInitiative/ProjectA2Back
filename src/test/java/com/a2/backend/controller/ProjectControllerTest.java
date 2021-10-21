@@ -9,6 +9,7 @@ import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
 import com.a2.backend.model.*;
 import com.a2.backend.repository.DiscussionRepository;
+import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ class ProjectControllerTest extends AbstractTest {
 
     @Autowired private UserRepository userRepository;
     @Autowired private DiscussionRepository discussionRepository;
+    @Autowired private ProjectRepository projectRepository;
 
     private final String baseUrl = "/project";
 
@@ -1733,6 +1735,11 @@ class ProjectControllerTest extends AbstractTest {
                 discussionCreateDTO.getForumTags().get(0));
         assertEquals(discussion.getProject().getId(), project.getId());
         assertTrue(!discussionRepository.findById(discussion.getId()).isEmpty());
+        Project project1 = projectRepository.findByTitle("Project title").get();
+        assertEquals(project1.getDiscussions().get(0).getTitle(), "Discussion title");
+        assertEquals(
+                project1.getDiscussions().get(0).getBody(),
+                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka");
     }
 
     @Test
