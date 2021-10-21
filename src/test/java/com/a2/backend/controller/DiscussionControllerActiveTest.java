@@ -528,4 +528,139 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
         assert (Objects.requireNonNull(errorMessage)
                 .contains("Only comment owners can delete comments"));
     }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+    Test001_ProjectControllerWithValidCommentIdAndCommentUpdateDTOWhenUpdatingShouldReturnHttpOkTest()
+            throws Exception {
+
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(1);
+
+        CommentUpdateDTO commentUpdateDTO =
+                CommentUpdateDTO.builder().comment("updated comment").build();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                baseUrl + "/comment-update/" + comment.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(commentUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        val updatedComment = objectMapper.readValue(contentAsString, CommentDTO.class);
+
+        assertNotNull(updatedComment);
+        assertEquals("updated comment", updatedComment.getComment());
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void
+    Test002_ProjectControllerWithValidCommentIdAndBlankCommentUpdateDTOWhenUpdatingShouldReturnBadRequest()
+            throws Exception {
+
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(1);
+
+        CommentUpdateDTO commentUpdateDTO =
+                CommentUpdateDTO.builder().comment("  \n  \r  \t  ").build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                baseUrl + "/comment-update/" + comment.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(commentUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("Comment cannot be empty"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test003_ProjectControllerWithNotValidCommentIdWhenUpdatingShouldReturnBadRequest()
+            throws Exception {
+
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(1);
+
+        CommentUpdateDTO commentUpdateDTO =
+                CommentUpdateDTO.builder().comment("update comment").build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                baseUrl + "/comment-update/" + UUID.randomUUID())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(commentUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage).contains("Discussion with comment"));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void
+    Test004_ProjectControllerWithValidCommentIdAndCommentUpdateDTOButLoggedUserIsNotCreatorWhenUpdatingShouldReturnBadRequest()
+            throws Exception {
+
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(1);
+
+        CommentUpdateDTO commentUpdateDTO =
+                CommentUpdateDTO.builder().comment("update comment").build();
+
+        String errorMessage =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(
+                                                baseUrl + "/comment-update/" + comment.getId())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(objectMapper.writeValueAsString(commentUpdateDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isBadRequest())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        assert (Objects.requireNonNull(errorMessage)
+                .contains("Only comment creator can update comment"));
+    }
 }

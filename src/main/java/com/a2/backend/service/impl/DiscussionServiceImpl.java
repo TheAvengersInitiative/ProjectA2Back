@@ -298,4 +298,25 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         discussionRepository.save(discussion);
     }
+
+    @Override
+    public CommentDTO updateComment(UUID commentId, CommentUpdateDTO commentUpdateDTO) {
+        val discussionOptional = discussionRepository.findDiscussionByCommentId(commentId);
+
+        if (discussionOptional.isEmpty()) {
+            throw new DiscussionNotFoundException(
+                    String.format("Discussion with comment id: %s not found", commentId));
+        }
+
+        val discussion = discussionOptional.get();
+
+        val comments = discussionOptional.get().getComments();
+
+        val updatedComment = commentService.updateComment(commentId, commentUpdateDTO);
+
+        discussion.setComments(comments);
+        discussionRepository.save(discussion);
+
+        return updatedComment.toDTO();
+    }
 }

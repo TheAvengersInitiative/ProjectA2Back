@@ -8,6 +8,7 @@ import com.a2.backend.exception.DiscussionNotFoundException;
 import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.exception.UserIsNotOwnerException;
 import com.a2.backend.model.CommentCreateDTO;
+import com.a2.backend.model.CommentUpdateDTO;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.DiscussionService;
 import java.util.List;
@@ -315,5 +316,26 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
         assertThrows(
                 InvalidUserException.class,
                 () -> discussionService.deleteComment(discussion.getComments().get(0).getId()));
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test014_DiscussionServiceWithValidCommentIdWhenUpdatingShouldReturnUpdatedComment() {
+
+        val comment =
+                projectRepository
+                        .findByTitle("Kubernetes")
+                        .get()
+                        .getDiscussions()
+                        .get(0)
+                        .getComments()
+                        .get(1);
+
+        CommentUpdateDTO commentUpdateDTO =
+                CommentUpdateDTO.builder().comment("updated comment").build();
+
+        assertEquals("Or maybe just a reboot first...", comment.getComment());
+        discussionService.updateComment(comment.getId(), commentUpdateDTO);
+        assertEquals("updated comment", comment.getComment());
     }
 }

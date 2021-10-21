@@ -23,4 +23,6 @@ public interface DiscussionService {
     List<CommentDTO> getComments(UUID discussionId);
 
     void deleteComment(UUID id);
+
+    CommentDTO updateComment(UUID commentId, CommentUpdateDTO commentUpdateDTO);
 }

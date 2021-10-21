@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentCreateDTO {
+public class CommentUpdateDTO {
 
     @NotBlank(message = "Comment cannot be empty")
     @Size(max = 500, message = "Comment should have less than 500 characters")
