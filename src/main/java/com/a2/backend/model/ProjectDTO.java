@@ -1,5 +1,6 @@
 package com.a2.backend.model;
 
+import com.a2.backend.entity.Discussion;
 import com.a2.backend.entity.ForumTag;
 import com.a2.backend.entity.Language;
 import com.a2.backend.entity.Tag;
@@ -38,4 +39,6 @@ public class ProjectDTO {
     private List<ProjectUserDTO> applicants;
 
     private List<ReviewDTO> reviews;
+
+    private List<Discussion> discussions;
 }
