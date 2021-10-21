@@ -532,8 +532,8 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test001_ProjectControllerWithValidCommentIdAndCommentUpdateDTOWhenUpdatingShouldReturnHttpOkTest()
-            throws Exception {
+            Test019_DiscussionControllerWithValidCommentIdAndCommentUpdateDTOWhenUpdatingShouldReturnHttpOkTest()
+                    throws Exception {
 
         val comment =
                 projectRepository
@@ -568,8 +568,8 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
     void
-    Test002_ProjectControllerWithValidCommentIdAndBlankCommentUpdateDTOWhenUpdatingShouldReturnBadRequest()
-            throws Exception {
+            Test020_DiscussionControllerWithValidCommentIdAndBlankCommentUpdateDTOWhenUpdatingShouldReturnBadRequest()
+                    throws Exception {
 
         val comment =
                 projectRepository
@@ -600,7 +600,7 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void Test003_ProjectControllerWithNotValidCommentIdWhenUpdatingShouldReturnBadRequest()
+    void Test021_DiscussionControllerWithNotValidCommentIdWhenUpdatingShouldReturnBadRequest()
             throws Exception {
 
         val comment =
@@ -633,8 +633,8 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-    Test004_ProjectControllerWithValidCommentIdAndCommentUpdateDTOButLoggedUserIsNotCreatorWhenUpdatingShouldReturnBadRequest()
-            throws Exception {
+            Test022_DiscussionControllerWithValidCommentIdAndCommentUpdateDTOButLoggedUserIsNotCreatorWhenUpdatingShouldReturnBadRequest()
+                    throws Exception {
 
         val comment =
                 projectRepository

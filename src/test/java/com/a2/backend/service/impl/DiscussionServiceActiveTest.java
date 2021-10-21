@@ -320,7 +320,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
-    void Test014_DiscussionServiceWithValidCommentIdWhenUpdatingShouldReturnUpdatedComment() {
+    void Test021_DiscussionServiceWithValidCommentIdWhenUpdatingShouldReturnUpdatedComment() {
 
         val comment =
                 projectRepository

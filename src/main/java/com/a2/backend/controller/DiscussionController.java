@@ -1,8 +1,8 @@
 package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
-import com.a2.backend.model.CommentUpdateDTO;
 import com.a2.backend.model.CommentCreateDTO;
+import com.a2.backend.model.CommentUpdateDTO;
 import com.a2.backend.model.DiscussionUpdateDTO;
 import com.a2.backend.service.DiscussionService;
 import java.util.UUID;
