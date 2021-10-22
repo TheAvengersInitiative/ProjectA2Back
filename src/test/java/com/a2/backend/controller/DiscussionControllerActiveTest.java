@@ -667,4 +667,17 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
         assert (Objects.requireNonNull(errorMessage)
                 .contains("Only comment creator can update comment"));
     }
+
+    @Test
+    @WithMockUser(username = "franz.sotoleal@ing.austral.edu.ar")
+    void Test023_DiscussionControllerDeleteDiscussion() throws Exception {
+        val discussion = projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
+
+        mvc.perform(
+                        MockMvcRequestBuilders.delete(baseUrl + "/" + discussion.getId())
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        assertEquals(1, projectRepository.findByTitle("Kubernetes").get().getDiscussions().size());
+    }
 }
