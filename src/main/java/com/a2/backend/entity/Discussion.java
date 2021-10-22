@@ -60,6 +60,7 @@ public class Discussion {
     public DiscussionDTO toDTO() {
         return DiscussionDTO.builder()
                 .project(project)
+                .body(body)
                 .owner(owner)
                 .id(id)
                 .title(title)
