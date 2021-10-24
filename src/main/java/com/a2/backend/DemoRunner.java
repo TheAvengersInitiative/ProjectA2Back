@@ -373,6 +373,7 @@ public class DemoRunner implements CommandLineRunner {
                                 .project(tensorFlow)
                                 .comments(List.of())
                                 .body("I am having this bug with in my code. How  do I fix it?")
+                                .owner(ropa1998)
                                 .build()));
         django.setDiscussions(
                 List.of(
@@ -448,6 +449,7 @@ public class DemoRunner implements CommandLineRunner {
                         Discussion.builder()
                                 .body("How do I fix this bug")
                                 .title("Bug US-5.4")
+                                .owner(ropa1998)
                                 .forumTags(List.of(forumTagRepository.findByName("advice").get()))
                                 .project(kubernetes)
                                 .comments(List.of())

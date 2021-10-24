@@ -453,7 +453,7 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-            Test0015_DiscussionControllerWhenReceivesValidUpdateDiscussionDTOButNotFromOwnerShouldReturnUnauthorized()
+            Test0015_DiscussionControllerWhenReceivesValidUpdateDiscussionDTOFromOwnerShouldReturnStatusOk()
                     throws Exception {
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
         DiscussionUpdateDTO discussionUpdateDTO =
