@@ -56,6 +56,56 @@ class ProjectRepositoryTest {
                     .reviews(List.of())
                     .build();
 
+    Tag tag1 = Tag.builder().name("tag1").build();
+    Tag tag2 = Tag.builder().name("tag2").build();
+    Tag tag3 = Tag.builder().name("tag3").build();
+
+    Language language1 = Language.builder().name("Java").build();
+    Language language2 = Language.builder().name("C").build();
+    Language language3 = Language.builder().name("Python").build();
+
+    Project project1 =
+            Project.builder()
+                    .title("Project1")
+                    .description("My description")
+                    .owner(owner)
+                    .links(Arrays.asList("link1", "link2"))
+                    .tags(Arrays.asList(tag1, tag2))
+                    .forumTags(forumTags)
+                    .languages(Arrays.asList(language1, language2))
+                    .applicants(List.of())
+                    .collaborators(List.of())
+                    .reviews(List.of())
+                    .build();
+
+    Project project2 =
+            Project.builder()
+                    .title("Project2")
+                    .description("My description")
+                    .owner(owner)
+                    .links(Arrays.asList("link1", "link2"))
+                    .tags(Arrays.asList(tag1, tag3))
+                    .forumTags(forumTags)
+                    .languages(Arrays.asList(language3, language2))
+                    .applicants(List.of())
+                    .collaborators(List.of())
+                    .reviews(List.of())
+                    .build();
+
+    Project project3 =
+            Project.builder()
+                    .title("Project3")
+                    .description("My description")
+                    .owner(owner)
+                    .links(Arrays.asList("link1", "link2"))
+                    .tags(Arrays.asList(tag1, tag3))
+                    .forumTags(forumTags)
+                    .languages(Arrays.asList(language1, language3))
+                    .applicants(List.of())
+                    .collaborators(List.of())
+                    .reviews(List.of())
+                    .build();
+
     @Test
     void Test001_ProjectRepositoryShouldSaveProjects() {
         userRepository.save(owner);
@@ -173,49 +223,6 @@ class ProjectRepositoryTest {
     void Test007_ProjectRepositoryWhenGivenTagNameShouldReturnAllProjectsThatHaveThatTag() {
         userRepository.save(owner);
 
-        Tag tag1 = Tag.builder().name("tag1").build();
-        Tag tag2 = Tag.builder().name("tag2").build();
-        Tag tag3 = Tag.builder().name("tag3").build();
-
-        Project project1 =
-                Project.builder()
-                        .title("Project1")
-                        .description("My description")
-                        .owner(owner)
-                        .links(Arrays.asList("link1", "link2"))
-                        .tags(Arrays.asList(tag1, tag2))
-                        .forumTags(forumTags)
-                        .applicants(List.of())
-                        .collaborators(List.of())
-                        .reviews(List.of())
-                        .build();
-
-        Project project2 =
-                Project.builder()
-                        .title("Project2")
-                        .description("My description")
-                        .owner(owner)
-                        .links(Arrays.asList("link1", "link2"))
-                        .tags(Arrays.asList(tag1, tag3))
-                        .forumTags(forumTags)
-                        .applicants(List.of())
-                        .collaborators(List.of())
-                        .reviews(List.of())
-                        .build();
-
-        Project project3 =
-                Project.builder()
-                        .title("Project3")
-                        .description("My description")
-                        .owner(owner)
-                        .links(Arrays.asList("link1", "link2"))
-                        .tags(Arrays.asList(tag1, tag3))
-                        .forumTags(forumTags)
-                        .applicants(List.of())
-                        .collaborators(List.of())
-                        .reviews(List.of())
-                        .build();
-
         projectRepository.save(project1);
         projectRepository.save(project2);
         projectRepository.save(project3);
@@ -233,56 +240,6 @@ class ProjectRepositoryTest {
             Test008_ProjectRepositoryWhenGivenLanguageNameShouldReturnAllProjectsThatHaveThatLanguage() {
         userRepository.save(owner);
 
-        Tag tag1 = Tag.builder().name("tag1").build();
-        Tag tag2 = Tag.builder().name("tag2").build();
-        Tag tag3 = Tag.builder().name("tag3").build();
-
-        Language language1 = Language.builder().name("Java").build();
-        Language language2 = Language.builder().name("C").build();
-        Language language3 = Language.builder().name("Python").build();
-
-        Project project1 =
-                Project.builder()
-                        .title("Project1")
-                        .description("My description")
-                        .owner(owner)
-                        .links(Arrays.asList("link1", "link2"))
-                        .tags(Arrays.asList(tag1, tag2))
-                        .forumTags(forumTags)
-                        .languages(Arrays.asList(language1, language2))
-                        .applicants(List.of())
-                        .collaborators(List.of())
-                        .reviews(List.of())
-                        .build();
-
-        Project project2 =
-                Project.builder()
-                        .title("Project2")
-                        .description("My description")
-                        .owner(owner)
-                        .links(Arrays.asList("link1", "link2"))
-                        .tags(Arrays.asList(tag1, tag3))
-                        .forumTags(forumTags)
-                        .languages(Arrays.asList(language3, language2))
-                        .applicants(List.of())
-                        .collaborators(List.of())
-                        .reviews(List.of())
-                        .build();
-
-        Project project3 =
-                Project.builder()
-                        .title("Project3")
-                        .description("My description")
-                        .owner(owner)
-                        .links(Arrays.asList("link1", "link2"))
-                        .tags(Arrays.asList(tag1, tag3))
-                        .forumTags(forumTags)
-                        .languages(Arrays.asList(language1, language3))
-                        .applicants(List.of())
-                        .collaborators(List.of())
-                        .reviews(List.of())
-                        .build();
-
         projectRepository.save(project1);
         projectRepository.save(project2);
         projectRepository.save(project3);
@@ -296,23 +253,10 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    public void Test009_GivenTitleFilterSearchisSuccesfull() {
-        Tag tag1 = Tag.builder().name("tag1").build();
-        Tag tag2 = Tag.builder().name("tag2").build();
-        Tag tag3 = Tag.builder().name("tag3").build();
+    public void Test009_GivenTitleFilterSearchIsSuccessfull() {
+
         userRepository.save(owner);
-        Project project =
-                Project.builder()
-                        .title(title)
-                        .description(description)
-                        .owner(owner)
-                        .links(Arrays.asList("link1", "link2"))
-                        .tags(Arrays.asList(tag1, tag2))
-                        .forumTags(forumTags)
-                        .applicants(List.of())
-                        .collaborators(List.of())
-                        .reviews(List.of())
-                        .build();
+
         assertTrue(projectRepository.findAll().isEmpty());
         assertNull(project.getId());
         assertEquals(project.getTitle(), title);

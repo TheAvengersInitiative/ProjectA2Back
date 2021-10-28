@@ -50,28 +50,42 @@ class ProjectControllerTest extends AbstractTest {
                     .biography("bio")
                     .password("password")
                     .build();
+    String title = "Project title";
+    String description = "Testing exception for existing title";
+    List<String> links = Arrays.asList("http://link.com", "http://link2.com");
+    List<String> tags = Arrays.asList("tag1", "tag2");
+    List<String> languages = Arrays.asList("Java", "C");
+    List<String> forumTags = Arrays.asList("help", "fix");
+    ProjectCreateDTO projectToCreate =
+            ProjectCreateDTO.builder()
+                    .title(title)
+                    .description(description)
+                    .links(links)
+                    .tags(tags)
+                    .forumTags(forumTags)
+                    .languages(languages)
+                    .build();
+    String titleforUpdate = "New Project Title";
+    String descriptionforUpdate = "New Project description";
+    List<String> linksForUpdate = List.of("http://google.com", "http://test.com");
+    List<String> tagsForUpdate = List.of("tag1", "tag2");
+    List<String> languagesForUpdate = Arrays.asList("Python", "PHP");
+
+    ProjectUpdateDTO projectUpdateDTO =
+            ProjectUpdateDTO.builder()
+                    .title(titleforUpdate)
+                    .description(descriptionforUpdate)
+                    .links(linksForUpdate)
+                    .tags(tagsForUpdate)
+                    .forumTags(forumTags)
+                    .languages(languagesForUpdate)
+                    .build();
 
     @Test
     @WithMockUser(username = "some@gmail.com")
     void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated()
             throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
 
         String contentAsString =
                 mvc.perform(
@@ -101,21 +115,7 @@ class ProjectControllerTest extends AbstractTest {
         userRepository.save(owner);
 
         String title = "a";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setTitle(title);
 
         String errorMessage =
                 mvc.perform(
@@ -138,22 +138,8 @@ class ProjectControllerTest extends AbstractTest {
                     throws Exception {
         userRepository.save(owner);
 
-        String title = "Project title";
         String description = "Short";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setDescription(description);
 
         String errorMessage =
                 mvc.perform(
@@ -178,20 +164,8 @@ class ProjectControllerTest extends AbstractTest {
 
         String title = "a";
         String description = "Short";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setDescription(description);
+        projectToCreate.setTitle(title);
 
         String errorMessage =
                 mvc.perform(
@@ -231,23 +205,6 @@ class ProjectControllerTest extends AbstractTest {
     void Test006_GivenASingleExistingProjectWhenDeletedThenProjectIdIsReturned() throws Exception {
         userRepository.save(owner);
 
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -286,23 +243,6 @@ class ProjectControllerTest extends AbstractTest {
     void Test007_GivenASingleExistingProjectWhenDeletedThenThereAreNoExistingProjects()
             throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
 
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
@@ -353,24 +293,6 @@ class ProjectControllerTest extends AbstractTest {
     @WithMockUser(username = "some@gmail.com")
     void Test008_GivenASingleExistingProjectWhenDeletedTwiceErrorShouldBeThrown() throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -422,43 +344,6 @@ class ProjectControllerTest extends AbstractTest {
     void Test009_ProjectControllerWhenReceivesValidProjectUpdateDTOShouldReturnHttpOkTest()
             throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        String titleforUpdate = "New Project Title";
-        String descriptionforUpdate = "New Project description";
-        List<String> linksForUpdate = new ArrayList<>();
-        linksForUpdate.add("http://google.com");
-        linksForUpdate.add("http://test.com");
-        List<String> tagsForUpdate = new ArrayList<>();
-        tagsForUpdate.add("tag1");
-        tagsForUpdate.add("tag2");
-        List<String> languagesForUpdate = Arrays.asList("Python", "PHP");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-
-        ProjectUpdateDTO projectUpdateDTO =
-                ProjectUpdateDTO.builder()
-                        .title(titleforUpdate)
-                        .description(descriptionforUpdate)
-                        .links(linksForUpdate)
-                        .tags(tagsForUpdate)
-                        .forumTags(forumTags)
-                        .languages(languagesForUpdate)
-                        .build();
 
         String contentAsString =
                 mvc.perform(
@@ -553,24 +438,6 @@ class ProjectControllerTest extends AbstractTest {
     @WithMockUser(username = "some@gmail.com")
     void Test011_GivenAnExistingProjectWhenGettingAllProjectsThenItIsReturned() throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "description";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -601,24 +468,8 @@ class ProjectControllerTest extends AbstractTest {
             Test012_ProjectControllerWhenReceiveCreateProjectDTOWithTagShorterThanOneCharacterShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-
+        projectToCreate.setTags(tags);
         String errorMessage =
                 mvc.perform(
                                 MockMvcRequestBuilders.post(baseUrl)
@@ -639,23 +490,8 @@ class ProjectControllerTest extends AbstractTest {
             Test013_ProjectControllerWhenReceiveCreateProjectDTOWithTagLargerThanTwentyfourCharactersShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
         List<String> tags = Arrays.asList("This is not a valid tag for a project", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setTags(tags);
 
         String errorMessage =
                 mvc.perform(
@@ -677,24 +513,8 @@ class ProjectControllerTest extends AbstractTest {
             Test014_ProjectControllerWhenReceiveCreateProjectDTOWithNoLinksShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
         List<String> links = List.of();
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-
+        projectToCreate.setLinks(links);
         String errorMessage =
                 mvc.perform(
                                 MockMvcRequestBuilders.post(baseUrl)
@@ -716,8 +536,6 @@ class ProjectControllerTest extends AbstractTest {
                     throws Exception {
         userRepository.save(owner);
 
-        String title = "Project title";
-        String description = "Testing exception for existing title";
         List<String> links =
                 Arrays.asList(
                         "http://link1.com",
@@ -726,19 +544,7 @@ class ProjectControllerTest extends AbstractTest {
                         "http://link4.com",
                         "http://link5.com",
                         "http://link6.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setLinks(links);
 
         String errorMessage =
                 mvc.perform(
@@ -783,24 +589,8 @@ class ProjectControllerTest extends AbstractTest {
             Test019_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLanguageShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://google.com", "http://link.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Not Valid Language", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-
+        projectToCreate.setLanguages(languages);
         String errorMessage =
                 mvc.perform(
                                 MockMvcRequestBuilders.post(baseUrl)
@@ -821,23 +611,8 @@ class ProjectControllerTest extends AbstractTest {
             Test020_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanThreeLanguagesShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = Arrays.asList("Java", "C", "Python", "PHP");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setLanguages(languages);
 
         String errorMessage =
                 mvc.perform(
@@ -859,23 +634,8 @@ class ProjectControllerTest extends AbstractTest {
             Test021_ProjectControllerWhenReceiveCreateProjectDTOWithNoLanguagesShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link1.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> languages = List.of();
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setLanguages(languages);
 
         String errorMessage =
                 mvc.perform(
@@ -898,23 +658,8 @@ class ProjectControllerTest extends AbstractTest {
                     throws Exception {
         userRepository.save(owner);
 
-        String title = "Project title";
-        String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("http://link1.com", "link");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = List.of("C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-
+        projectToCreate.setLinks(links);
         String errorMessage =
                 mvc.perform(
                                 MockMvcRequestBuilders.post(baseUrl)
@@ -935,23 +680,8 @@ class ProjectControllerTest extends AbstractTest {
             Test022_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedLinkShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
         List<String> links = Arrays.asList("http://link1.com", "http://link1.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = List.of("C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setLinks(links);
 
         String errorMessage =
                 mvc.perform(
@@ -973,23 +703,8 @@ class ProjectControllerTest extends AbstractTest {
             Test023_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedTagsShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link1.com");
         List<String> tags = Arrays.asList("t", "t");
-        List<String> languages = List.of("C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
+        projectToCreate.setTags(tags);
 
         String errorMessage =
                 mvc.perform(
@@ -1077,7 +792,7 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test022_ProjectControllerSuccesfulMultiFilterSearch() throws Exception {
+    void Test022_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1194,7 +909,7 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test023_ProjectControllerSuccesfulMultiFilterSearch() throws Exception {
+    void Test023_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1310,7 +1025,7 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test024_ProjectControllerSuccesfulMultiFilterSearch() throws Exception {
+    void Test024_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1423,7 +1138,7 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test026_ProjectControllerSuccesfulMultiFilterSearchWithFeatured() throws Exception {
+    void Test026_ProjectControllerSuccessfulMultiFilterSearchWithFeatured() throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1541,7 +1256,8 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test027_ProjectControllerSuccesfulMultiFilterSearchWithInsensitiveCase() throws Exception {
+    void Test027_ProjectControllerSuccessfulMultiFilterSearchWithInsensitiveCase()
+            throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -1663,13 +1379,6 @@ class ProjectControllerTest extends AbstractTest {
     void Test0028_ProjectControllerWhenReceivesValidCreateDiscussionDTOShouldReturnStatusCreated()
             throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-
         String discussionTitle = "Discussion title";
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
@@ -1679,16 +1388,6 @@ class ProjectControllerTest extends AbstractTest {
                         .title(discussionTitle)
                         .body(
                                 "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
-                        .build();
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .forumTags(discussionTags)
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .languages(languages)
                         .build();
 
         String contentAsString =
@@ -1748,13 +1447,6 @@ class ProjectControllerTest extends AbstractTest {
             Test0029_ProjectControllerWhenReceivesNotValidProjectWhileCreatingDiscussionShouldReturnBadRequestStatus()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-
         String discussionTitle = "Discussion title";
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
@@ -1765,17 +1457,6 @@ class ProjectControllerTest extends AbstractTest {
                         .body(
                                 "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .build();
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .forumTags(discussionTags)
-                        .tags(tags)
-                        .languages(languages)
-                        .build();
-
         String contentAsString =
                 mvc.perform(
                                 MockMvcRequestBuilders.post(baseUrl)
@@ -1819,13 +1500,6 @@ class ProjectControllerTest extends AbstractTest {
             Test0030_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNonExistingProjectShouldReturnBadStatus()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-
         String discussionTitle = "Discussion title";
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
@@ -1836,17 +1510,6 @@ class ProjectControllerTest extends AbstractTest {
                         .body(
                                 "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .build();
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .forumTags(discussionTags)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .languages(languages)
-                        .build();
-
         String contentAsString =
                 mvc.perform(
                                 MockMvcRequestBuilders.post(baseUrl)
@@ -1915,12 +1578,6 @@ class ProjectControllerTest extends AbstractTest {
                     throws Exception {
         userRepository.save(owner);
 
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-
         String discussionTitle = "Discussion title";
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
@@ -1937,16 +1594,6 @@ class ProjectControllerTest extends AbstractTest {
                         .body(
                                 "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
                         .title(discussionTitle + "2")
-                        .build();
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .forumTags(discussionTags)
-                        .tags(tags)
-                        .languages(languages)
                         .build();
 
         String contentAsString =
@@ -2028,13 +1675,6 @@ class ProjectControllerTest extends AbstractTest {
             Test0032_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNotExistingProjectShouldReturnBadRequest()
                     throws Exception {
         userRepository.save(owner);
-
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> languages = Arrays.asList("Java", "C");
-
         String discussionTitle = "Discussion title";
         List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
 
@@ -2044,16 +1684,6 @@ class ProjectControllerTest extends AbstractTest {
                         .title(discussionTitle)
                         .body(
                                 "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
-                        .build();
-
-        ProjectCreateDTO projectToCreate =
-                ProjectCreateDTO.builder()
-                        .forumTags(discussionTags)
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .languages(languages)
                         .build();
 
         String contentAsString =
@@ -2095,7 +1725,8 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test030_ProjectControllerSuccesfulMultiFilterSearchWithInsensitiveCase() throws Exception {
+    void Test030_ProjectControllerSuccessfulMultiFilterSearchWithInsensitiveCase()
+            throws Exception {
         userRepository.save(owner);
         String title = "Project title";
         String description = "Testing exception for existing title";
@@ -2209,3 +1840,4 @@ class ProjectControllerTest extends AbstractTest {
         assertEquals("Not Start Project", projects[0].getTitle());
     }
 }
+// I was able to reduce the amount of lines from 2200+ to 1840

@@ -40,15 +40,16 @@ public class UserLoginLogoutTest extends AbstractTest {
 
     @Autowired private PasswordEncoder passwordEncoder;
 
+    UserCreateDTO userCreateDTO =
+            UserCreateDTO.builder()
+                    .nickname(nickname)
+                    .email(email)
+                    .biography(biography)
+                    .password(password)
+                    .build();
+
     @Test
     void Test001_GivenAnExistingUserLoginShouldSucceed() {
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
@@ -93,13 +94,7 @@ public class UserLoginLogoutTest extends AbstractTest {
 
     @Test
     void Test002_GivenNonExistingUserLoginShouldFail() {
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email + "l")
-                        .biography(biography)
-                        .password(password)
-                        .build();
+
         String validConfirmationToken = "token001";
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
@@ -117,13 +112,7 @@ public class UserLoginLogoutTest extends AbstractTest {
 
     @Test
     void Test003_GivenNonActiveUserLoginShouldFail() {
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
+
         String validConfirmationToken = "token001";
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
@@ -141,13 +130,6 @@ public class UserLoginLogoutTest extends AbstractTest {
 
     @Test
     void Test004_GivenAnExistingUserWithEmailInUpperCaseLoginShouldSucceed() {
-        UserCreateDTO userCreateDTO =
-                UserCreateDTO.builder()
-                        .nickname(nickname)
-                        .email(email)
-                        .biography(biography)
-                        .password(password)
-                        .build();
 
         HttpEntity<UserCreateDTO> request = new HttpEntity<>(userCreateDTO);
 
