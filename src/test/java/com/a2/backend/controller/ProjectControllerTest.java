@@ -81,6 +81,35 @@ class ProjectControllerTest extends AbstractTest {
                     .languages(languagesForUpdate)
                     .build();
 
+    String discussionTitle = "Discussion title";
+    List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
+
+    DiscussionCreateDTO discussionCreateDTO =
+            DiscussionCreateDTO.builder()
+                    .forumTags(discussionTags)
+                    .title(discussionTitle)
+                    .body("aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
+                    .build();
+
+    public List<ProjectCreateDTO> projectCreator(int numberOfProjects) {
+        List<ProjectCreateDTO> projects = new ArrayList<>();
+        int i = 0;
+        while (i < numberOfProjects) {
+            ProjectCreateDTO projectCreated =
+                    ProjectCreateDTO.builder()
+                            .title(title + " " + i)
+                            .description(description + " " + i)
+                            .links(links)
+                            .tags(tags)
+                            .forumTags(forumTags)
+                            .languages(languages)
+                            .build();
+            projects.add(projectCreated);
+            i++;
+        }
+        return projects;
+    }
+
     @Test
     @WithMockUser(username = "some@gmail.com")
     void Test001_ProjectControllerWhenReceivesValidCreateProjectDTOShouldReturnStatusCreated()
@@ -562,7 +591,7 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test018_WhenGettingValidLanguagesNameListShouldBeReturned() throws Exception {
+    void Test016_WhenGettingValidLanguagesNameListShouldBeReturned() throws Exception {
         String validLanguageNames =
                 "Java, C, C++, C#, Python, Visual Basic .NET, PHP, JavaScript, TypeScript, Delphi/Object Pascal, Swift, Perl, Ruby, Assembly language, R, Visual Basic, Objective-C, Go, MATLAB, PL/SQL, Scratch, SAS, D, Dart, ABAP, COBOL, Ada, Fortran, Transact-SQL, Lua, Scala, Logo, F#, Lisp, LabVIEW, Prolog, Haskell, Scheme, Groovy, RPG (OS/400), Apex, Erlang, MQL4, Rust, Bash, Ladder Logic, Q, Julia, Alice, VHDL, Awk, (Visual) FoxPro, ABC, ActionScript, APL, AutoLISP, bc, BlitzMax, Bourne shell, C shell, CFML, cg, CL (OS/400), Clipper, Clojure, Common Lisp, Crystal, Eiffel, Elixir, Elm, Emacs Lisp, Forth, Hack, Icon, IDL, Inform, Io, J, Korn shell, Kotlin, Maple, ML, NATURAL, NXT-G, OCaml, OpenCL, OpenEdge ABL, Oz, PL/I, PowerShell, REXX, Ring, S, Smalltalk, SPARK, SPSS, Standard ML, Stata, Tcl, VBScript, Verilog";
         List<String> validLanguageList =
@@ -586,7 +615,7 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test019_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLanguageShouldReturnStatusBadRequest()
+            Test017_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLanguageShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
         List<String> languages = Arrays.asList("Not Valid Language", "C");
@@ -608,7 +637,7 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test020_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanThreeLanguagesShouldReturnStatusBadRequest()
+            Test018_ProjectControllerWhenReceiveCreateProjectDTOWithMoreThanThreeLanguagesShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
         List<String> languages = Arrays.asList("Java", "C", "Python", "PHP");
@@ -631,7 +660,7 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithNoLanguagesShouldReturnStatusBadRequest()
+            Test019_ProjectControllerWhenReceiveCreateProjectDTOWithNoLanguagesShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
         List<String> languages = List.of();
@@ -654,7 +683,7 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLinkShouldReturnStatusBadRequest()
+            Test020_ProjectControllerWhenReceiveCreateProjectDTOWithInvalidLinkShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
 
@@ -677,7 +706,7 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test022_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedLinkShouldReturnStatusBadRequest()
+            Test021_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedLinkShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
         List<String> links = Arrays.asList("http://link1.com", "http://link1.com");
@@ -700,7 +729,7 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test023_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedTagsShouldReturnStatusBadRequest()
+            Test022_ProjectControllerWhenReceiveCreateProjectDTOWithRepeatedTagsShouldReturnStatusBadRequest()
                     throws Exception {
         userRepository.save(owner);
         List<String> tags = Arrays.asList("t", "t");
@@ -722,45 +751,22 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test024_ProjectControllerWhenAskedForTagsShouldReturnAllTags() throws Exception {
+    void Test023_ProjectControllerWhenAskedForTagsShouldReturnAllTags() throws Exception {
         userRepository.save(owner);
 
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links =
-                Arrays.asList("http://link1.com", "http://link2.com", "http://link3.com");
-        List<String> secondLinks =
-                Arrays.asList("http://link4.com", "http://link5.com", "http://link6.com");
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> secondLanguages = Arrays.asList("Java", "Python");
-        List<String> forumTags = Arrays.asList("help", "fix");
-        List<String> forumTags2 = Arrays.asList("help2", "fix2");
 
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .links(links)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .forumTags(forumTags2)
-                        .languages(secondLanguages)
-                        .build();
+        List<ProjectCreateDTO> projects = projectCreator(2);
+        projects.get(0).setFeatured(true);
+        projects.get(0).setTags(tags);
+        projects.get(1).setTitle("Not Start Project");
+        projects.get(1).setTags(secondTags);
 
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(0)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -769,7 +775,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(1)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -792,14 +798,9 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test022_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
+    void Test024_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> secondLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> thirdLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> fourthLinks = Arrays.asList("http://link.com", "http://link2.com");
+
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<String> secondTags = Arrays.asList("tag3", "tag4");
         List<String> thirdTags = Arrays.asList("tag5", "tag6");
@@ -807,48 +808,20 @@ class ProjectControllerTest extends AbstractTest {
         List<String> languages = Arrays.asList("Java", "C");
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
-        List<String> fourthLlanguages = Arrays.asList("TypeScript", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-        List<String> forumTags2 = Arrays.asList("help2", "fix2");
-        List<String> forumTags3 = Arrays.asList("help3", "fix3");
-        List<String> forumTags4 = Arrays.asList("help4", "fix4");
+        List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
 
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .links(links)
-                        .description(description)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .languages(languages)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .forumTags(forumTags2)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .forumTags(forumTags3)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .forumTags(forumTags4)
-                        .languages(fourthLlanguages)
-                        .build();
+        List<ProjectCreateDTO> projects = projectCreator(4);
+        projects.get(0).setFeatured(true);
+        projects.get(0).setLanguages(languages);
+        projects.get(0).setTags(tags);
+        projects.get(1).setTitle("Not Start Project");
+        projects.get(1).setLanguages(secondLanguages);
+        projects.get(1).setTags(secondTags);
+        projects.get(2).setLanguages(thirdLanguages);
+        projects.get(2).setTags(thirdTags);
+        projects.get(3).setFeatured(true);
+        projects.get(3).setLanguages(fourthlanguages);
+        projects.get(3).setTags(fourthTags);
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
@@ -860,7 +833,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(0)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -869,7 +842,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(1)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -877,7 +850,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(2)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -886,7 +859,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(3)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -903,69 +876,27 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(1, projects.length);
+        Project[] newProjects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(1, newProjects.length);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test023_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
+    void Test025_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> secondLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> thirdLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> fourthLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
         List<String> languages = Arrays.asList("Java", "C");
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-        List<String> forumTags2 = Arrays.asList("help2", "fix2");
-        List<String> forumTags3 = Arrays.asList("help3", "fix3");
-        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .links(links)
-                        .languages(languages)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .forumTags(forumTags2)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .forumTags(forumTags3)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .forumTags(forumTags4)
-                        .languages(fourthlanguages)
-                        .build();
+        List<ProjectCreateDTO> projects = projectCreator(4);
+        projects.get(0).setFeatured(true);
+        projects.get(0).setLanguages(languages);
+        projects.get(1).setTitle("Not Start Project");
+        projects.get(1).setLanguages(secondLanguages);
+        projects.get(2).setLanguages(thirdLanguages);
+        projects.get(3).setFeatured(true);
+        projects.get(3).setLanguages(fourthlanguages);
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
@@ -976,7 +907,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(0)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -985,7 +916,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(1)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -993,7 +924,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(2)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1002,7 +933,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(3)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1019,69 +950,27 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(1, projects.length);
+        Project[] newProjects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(1, newProjects.length);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test024_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
+    void Test026_ProjectControllerSuccessfulMultiFilterSearch() throws Exception {
         userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> secondLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> thirdLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> fourthLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
         List<String> languages = Arrays.asList("Java", "C");
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-        List<String> forumTags2 = Arrays.asList("help2", "fix2");
-        List<String> forumTags3 = Arrays.asList("help3", "fix3");
-        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .links(links)
-                        .languages(languages)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .forumTags(forumTags2)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .forumTags(forumTags3)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .forumTags(forumTags4)
-                        .languages(fourthlanguages)
-                        .build();
+        List<ProjectCreateDTO> projects = projectCreator(4);
+        projects.get(0).setFeatured(true);
+        projects.get(0).setLanguages(languages);
+        projects.get(1).setTitle("Not Start Project");
+        projects.get(1).setLanguages(secondLanguages);
+        projects.get(2).setLanguages(thirdLanguages);
+        projects.get(3).setFeatured(true);
+        projects.get(3).setLanguages(fourthlanguages);
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder().languages(Arrays.asList("JavAScript")).build();
@@ -1089,7 +978,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(0)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1098,7 +987,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(1)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1106,7 +995,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(2)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1115,7 +1004,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(3)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1132,71 +1021,27 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(1, projects.length);
+        Project[] newProjects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(1, newProjects.length);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test026_ProjectControllerSuccessfulMultiFilterSearchWithFeatured() throws Exception {
+    void Test027_ProjectControllerSuccessfulMultiFilterSearchWithFeatured() throws Exception {
         userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> secondLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> thirdLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> fourthLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
         List<String> languages = Arrays.asList("Java", "C");
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-        List<String> forumTags2 = Arrays.asList("help2", "fix2");
-        List<String> forumTags3 = Arrays.asList("help3", "fix3");
-        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .links(links)
-                        .languages(languages)
-                        .featured(true)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .forumTags(forumTags2)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .forumTags(forumTags3)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .forumTags(forumTags4)
-                        .featured(true)
-                        .languages(fourthlanguages)
-                        .build();
+        List<ProjectCreateDTO> projects = projectCreator(4);
+        projects.get(0).setFeatured(true);
+        projects.get(0).setLanguages(languages);
+        projects.get(1).setTitle("Not Start Project");
+        projects.get(1).setLanguages(secondLanguages);
+        projects.get(2).setLanguages(thirdLanguages);
+        projects.get(3).setFeatured(true);
+        projects.get(3).setLanguages(fourthlanguages);
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
@@ -1207,7 +1052,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(0)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1216,7 +1061,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(1)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1224,7 +1069,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(2)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1233,7 +1078,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(3)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1250,72 +1095,29 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(1, projects.length);
+        Project[] newProjects = objectMapper.readValue(contentAsString, Project[].class);
+        assertEquals(1, newProjects.length);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test027_ProjectControllerSuccessfulMultiFilterSearchWithInsensitiveCase()
+    void Test028_ProjectControllerSuccessfulMultiFilterSearchWithInsensitiveCase()
             throws Exception {
         userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> secondLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> thirdLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> fourthLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
+
         List<String> languages = Arrays.asList("Java", "C");
         List<String> secondLanguages = Arrays.asList("Java", "Python");
         List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
         List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-        List<String> forumTags2 = Arrays.asList("help2", "fix2");
-        List<String> forumTags3 = Arrays.asList("help3", "fix3");
-        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .links(links)
-                        .languages(languages)
-                        .featured(true)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .forumTags(forumTags2)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .forumTags(forumTags3)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .forumTags(forumTags4)
-                        .featured(true)
-                        .languages(fourthlanguages)
-                        .build();
+        List<ProjectCreateDTO> projects = projectCreator(4);
+        projects.get(0).setFeatured(true);
+        projects.get(0).setLanguages(languages);
+        projects.get(1).setTitle("Not Start Project");
+        projects.get(1).setLanguages(secondLanguages);
+        projects.get(2).setLanguages(thirdLanguages);
+        projects.get(3).setFeatured(true);
+        projects.get(3).setLanguages(fourthlanguages);
 
         ProjectSearchDTO projectToSearch =
                 ProjectSearchDTO.builder()
@@ -1326,7 +1128,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(0)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1335,7 +1137,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(1)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1343,7 +1145,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(2)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1352,7 +1154,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projects.get(3)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1369,26 +1171,16 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        Project[] newprojects = objectMapper.readValue(contentAsString, Project[].class);
 
-        assertEquals(0, projects.length);
+        assertEquals(0, newprojects.length);
     }
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test0028_ProjectControllerWhenReceivesValidCreateDiscussionDTOShouldReturnStatusCreated()
+    void Test029_ProjectControllerWhenReceivesValidCreateDiscussionDTOShouldReturnStatusCreated()
             throws Exception {
         userRepository.save(owner);
-        String discussionTitle = "Discussion title";
-        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
-
-        DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder()
-                        .forumTags(discussionTags)
-                        .title(discussionTitle)
-                        .body(
-                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
-                        .build();
 
         String contentAsString =
                 mvc.perform(
@@ -1444,19 +1236,9 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test0029_ProjectControllerWhenReceivesNotValidProjectWhileCreatingDiscussionShouldReturnBadRequestStatus()
+            Test030_ProjectControllerWhenReceivesNotValidProjectWhileCreatingDiscussionShouldReturnBadRequestStatus()
                     throws Exception {
         userRepository.save(owner);
-        String discussionTitle = "Discussion title";
-        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
-
-        DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder()
-                        .forumTags(discussionTags)
-                        .title(discussionTitle)
-                        .body(
-                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
-                        .build();
         String contentAsString =
                 mvc.perform(
                                 MockMvcRequestBuilders.post(baseUrl)
@@ -1497,19 +1279,9 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test0030_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNonExistingProjectShouldReturnBadStatus()
+            Test031_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNonExistingProjectShouldReturnBadStatus()
                     throws Exception {
         userRepository.save(owner);
-        String discussionTitle = "Discussion title";
-        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
-
-        DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder()
-                        .forumTags(discussionTags)
-                        .title(discussionTitle)
-                        .body(
-                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
-                        .build();
         String contentAsString =
                 mvc.perform(
                                 MockMvcRequestBuilders.post(baseUrl)
@@ -1574,20 +1346,10 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test0031_ProjectControllerWhenReceivesSecondValidCreateDiscussionDTOShouldReturnStatusCreated()
+            Test032_ProjectControllerWhenReceivesSecondValidCreateDiscussionDTOShouldReturnStatusCreated()
                     throws Exception {
         userRepository.save(owner);
 
-        String discussionTitle = "Discussion title";
-        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
-
-        DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder()
-                        .forumTags(discussionTags)
-                        .body(
-                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
-                        .title(discussionTitle)
-                        .build();
         DiscussionCreateDTO secondDiscussionCreateDTO =
                 DiscussionCreateDTO.builder()
                         .forumTags(discussionTags)
@@ -1672,19 +1434,9 @@ class ProjectControllerTest extends AbstractTest {
     @Test
     @WithMockUser(username = "some@gmail.com")
     void
-            Test0032_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNotExistingProjectShouldReturnBadRequest()
+            Test033_ProjectControllerWhenReceivesValidCreateDiscussionDTOButNotExistingProjectShouldReturnBadRequest()
                     throws Exception {
         userRepository.save(owner);
-        String discussionTitle = "Discussion title";
-        List<String> discussionTags = Arrays.asList("desctag1", "desctag2");
-
-        DiscussionCreateDTO discussionCreateDTO =
-                DiscussionCreateDTO.builder()
-                        .forumTags(discussionTags)
-                        .title(discussionTitle)
-                        .body(
-                                "aaaaaaaaaaaaaakakakakakkakakakakakakakakakakakakkakakakakakakakakakaka")
-                        .build();
 
         String contentAsString =
                 mvc.perform(
@@ -1725,73 +1477,18 @@ class ProjectControllerTest extends AbstractTest {
 
     @Test
     @WithMockUser(username = "some@gmail.com")
-    void Test030_ProjectControllerSuccessfulMultiFilterSearchWithInsensitiveCase()
+    void Test034_ProjectControllerSuccessfulMultiFilterSearchWithInsensitiveCase()
             throws Exception {
         userRepository.save(owner);
-        String title = "Project title";
-        String description = "Testing exception for existing title";
-        List<String> links = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> secondLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> thirdLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> fourthLinks = Arrays.asList("http://link.com", "http://link2.com");
-        List<String> tags = Arrays.asList("tag1", "tag2");
-        List<String> secondTags = Arrays.asList("tag3", "tag4");
-        List<String> thirdTags = Arrays.asList("tag5", "tag6");
-        List<String> fourthTags = Arrays.asList("tag7", "tag8");
-        List<String> languages = Arrays.asList("Java", "C");
-        List<String> secondLanguages = Arrays.asList("Java", "Python");
-        List<String> thirdLanguages = Arrays.asList("JavaScript", "C#");
-        List<String> fourthlanguages = Arrays.asList("TypeScript", "C");
-        List<String> forumTags = Arrays.asList("help", "fix");
-        List<String> forumTags2 = Arrays.asList("help2", "fix2");
-        List<String> forumTags3 = Arrays.asList("help3", "fix3");
-        List<String> forumTags4 = Arrays.asList("help4", "fix4");
 
-        ProjectCreateDTO firstProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title(title)
-                        .description(description)
-                        .tags(tags)
-                        .forumTags(forumTags)
-                        .links(links)
-                        .languages(languages)
-                        .featured(true)
-                        .build();
-        ProjectCreateDTO secondProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Not Start Project")
-                        .description(description)
-                        .links(secondLinks)
-                        .tags(secondTags)
-                        .forumTags(forumTags2)
-                        .languages(secondLanguages)
-                        .build();
-        ProjectCreateDTO thirdProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project2 Title")
-                        .description(description)
-                        .links(thirdLinks)
-                        .tags(thirdTags)
-                        .forumTags(forumTags3)
-                        .languages(thirdLanguages)
-                        .build();
-        ProjectCreateDTO fourthProjectToCreate =
-                ProjectCreateDTO.builder()
-                        .title("Project3 Title")
-                        .description(description)
-                        .links(fourthLinks)
-                        .tags(fourthTags)
-                        .forumTags(forumTags4)
-                        .featured(true)
-                        .languages(fourthlanguages)
-                        .build();
-
+        List<ProjectCreateDTO> projectCreateDTOS = projectCreator(4);
+        projectCreateDTOS.get(1).setTitle("Not Start Project");
         ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().title("nOT").build();
 
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projectCreateDTOS.get(0)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1800,7 +1497,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projectCreateDTOS.get(1)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1808,7 +1505,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(thirdProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projectCreateDTOS.get(2)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1817,7 +1514,7 @@ class ProjectControllerTest extends AbstractTest {
         mvc.perform(
                         MockMvcRequestBuilders.post(baseUrl)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(fourthProjectToCreate))
+                                .content(objectMapper.writeValueAsString(projectCreateDTOS.get(3)))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn()
@@ -1839,5 +1536,12 @@ class ProjectControllerTest extends AbstractTest {
         assertEquals(1, projects.length);
         assertEquals("Not Start Project", projects[0].getTitle());
     }
+
+    @Test
+    void Test_ProjectCreator() {
+        List<ProjectCreateDTO> projects = projectCreator(3);
+
+        assertEquals(3, projects.size());
+    }
 }
-// I was able to reduce the amount of lines from 2200+ to 1840
+// I was able to reduce the amount of lines from 2200+ to 1545
