@@ -1,35 +1,47 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.a2.backend.entity.Comment;
-import com.a2.backend.entity.Discussion;
+import com.a2.backend.constants.NotificationType;
+import com.a2.backend.entity.*;
 import com.a2.backend.exception.DiscussionNotFoundException;
 import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.exception.UserIsNotOwnerException;
 import com.a2.backend.model.CommentCreateDTO;
 import com.a2.backend.model.CommentUpdateDTO;
+import com.a2.backend.model.DiscussionCreateDTO;
+import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.DiscussionService;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import com.a2.backend.service.UserService;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
-    @Autowired DiscussionService discussionService;
+    @Autowired
+    DiscussionService discussionService;
 
     // Use projectRepository to find discussions
-    @Autowired ProjectRepository projectRepository;
+    @Autowired
+    ProjectRepository projectRepository;
+
+    @Autowired
+    NotificationRepository notificationRepository;
+
+    @Autowired
+    UserService userService;
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
     void
-            Test001_DiscussionServiceWithValidCommentCreateDTOWhenAddingCommentShouldUpdateCommentListOnDiscussion() {
+    Test001_DiscussionServiceWithValidCommentCreateDTOWhenAddingCommentShouldUpdateCommentListOnDiscussion() {
         Discussion discussion =
                 projectRepository.findByTitle("TensorFlow").get().getDiscussions().get(0);
 
@@ -337,5 +349,126 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
         assertEquals("Or maybe just a reboot first...", comment.getComment());
         discussionService.updateComment(comment.getId(), commentUpdateDTO);
         assertEquals("updated comment", comment.getComment());
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void
+    Test022_DiscussionServiceWhenCreatingDiscussionThenOtherCollaboratorsAndOwnerAreNotified() {
+        val loggedUser = userService.getLoggedUser();
+
+        DiscussionCreateDTO discussionCreateDTO =
+                DiscussionCreateDTO.builder()
+                        .title("title")
+                        .body("this is a discussion body")
+                        .forumTags(List.of("help", "test"))
+                        .build();
+
+        val project = projectRepository.findByTitle("Node.js").get();
+
+        val discussion = discussionService.createDiscussion(project.getId(), discussionCreateDTO);
+
+        val notificationsForOwner =
+                notificationRepository.findAllByUsersContaining(project.getOwner());
+        assertEquals(1, notificationsForOwner.size());
+
+        User peltevis =
+                project.getCollaborators().stream()
+                        .filter(u -> u.getNickname().equals("Peltevis"))
+                        .collect(Collectors.toList())
+                        .get(0);
+        val notificationsForCollaborator =
+                notificationRepository.findAllByUsersContaining(peltevis);
+        assertEquals(1, notificationsForCollaborator.size());
+
+        val notificationsForDiscussionCreator =
+                notificationRepository.findAllByUsersContaining(loggedUser);
+        assertTrue(notificationsForDiscussionCreator.isEmpty());
+
+        val notification = notificationsForCollaborator.get(0);
+        assertEquals(notification, notificationsForOwner.get(0));
+
+        assertNotNull(notification.getId());
+        assertTrue(notification.getUsers().contains(project.getOwner()));
+        assertTrue(notification.getUsers().contains(peltevis));
+        assertFalse(notification.getUsers().contains(loggedUser));
+        assertEquals(NotificationType.DISCUSSION, notification.getType());
+        assertEquals(project, notification.getProject());
+        assertEquals(loggedUser, notification.getUser());
+        assertEquals(discussion.getId(), notification.getDiscussion().getId());
+        assertNull(notification.getComment());
+        assertFalse(notification.isSeen());
+    }
+
+    @Test
+    @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
+    void
+    Test023_DiscussionServiceWhenCreatingCommentOnDiscussionThenProjectOwnerAndDiscussionOwnerAreNotified() {
+        User loggedUser = userService.getLoggedUser();
+        Project project = projectRepository.findByTitle("Kubernetes").get();
+        Discussion discussion = project.getDiscussions().get(0);
+
+        discussionService.createComment(
+                discussion.getId(), CommentCreateDTO.builder().comment("test comment").build());
+
+        Comment comment = discussion.getComments().get(discussion.getComments().size() - 1);
+        assertEquals("test comment", comment.getComment());
+        assertEquals(loggedUser, comment.getUser());
+
+        Notification notification =
+                notificationRepository.findAllByUsersContaining(discussion.getOwner()).get(0);
+        assertEquals(
+                notification,
+                notificationRepository.findAllByUsersContaining(project.getOwner()).get(0));
+
+        assertNotNull(notification.getId());
+        assertEquals(NotificationType.COMMENT, notification.getType());
+        assertEquals(project, notification.getProject());
+        assertEquals(loggedUser, notification.getUser());
+        assertEquals(discussion, notification.getDiscussion());
+        assertEquals(comment, notification.getComment());
+        assertFalse(notification.isSeen());
+    }
+
+    @Test
+    @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
+    void
+    Test024_DiscussionServiceWhenCreatingCommentOnDiscussionWhereCommentCreatorIsDiscussionAndProjectOwnerThenNoOneIsNotified() {
+        User loggedUser = userService.getLoggedUser();
+        Project project = projectRepository.findByTitle("Django").get();
+        Discussion discussion = project.getDiscussions().get(0);
+
+        discussionService.createComment(
+                discussion.getId(), CommentCreateDTO.builder().comment("test comment").build());
+
+        List<Notification> notifications =
+                notificationRepository.findAllByUsersContaining(loggedUser);
+
+        assertEquals(loggedUser, project.getOwner());
+        assertEquals(loggedUser, discussion.getOwner());
+        assertTrue(notifications.isEmpty());
+    }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void
+    Test025_DiscussionServiceWhenCreatingDiscussionWhereDiscussionCreatorIsProjectOwnerAndThereAreNoCollaboratorsThenNoOneIsNotified() {
+        User loggedUser = userService.getLoggedUser();
+        Project project = projectRepository.findByTitle("Renovate").get();
+
+        discussionService.createDiscussion(
+                project.getId(),
+                DiscussionCreateDTO.builder()
+                        .title("discussion")
+                        .body("discussion body")
+                        .forumTags(List.of("help"))
+                        .build());
+
+        List<Notification> notifications =
+                notificationRepository.findAllByUsersContaining(loggedUser);
+
+        assertEquals(loggedUser, project.getOwner());
+        assertTrue(project.getCollaborators().isEmpty());
+        assertTrue(notifications.isEmpty());
     }
 }

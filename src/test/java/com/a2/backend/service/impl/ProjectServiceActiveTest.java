@@ -1,32 +1,41 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.a2.backend.constants.NotificationType;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
 import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.exception.NotValidCollaboratorException;
 import com.a2.backend.exception.ProjectNotFoundException;
 import com.a2.backend.model.*;
+import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ProjectServiceActiveTest extends AbstractServiceTest {
 
-    @Autowired private ProjectService projectService;
+    @Autowired
+    private ProjectService projectService;
 
-    @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
 
-    @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
@@ -491,5 +500,67 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         ProjectDTO project = projectService.updateProject(projectUpdateDTO, projectDTO.getId());
 
         assertEquals(description, project.getDescription());
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test026_ProjectServiceWhenCreatingReviewShouldCreateNotificationForReviewedUser() {
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("Geany").build();
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        val collaborator = userRepository.findByNickname("Peltevis");
+
+        ReviewCreateDTO reviewCreateDTO =
+                ReviewCreateDTO.builder()
+                        .collaboratorID(collaborator.get().getId())
+                        .score(5)
+                        .comment("Did a great job")
+                        .build();
+
+        projectService.createReview(project.getId(), reviewCreateDTO);
+
+        val notificationsForUser =
+                notificationRepository.findAllByUsersContaining(collaborator.get());
+
+        assertEquals(1, notificationsForUser.size());
+
+        val notification = notificationsForUser.get(0);
+
+        assertNotNull(notification.getId());
+        assertTrue(notification.getUsers().contains(collaborator.get()));
+        assertEquals(NotificationType.REVIEW, notification.getType());
+        assertEquals(project.getId(), notification.getProject().getId());
+        assertEquals(project.getOwner().getId(), notification.getUser().getId());
+        assertNull(notification.getComment());
+        assertNull(notification.getDiscussion());
+        assertFalse(notification.isSeen());
+    }
+
+    @Test
+    @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
+    void Test027_ProjectServiceWhenValidUserAppliesToProjectThenNotificationIsSentToProjectOwner() {
+        User loggedUser = userService.getLoggedUser();
+
+        ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("GNU/Linux").build();
+        val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
+
+        projectService.applyToProject(project.getId());
+
+        User owner = userRepository.findById(project.getOwner().getId()).get();
+        val notificationsForUser = notificationRepository.findAllByUsersContaining(owner);
+
+        assertEquals(1, notificationsForUser.size());
+
+        val notification = notificationsForUser.get(0);
+
+        assertNotNull(notification.getId());
+        assertTrue(notification.getUsers().contains(owner));
+        assertEquals(NotificationType.APPLICANT, notification.getType());
+        assertEquals(project.getId(), notification.getProject().getId());
+        assertEquals(loggedUser, notification.getUser());
+        assertNull(notification.getComment());
+        assertNull(notification.getDiscussion());
+        assertFalse(notification.isSeen());
     }
 }
