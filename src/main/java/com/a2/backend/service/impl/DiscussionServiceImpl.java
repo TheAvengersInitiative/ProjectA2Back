@@ -1,5 +1,6 @@
 package com.a2.backend.service.impl;
 
+import com.a2.backend.constants.NotificationType;
 import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.Discussion;
 import com.a2.backend.entity.ForumTag;
@@ -8,17 +9,16 @@ import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
-import com.a2.backend.service.CommentService;
-import com.a2.backend.service.DiscussionService;
-import com.a2.backend.service.ForumTagService;
-import com.a2.backend.service.UserService;
+import com.a2.backend.service.*;
+import lombok.val;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import lombok.val;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DiscussionServiceImpl implements DiscussionService {
@@ -28,18 +28,21 @@ public class DiscussionServiceImpl implements DiscussionService {
     private final ForumTagService forumTagService;
     private final UserService userService;
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
     public DiscussionServiceImpl(
             ProjectRepository projectRepository,
             DiscussionRepository discussionRepository,
             ForumTagService forumTagService,
             UserService userService,
-            CommentService commentService) {
+            CommentService commentService,
+            NotificationService notificationService) {
         this.forumTagService = forumTagService;
         this.projectRepository = projectRepository;
         this.userService = userService;
         this.discussionRepository = discussionRepository;
         this.commentService = commentService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -47,7 +50,7 @@ public class DiscussionServiceImpl implements DiscussionService {
     public DiscussionDTO createDiscussion(UUID projectId, DiscussionCreateDTO discussionCreateDTO) {
         User loggedUser = userService.getLoggedUser();
         val project = projectRepository.findById(projectId);
-        if (!project.isPresent()) {
+        if (project.isEmpty()) {
             throw new ProjectNotFoundException("Project not found with that ID");
         }
         if (!project.get().getCollaborators().contains(loggedUser)
@@ -76,6 +79,21 @@ public class DiscussionServiceImpl implements DiscussionService {
             project.get().setDiscussions(discussions);
             Discussion createdDiscussion = discussionRepository.save(discussion);
             projectRepository.save(project.get());
+
+            List<User> toNotify = new ArrayList<>(project.get().getCollaborators());
+            toNotify.remove(loggedUser);
+            if (loggedUser != project.get().getOwner()) toNotify.add(project.get().getOwner());
+            if (!toNotify.isEmpty()) {
+                NotificationCreateDTO notificationCreateDTO =
+                        NotificationCreateDTO.builder()
+                                .type(NotificationType.DISCUSSION)
+                                .discussion(discussion)
+                                .project(project.get())
+                                .user(loggedUser)
+                                .users(toNotify)
+                                .build();
+                notificationService.createNotification(notificationCreateDTO);
+            }
             return createdDiscussion.toDTO();
         }
 
@@ -110,6 +128,27 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         discussion.setComments(comments);
         discussionRepository.save(discussion);
+
+        List<User> toNotify = new ArrayList<>();
+        if (loggedUser != project.getOwner()) toNotify.add(project.getOwner());
+        if (loggedUser != discussion.getOwner() && discussion.getOwner() != project.getOwner())
+            toNotify.add(discussion.getOwner());
+
+        if (!toNotify.isEmpty()) {
+            NotificationCreateDTO notificationCreateDTO =
+                    NotificationCreateDTO.builder()
+                            .type(NotificationType.COMMENT)
+                            .comment(
+                                    discussion
+                                            .getComments()
+                                            .get(discussion.getComments().size() - 1))
+                            .discussion(discussion)
+                            .project(project)
+                            .user(loggedUser)
+                            .users(toNotify)
+                            .build();
+            notificationService.createNotification(notificationCreateDTO);
+        }
 
         return comment.toDTO();
     }

@@ -1,5 +1,6 @@
 package com.a2.backend.service.impl;
 
+import com.a2.backend.constants.NotificationType;
 import com.a2.backend.entity.*;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
@@ -8,14 +9,15 @@ import com.a2.backend.repository.LanguageRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.TagRepository;
 import com.a2.backend.service.*;
+import lombok.val;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
-import lombok.val;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -38,6 +40,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ReviewService reviewService;
 
+    private final NotificationService notificationService;
+
     public ProjectServiceImpl(
             ProjectRepository projectRepository,
             TagService tagService,
@@ -47,7 +51,8 @@ public class ProjectServiceImpl implements ProjectService {
             TagRepository tagRepository,
             ForumTagService forumTagService,
             ForumTagRepository forumTagRepository,
-            ReviewService reviewService) {
+            ReviewService reviewService,
+            NotificationService notificationService) {
         this.projectRepository = projectRepository;
         this.tagService = tagService;
         this.languageService = languageService;
@@ -57,6 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
         this.forumTagService = forumTagService;
         this.forumTagRepository = forumTagRepository;
         this.reviewService = reviewService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -379,6 +385,15 @@ public class ProjectServiceImpl implements ProjectService {
 
         project.setApplicants(applicants);
 
+        NotificationCreateDTO notificationCreateDTO =
+                NotificationCreateDTO.builder()
+                        .type(NotificationType.APPLICANT)
+                        .project(project)
+                        .user(loggedUser)
+                        .users(List.of(project.getOwner()))
+                        .build();
+        notificationService.createNotification(notificationCreateDTO);
+
         return projectRepository.save(project).toDTO();
     }
 
@@ -517,6 +532,15 @@ public class ProjectServiceImpl implements ProjectService {
         val reviews = project.getReviews();
         val review = reviewService.createReview(reviewCreateDTO);
         reviews.add(review);
+
+        NotificationCreateDTO notificationCreateDTO =
+                NotificationCreateDTO.builder()
+                        .type(NotificationType.REVIEW)
+                        .project(project)
+                        .user(loggedUser)
+                        .users(List.of(review.getCollaborator()))
+                        .build();
+        notificationService.createNotification(notificationCreateDTO);
 
         project.setReviews(reviews);
         projectRepository.save(project);
