@@ -10,15 +10,14 @@ import com.a2.backend.model.*;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.*;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class DiscussionServiceImpl implements DiscussionService {
@@ -84,15 +83,17 @@ public class DiscussionServiceImpl implements DiscussionService {
             toNotify.remove(loggedUser);
             if (loggedUser != project.get().getOwner()) toNotify.add(project.get().getOwner());
             if (!toNotify.isEmpty()) {
-                NotificationCreateDTO notificationCreateDTO =
-                        NotificationCreateDTO.builder()
-                                .type(NotificationType.DISCUSSION)
-                                .discussion(discussion)
-                                .project(project.get())
-                                .user(loggedUser)
-                                .users(toNotify)
-                                .build();
-                notificationService.createNotification(notificationCreateDTO);
+                for (User userToNotify : toNotify) {
+                    NotificationCreateDTO notificationCreateDTO =
+                            NotificationCreateDTO.builder()
+                                    .type(NotificationType.DISCUSSION)
+                                    .discussion(discussion)
+                                    .project(project.get())
+                                    .user(loggedUser)
+                                    .userToNotify(userToNotify)
+                                    .build();
+                    notificationService.createNotification(notificationCreateDTO);
+                }
             }
             return createdDiscussion.toDTO();
         }
@@ -135,19 +136,21 @@ public class DiscussionServiceImpl implements DiscussionService {
             toNotify.add(discussion.getOwner());
 
         if (!toNotify.isEmpty()) {
-            NotificationCreateDTO notificationCreateDTO =
-                    NotificationCreateDTO.builder()
-                            .type(NotificationType.COMMENT)
-                            .comment(
-                                    discussion
-                                            .getComments()
-                                            .get(discussion.getComments().size() - 1))
-                            .discussion(discussion)
-                            .project(project)
-                            .user(loggedUser)
-                            .users(toNotify)
-                            .build();
-            notificationService.createNotification(notificationCreateDTO);
+            for (User userToNotify : toNotify) {
+                NotificationCreateDTO notificationCreateDTO =
+                        NotificationCreateDTO.builder()
+                                .type(NotificationType.COMMENT)
+                                .comment(
+                                        discussion
+                                                .getComments()
+                                                .get(discussion.getComments().size() - 1))
+                                .discussion(discussion)
+                                .project(project)
+                                .user(loggedUser)
+                                .userToNotify(userToNotify)
+                                .build();
+                notificationService.createNotification(notificationCreateDTO);
+            }
         }
 
         return comment.toDTO();

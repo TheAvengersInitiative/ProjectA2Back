@@ -5,11 +5,8 @@ import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.Discussion;
 import com.a2.backend.entity.Project;
 import com.a2.backend.entity.User;
-import lombok.*;
-
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import lombok.*;
 
 @Getter
 @Setter
@@ -19,11 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 public class NotificationCreateDTO {
 
-    @NotNull
-    private NotificationType type;
+    @NotNull private NotificationType type;
 
-    @NotEmpty
-    private List<User> users;
+    @NotNull private User userToNotify;
 
     private Project project;
 

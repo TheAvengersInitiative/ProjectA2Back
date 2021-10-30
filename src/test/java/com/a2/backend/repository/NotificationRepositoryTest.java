@@ -1,8 +1,14 @@
 package com.a2.backend.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.a2.backend.BackendApplication;
 import com.a2.backend.constants.NotificationType;
 import com.a2.backend.entity.*;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +19,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @AutoConfigureWebClient
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
@@ -27,14 +27,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 public class NotificationRepositoryTest {
 
-    @Autowired
-    UserRepository userRepository;
+    @Autowired UserRepository userRepository;
 
-    @Autowired
-    ProjectRepository projectRepository;
+    @Autowired ProjectRepository projectRepository;
 
-    @Autowired
-    NotificationRepository notificationRepository;
+    @Autowired NotificationRepository notificationRepository;
 
     User user =
             User.builder()
@@ -73,9 +70,10 @@ public class NotificationRepositoryTest {
     Notification notification =
             Notification.builder()
                     .user(anotherUser)
-                    .users(List.of(user))
+                    .userToNotify(user)
                     .project(project)
                     .type(NotificationType.REVIEW)
+                    .date(LocalDateTime.now())
                     .build();
 
     @Test
@@ -88,10 +86,10 @@ public class NotificationRepositoryTest {
 
         Notification savedNotification = notificationRepository.save(notification);
 
-        assertEquals(1, notificationRepository.findAllByUsersContaining(user).size());
+        assertEquals(1, notificationRepository.findAllByUserToNotify(user).size());
 
         assertEquals(NotificationType.REVIEW, savedNotification.getType());
-        assertEquals(user.getNickname(), savedNotification.getUsers().get(0).getNickname());
+        assertEquals(user.getNickname(), savedNotification.getUserToNotify().getNickname());
         assertEquals(anotherUser.getNickname(), savedNotification.getUser().getNickname());
         assertEquals(project.getTitle(), savedNotification.getProject().getTitle());
     }

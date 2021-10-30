@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.constants.NotificationType;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.InvalidProjectCollaborationApplicationException;
@@ -11,31 +13,24 @@ import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.ProjectService;
 import com.a2.backend.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class ProjectServiceActiveTest extends AbstractServiceTest {
 
-    @Autowired
-    private ProjectService projectService;
+    @Autowired private ProjectService projectService;
 
-    @Autowired
-    private UserService userService;
+    @Autowired private UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private NotificationRepository notificationRepository;
+    @Autowired private NotificationRepository notificationRepository;
 
     @Test
     @WithMockUser(username = "fabrizio.disanto@ing.austral.edu.ar")
@@ -520,15 +515,14 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
 
         projectService.createReview(project.getId(), reviewCreateDTO);
 
-        val notificationsForUser =
-                notificationRepository.findAllByUsersContaining(collaborator.get());
+        val notificationsForUser = notificationRepository.findAllByUserToNotify(collaborator.get());
 
-        assertEquals(1, notificationsForUser.size());
+        assertEquals(4, notificationsForUser.size());
 
-        val notification = notificationsForUser.get(0);
+        val notification = notificationsForUser.get(notificationsForUser.size() - 1);
 
         assertNotNull(notification.getId());
-        assertTrue(notification.getUsers().contains(collaborator.get()));
+        assertEquals(collaborator.get(), notification.getUserToNotify());
         assertEquals(NotificationType.REVIEW, notification.getType());
         assertEquals(project.getId(), notification.getProject().getId());
         assertEquals(project.getOwner().getId(), notification.getUser().getId());
@@ -545,17 +539,21 @@ public class ProjectServiceActiveTest extends AbstractServiceTest {
         ProjectSearchDTO projectSearchDTO = ProjectSearchDTO.builder().title("GNU/Linux").build();
         val project = projectService.searchProjectsByFilter(projectSearchDTO).get(0);
 
+        User owner = userRepository.findById(project.getOwner().getId()).get();
+        val notificationsForUserBeforeApplication =
+                notificationRepository.findAllByUserToNotify(owner);
+        assertEquals(3, notificationsForUserBeforeApplication.size());
+
         projectService.applyToProject(project.getId());
 
-        User owner = userRepository.findById(project.getOwner().getId()).get();
-        val notificationsForUser = notificationRepository.findAllByUsersContaining(owner);
+        val notificationsForUser = notificationRepository.findAllByUserToNotify(owner);
 
-        assertEquals(1, notificationsForUser.size());
+        assertEquals(4, notificationsForUser.size());
 
-        val notification = notificationsForUser.get(0);
+        val notification = notificationsForUser.get(notificationsForUser.size() - 1);
 
         assertNotNull(notification.getId());
-        assertTrue(notification.getUsers().contains(owner));
+        assertEquals(owner, notification.getUserToNotify());
         assertEquals(NotificationType.APPLICANT, notification.getType());
         assertEquals(project.getId(), notification.getProject().getId());
         assertEquals(loggedUser, notification.getUser());

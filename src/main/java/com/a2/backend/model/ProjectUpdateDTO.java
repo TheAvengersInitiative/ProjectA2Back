@@ -1,13 +1,12 @@
 package com.a2.backend.model;
 
-import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
-
+import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.List;
+import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 
 @Getter
 @Setter
@@ -51,11 +50,11 @@ public class ProjectUpdateDTO {
     @Size(min = 1, max = 5, message = "Number of ForumTags must be between 1 and 5")
     @UniqueElements
     private List<
-            @Pattern(regexp = "[a-zA-Z0-9 ]+")
-            @Size(
-                    min = 1,
-                    max = 24,
-                    message = "Tag name must be between 1 and 24 characters")
+                    @Pattern(regexp = "[a-zA-Z0-9 ]+")
+                    @Size(
+                            min = 1,
+                            max = 24,
+                            message = "Tag name must be between 1 and 24 characters")
                     String>
             forumTags;
 
