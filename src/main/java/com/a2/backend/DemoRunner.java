@@ -1,6 +1,7 @@
 package com.a2.backend;
 
 import com.a2.backend.annotation.Generated;
+import com.a2.backend.constants.NotificationType;
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.*;
 import com.a2.backend.repository.*;
@@ -30,6 +31,7 @@ public class DemoRunner implements CommandLineRunner {
     @Autowired private TagRepository tagRepository;
     @Autowired private ForumTagRepository forumTagRepository;
     @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private NotificationRepository notificationRepository;
 
     public DemoRunner() {}
 
@@ -50,6 +52,7 @@ public class DemoRunner implements CommandLineRunner {
         loadUsers();
         loadForumTags();
         loadProjects();
+        loadNotifications();
         logger.info("Created demo data");
     }
 
@@ -63,6 +66,10 @@ public class DemoRunner implements CommandLineRunner {
 
     public void setProjectRepository(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
+    }
+
+    public void setNotificationRepository(NotificationRepository notificationRepository) {
+        this.notificationRepository = notificationRepository;
     }
 
     private void loadUsers() {
@@ -540,6 +547,151 @@ public class DemoRunner implements CommandLineRunner {
         forumTagRepository.save(helpPlease);
         forumTagRepository.save(softwareLib);
         forumTagRepository.save(great);
+    }
+
+    private void loadNotifications() {
+        User peltevis = userRepository.findByNickname("Peltevis").get();
+        User fabriDS23 = userRepository.findByNickname("FabriDS23").get();
+        User ropa1998 = userRepository.findByNickname("ropa1998").get();
+        User franz = userRepository.findByNickname("Franz").get();
+
+        Project tensorFlow = projectRepository.findByTitle("TensorFlow").get();
+        Project django = projectRepository.findByTitle("Django").get();
+        Project node = projectRepository.findByTitle("Node.js").get();
+        Project kubernetes = projectRepository.findByTitle("Kubernetes").get();
+
+        // applicant notifications
+        Notification notif1 =
+                Notification.builder()
+                        .type(NotificationType.APPLICANT)
+                        .project(tensorFlow)
+                        .user(peltevis)
+                        .userToNotify(ropa1998)
+                        .date(LocalDateTime.now())
+                        .seen(true)
+                        .build();
+
+        Notification notif2 =
+                Notification.builder()
+                        .type(NotificationType.APPLICANT)
+                        .project(django)
+                        .user(fabriDS23)
+                        .userToNotify(peltevis)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(true)
+                        .build();
+
+        // review notifications
+        Notification notif3 =
+                Notification.builder()
+                        .type(NotificationType.REVIEW)
+                        .project(django)
+                        .user(peltevis)
+                        .userToNotify(ropa1998)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(false)
+                        .build();
+
+        Notification notif4 =
+                Notification.builder()
+                        .type(NotificationType.REVIEW)
+                        .project(node)
+                        .user(fabriDS23)
+                        .userToNotify(ropa1998)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(false)
+                        .build();
+
+        Notification notif5 =
+                Notification.builder()
+                        .type(NotificationType.REVIEW)
+                        .project(node)
+                        .user(fabriDS23)
+                        .userToNotify(peltevis)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(false)
+                        .build();
+
+        // discussion notifications
+        Notification notif6 =
+                Notification.builder()
+                        .type(NotificationType.DISCUSSION)
+                        .project(django)
+                        .discussion(django.getDiscussions().get(0))
+                        .user(peltevis)
+                        .userToNotify(ropa1998)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(false)
+                        .build();
+
+        Notification notif7 =
+                Notification.builder()
+                        .type(NotificationType.DISCUSSION)
+                        .project(kubernetes)
+                        .discussion(kubernetes.getDiscussions().get(0))
+                        .user(franz)
+                        .userToNotify(peltevis)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(false)
+                        .build();
+
+        Notification notif8 =
+                Notification.builder()
+                        .type(NotificationType.DISCUSSION)
+                        .project(kubernetes)
+                        .discussion(kubernetes.getDiscussions().get(0))
+                        .user(franz)
+                        .userToNotify(fabriDS23)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(true)
+                        .build();
+        Notification notif9 =
+                Notification.builder()
+                        .type(NotificationType.DISCUSSION)
+                        .project(kubernetes)
+                        .discussion(kubernetes.getDiscussions().get(0))
+                        .user(franz)
+                        .userToNotify(ropa1998)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(false)
+                        .build();
+
+        // comments notifications
+        Notification notif10 =
+                Notification.builder()
+                        .type(NotificationType.COMMENT)
+                        .project(kubernetes)
+                        .discussion(kubernetes.getDiscussions().get(0))
+                        .comment(kubernetes.getDiscussions().get(0).getComments().get(0))
+                        .user(franz)
+                        .userToNotify(ropa1998)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(false)
+                        .build();
+
+        Notification notif11 =
+                Notification.builder()
+                        .type(NotificationType.COMMENT)
+                        .project(kubernetes)
+                        .discussion(kubernetes.getDiscussions().get(0))
+                        .comment(kubernetes.getDiscussions().get(0).getComments().get(0))
+                        .user(ropa1998)
+                        .userToNotify(franz)
+                        .date(LocalDateTime.now().plusNanos(3))
+                        .seen(false)
+                        .build();
+
+        notificationRepository.save(notif1);
+        notificationRepository.save(notif2);
+        notificationRepository.save(notif3);
+        notificationRepository.save(notif4);
+        notificationRepository.save(notif5);
+        notificationRepository.save(notif6);
+        notificationRepository.save(notif7);
+        notificationRepository.save(notif8);
+        notificationRepository.save(notif9);
+        notificationRepository.save(notif10);
+        notificationRepository.save(notif11);
     }
 
     @SafeVarargs

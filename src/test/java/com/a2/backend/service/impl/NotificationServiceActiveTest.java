@@ -1,8 +1,11 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.constants.NotificationType;
 import com.a2.backend.model.NotificationCreateDTO;
 import com.a2.backend.model.NotificationDTO;
+import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.NotificationService;
 import com.a2.backend.service.UserService;
@@ -11,20 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class NotificationServiceActiveTest extends AbstractServiceTest {
 
-    @Autowired
-    NotificationService notificationService;
+    @Autowired NotificationService notificationService;
 
-    @Autowired
-    UserService userService;
+    @Autowired UserService userService;
 
-    @Autowired
-    ProjectRepository projectRepository;
+    @Autowired ProjectRepository projectRepository;
+
+    @Autowired NotificationRepository notificationRepository;
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
@@ -33,7 +31,7 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
 
         NotificationCreateDTO notificationCreateDTO =
                 NotificationCreateDTO.builder()
-                        .users(List.of(userService.getLoggedUser()))
+                        .userToNotify(userService.getLoggedUser())
                         .type(NotificationType.REVIEW)
                         .project(project)
                         .user(project.getOwner())
@@ -62,7 +60,7 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
     void Test002_NotificationServiceWhenCreatingNotificationWithAllowedNullFieldsThenItIsCreated() {
         NotificationCreateDTO notificationCreateDTO =
                 NotificationCreateDTO.builder()
-                        .users(List.of(userService.getLoggedUser()))
+                        .userToNotify(userService.getLoggedUser())
                         .type(NotificationType.REVIEW)
                         .build();
 
@@ -76,5 +74,14 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
         assertNull(notification.getComment());
         assertNull(notification.getDiscussion());
         assertFalse(notification.isSeen());
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test003_NotificationServiceShouldReturnAllLoggedUsersNotificationsOrderedByDate() {
+        val notifications = notificationService.getNotificationsOfLoggedUser();
+        assertEquals(3, notifications.size());
+        assertTrue(notifications.get(0).getDate().isAfter(notifications.get(1).getDate()));
+        assertTrue(notifications.get(1).getDate().isAfter(notifications.get(2).getDate()));
     }
 }
