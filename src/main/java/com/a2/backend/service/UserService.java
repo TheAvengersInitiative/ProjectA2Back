@@ -37,4 +37,7 @@ public interface UserService {
     User updateReputation(UUID id);
 
     List<ReviewDTO> getUserReviews(UUID id);
+
+    boolean switchEmailNotificationPreferences(
+            NotificationUpdatePreferencDTO notificationUpdatePreferencDTO);
 }

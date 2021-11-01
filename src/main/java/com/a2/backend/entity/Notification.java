@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.*;
 
+
 @Entity
 @Getter
 @Setter

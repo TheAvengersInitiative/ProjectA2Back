@@ -680,4 +680,6 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
 
         assertEquals(1, projectRepository.findByTitle("Kubernetes").get().getDiscussions().size());
     }
+
+
 }

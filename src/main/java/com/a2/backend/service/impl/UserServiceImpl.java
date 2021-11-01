@@ -357,4 +357,13 @@ public class UserServiceImpl implements UserService {
 
         return reviews;
     }
+
+    @Override
+    public boolean switchEmailNotificationPreferences(
+            NotificationUpdatePreferencDTO notificationUpdatePreferencDTO) {
+        User loggedUser = getLoggedUser();
+        loggedUser.setAllowsNotifications(notificationUpdatePreferencDTO.isAllowsNotifications());
+        userRepository.save(loggedUser);
+        return loggedUser.isAllowsNotifications();
+    }
 }

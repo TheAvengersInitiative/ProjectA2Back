@@ -59,6 +59,8 @@ public class User {
 
     @Builder.Default boolean isActive = false;
 
+    @Builder.Default boolean allowsNotifications = true;
+
     public ProjectUserDTO toDTO() {
         return ProjectUserDTO.builder().id(id).nickname(nickname).email(email).build();
     }

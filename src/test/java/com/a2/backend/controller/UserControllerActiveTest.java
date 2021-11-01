@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.a2.backend.constants.PrivacyConstant;
 import com.a2.backend.entity.User;
+import com.a2.backend.model.NotificationUpdatePreferencDTO;
 import com.a2.backend.model.ReviewDTO;
 import com.a2.backend.model.UserPrivacyDTO;
 import com.a2.backend.model.UserProfileDTO;
@@ -183,5 +184,63 @@ public class UserControllerActiveTest extends AbstractControllerTest {
                         .getContentAsString();
 
         assert (Objects.requireNonNull(errorMessage).contains("User with id"));
+    }
+
+    @Test
+    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    void Test006_UserControllerWhenModifyingNotificationPreferencesStatusOkIsRecieved()
+            throws Exception {
+        assertTrue(
+                userRepository
+                        .findByEmail("rodrigo.pazos@ing.austral.edu.ar")
+                        .get()
+                        .isAllowsNotifications());
+        NotificationUpdatePreferencDTO notificationUpdatePreferencDTO =
+                NotificationUpdatePreferencDTO.builder().allowsNotifications(false).build();
+        NotificationUpdatePreferencDTO notificationUpdatedPreferencDTO =
+                NotificationUpdatePreferencDTO.builder().allowsNotifications(true).build();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl + "/notification-preferences")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        notificationUpdatePreferencDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        boolean updatedValue = objectMapper.readValue(contentAsString, Boolean.class);
+
+        assertTrue(!updatedValue);
+        assertTrue(
+                !userRepository
+                        .findByEmail("rodrigo.pazos@ing.austral.edu.ar")
+                        .get()
+                        .isAllowsNotifications());
+
+        String updatedContentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl + "/notification-preferences")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(
+                                                objectMapper.writeValueAsString(
+                                                        notificationUpdatedPreferencDTO))
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        boolean newUpdatedValue = objectMapper.readValue(updatedContentAsString, Boolean.class);
+        assertTrue(newUpdatedValue);
+        assertTrue(
+                userRepository
+                        .findByEmail("rodrigo.pazos@ing.austral.edu.ar")
+                        .get()
+                        .isAllowsNotifications());
     }
 }

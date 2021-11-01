@@ -9,6 +9,7 @@ import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.NotificationService;
 import com.a2.backend.service.UserService;
+import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
