@@ -33,4 +33,11 @@ public class NotificationController {
         val notification = notificationService.markNotificationAsSeen(id);
         return ResponseEntity.status(HttpStatus.OK).body(notification);
     }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @GetMapping("/first-five")
+    public ResponseEntity<?> getFirstFiveNotificationsOfLoggedUser() {
+        val userNotifications = notificationService.getFirstFiveNotificationsOfLoggedUser();
+        return ResponseEntity.status(HttpStatus.OK).body(userNotifications);
+    }
 }

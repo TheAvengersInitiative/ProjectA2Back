@@ -126,4 +126,22 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
                 InvalidUserException.class,
                 () -> notificationService.markNotificationAsSeen(notifications.get(0).getId()));
     }
+
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test007_NotificationServiceShouldReturnFirstFiveLoggedUsersNotificationsOrderedByDate() {
+        val notifications = notificationService.getFirstFiveNotificationsOfLoggedUser();
+        assertEquals(5, notifications.size());
+        assertTrue(notifications.get(0).getDate().isAfter(notifications.get(1).getDate()));
+        assertTrue(notifications.get(1).getDate().isAfter(notifications.get(2).getDate()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test008_NotificationServiceShouldReturnAllLoggedUsersNotificationsOrderedByDate() {
+        val notifications = notificationService.getFirstFiveNotificationsOfLoggedUser();
+        assertEquals(3, notifications.size());
+        assertTrue(notifications.get(0).getDate().isAfter(notifications.get(1).getDate()));
+        assertTrue(notifications.get(1).getDate().isAfter(notifications.get(2).getDate()));
+    }
 }
