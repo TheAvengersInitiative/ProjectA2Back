@@ -75,4 +75,9 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setSeen(true);
         return notificationRepository.save(notification).toDTO();
     }
+
+    @Override
+    public List<NotificationDTO> getFirstFiveNotificationsOfLoggedUser() {
+        return getNotificationsOfLoggedUser().subList(0, 5);
+    }
 }
