@@ -75,7 +75,7 @@ public class NotificationControllerActiveTest extends AbstractControllerTest {
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
-    void Test002_NotificationControllerShouldReturnLoggedUserFirstFiveNotificationsAndHttpOkTest()
+    void Test003_NotificationControllerShouldReturnLoggedUserFirstFiveNotificationsAndHttpOkTest()
             throws Exception {
 
         String contentAsString =
@@ -95,7 +95,7 @@ public class NotificationControllerActiveTest extends AbstractControllerTest {
 
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test003_NotificationControllerShouldReturnLoggedUserAllNotificationsAndHttpOkTest()
+    void Test004_NotificationControllerShouldReturnLoggedUserAllNotificationsAndHttpOkTest()
             throws Exception {
 
         String contentAsString =

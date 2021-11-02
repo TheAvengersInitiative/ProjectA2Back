@@ -129,7 +129,7 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
-    void Test004_NotificationServiceShouldReturnFirstFiveLoggedUsersNotificationsOrderedByDate() {
+    void Test007_NotificationServiceShouldReturnFirstFiveLoggedUsersNotificationsOrderedByDate() {
         val notifications = notificationService.getFirstFiveNotificationsOfLoggedUser();
         assertEquals(5, notifications.size());
         assertTrue(notifications.get(0).getDate().isAfter(notifications.get(1).getDate()));
@@ -138,7 +138,7 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
 
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test005_NotificationServiceShouldReturnAllLoggedUsersNotificationsOrderedByDate() {
+    void Test008_NotificationServiceShouldReturnAllLoggedUsersNotificationsOrderedByDate() {
         val notifications = notificationService.getFirstFiveNotificationsOfLoggedUser();
         assertEquals(3, notifications.size());
         assertTrue(notifications.get(0).getDate().isAfter(notifications.get(1).getDate()));
