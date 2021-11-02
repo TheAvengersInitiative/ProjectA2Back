@@ -1,18 +1,11 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.a2.backend.entity.Comment;
 import com.a2.backend.entity.Discussion;
 import com.a2.backend.model.*;
 import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +15,25 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @AutoConfigureMockMvc
 class DiscussionControllerActiveTest extends AbstractControllerTest {
 
-    @Autowired MockMvc mvc;
+    @Autowired
+    MockMvc mvc;
 
-    @Autowired ObjectMapper objectMapper;
+    @Autowired
+    ObjectMapper objectMapper;
 
-    @Autowired ProjectRepository projectRepository;
+    @Autowired
+    ProjectRepository projectRepository;
 
     @Autowired DiscussionRepository discussionRepository;
 
@@ -680,6 +684,4 @@ class DiscussionControllerActiveTest extends AbstractControllerTest {
 
         assertEquals(1, projectRepository.findByTitle("Kubernetes").get().getDiscussions().size());
     }
-
-
 }

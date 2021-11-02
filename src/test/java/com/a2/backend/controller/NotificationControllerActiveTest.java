@@ -1,8 +1,5 @@
 package com.a2.backend.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.service.UserService;
@@ -15,6 +12,11 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 public class NotificationControllerActiveTest extends AbstractControllerTest {
@@ -45,5 +47,29 @@ public class NotificationControllerActiveTest extends AbstractControllerTest {
 
         assertNotNull(notifications);
         assertEquals(3, notifications.length);
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test002_NotificationControllerWhenMarkingNotificationAsReadThenHttpOkIsReturned()
+            throws Exception {
+        UUID id =
+                notificationRepository
+                        .findAllByUserToNotify(userService.getLoggedUser())
+                        .get(0)
+                        .getId();
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.put(baseUrl + "/" + id)
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        val notification = objectMapper.readValue(contentAsString, NotificationDTO.class);
+
+        assertTrue(notification.isSeen());
     }
 }

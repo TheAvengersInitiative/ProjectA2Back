@@ -2,16 +2,22 @@ package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.Notification;
 import com.a2.backend.entity.User;
+import com.a2.backend.exception.InvalidUserException;
+import com.a2.backend.exception.NotificationNotFoundException;
 import com.a2.backend.model.NotificationCreateDTO;
 import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.service.NotificationService;
 import com.a2.backend.service.UserService;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 import lombok.val;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -50,5 +56,23 @@ public class NotificationServiceImpl implements NotificationService {
             Collections.reverse(notifications);
         }
         return notifications.stream().map(Notification::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public NotificationDTO markNotificationAsSeen(UUID id) {
+        val notificationOptional = notificationRepository.findById(id);
+        if (notificationOptional.isEmpty()) {
+            throw new NotificationNotFoundException(
+                    String.format("Notification with id %s not found", id));
+        }
+
+        val notification = notificationOptional.get();
+
+        if (!userService.getLoggedUser().equals(notification.getUserToNotify())) {
+            throw new InvalidUserException("User is not allowed to mark this notification as seen");
+        }
+
+        notification.setSeen(true);
+        return notificationRepository.save(notification).toDTO();
     }
 }

@@ -1,8 +1,6 @@
 package com.a2.backend.exceptionhandler;
 
 import com.a2.backend.exception.*;
-import java.util.Arrays;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -12,6 +10,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 @ControllerAdvice
 public class DefaultExceptionHandler {
@@ -142,6 +143,13 @@ public class DefaultExceptionHandler {
 
     @ExceptionHandler(CommentNotFoundException.class)
     protected ResponseEntity<?> handleCommentNotFound(CommentNotFoundException exception) {
+        logger.info(exception.getMessage());
+        return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotificationNotFoundException.class)
+    protected ResponseEntity<?> handleNotificationNotFound(
+            NotificationNotFoundException exception) {
         logger.info(exception.getMessage());
         return new ResponseEntity(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
