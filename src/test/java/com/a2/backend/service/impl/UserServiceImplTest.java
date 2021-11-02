@@ -279,7 +279,7 @@ class UserServiceImplTest extends AbstractTest {
 
     @Test
     void
-            Test014_GivenaValidEmailandValidNewPasswordWhenWantToRecoverPasswordThenChangeTheOldPasswordForNewOne() {
+            Test014_GivenAValidEmailAndValidNewPasswordWhenWantToRecoverPasswordThenChangeTheOldPasswordForNewOne() {
         User user = userService.createUser(userCreateDTO);
         PasswordRecoveryDTO passwordRecoveryDTO =
                 PasswordRecoveryDTO.builder()

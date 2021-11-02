@@ -687,6 +687,7 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
         assertTrue(projects[0].getTitle().equals("Kubernetes"));
         assertEquals(1, projects.length);
     }
+
     /**
      * Search projects only by languages with value Java should return projects sakai, apache, and
      * renovate project *
