@@ -1,29 +1,40 @@
 package com.a2.backend.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.a2.backend.constants.NotificationType;
+import com.a2.backend.exception.InvalidUserException;
+import com.a2.backend.exception.NotificationNotFoundException;
 import com.a2.backend.model.NotificationCreateDTO;
 import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.repository.ProjectRepository;
+import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.NotificationService;
 import com.a2.backend.service.UserService;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 public class NotificationServiceActiveTest extends AbstractServiceTest {
 
-    @Autowired NotificationService notificationService;
+    @Autowired
+    NotificationService notificationService;
 
-    @Autowired UserService userService;
+    @Autowired
+    UserService userService;
 
-    @Autowired ProjectRepository projectRepository;
+    @Autowired
+    UserRepository userRepository;
 
-    @Autowired NotificationRepository notificationRepository;
+    @Autowired
+    ProjectRepository projectRepository;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
@@ -84,5 +95,35 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
         assertEquals(3, notifications.size());
         assertTrue(notifications.get(0).getDate().isAfter(notifications.get(1).getDate()));
         assertTrue(notifications.get(1).getDate().isAfter(notifications.get(2).getDate()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test004_NotificationServiceWhenMarkingNotificationAsSeenThenItSeenIsTrue() {
+        val notification = notificationService.getNotificationsOfLoggedUser().get(0);
+        assertFalse(notification.isSeen());
+        val updatedNotification = notificationService.markNotificationAsSeen(notification.getId());
+        assertTrue(updatedNotification.isSeen());
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void
+    Test005_NotificationServiceWhenMarkingNonExistentNotificationAsSeenThenExceptionIsThrown() {
+        assertThrows(
+                NotificationNotFoundException.class,
+                () -> notificationService.markNotificationAsSeen(UUID.randomUUID()));
+    }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void
+    Test006_GivenALoggedUserThatIsNotTheUserToNotifyWhenMarkingNotificationAsSeenThenExceptionIsThrown() {
+        val notifications =
+                notificationRepository.findAllByUserToNotify(
+                        userRepository.findByNickname("Franz").get());
+        assertThrows(
+                InvalidUserException.class,
+                () -> notificationService.markNotificationAsSeen(notifications.get(0).getId()));
     }
 }

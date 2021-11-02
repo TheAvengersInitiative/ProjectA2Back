@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/notification")
 public class NotificationController {
@@ -23,5 +25,12 @@ public class NotificationController {
     public ResponseEntity<?> getNotificationsOfLoggedUser() {
         val userNotifications = notificationService.getNotificationsOfLoggedUser();
         return ResponseEntity.status(HttpStatus.OK).body(userNotifications);
+    }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateNotification(@PathVariable("id") UUID id) {
+        val notification = notificationService.markNotificationAsSeen(id);
+        return ResponseEntity.status(HttpStatus.OK).body(notification);
     }
 }
