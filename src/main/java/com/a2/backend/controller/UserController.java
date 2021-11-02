@@ -104,4 +104,13 @@ public class UserController {
         val userReviews = userService.getUserReviews(id);
         return ResponseEntity.status(HttpStatus.OK).body(userReviews);
     }
+
+    @Secured({SecurityConstants.USER_ROLE})
+    @PutMapping("/notification-preferences")
+    public ResponseEntity<?> modifyUserNotificationsPreference(
+            @Valid @RequestBody NotificationUpdatePreferencDTO notificationUpdatePreferencDTO) {
+        boolean userNotificationPreferenceValue =
+                userService.switchEmailNotificationPreferences(notificationUpdatePreferencDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(userNotificationPreferenceValue);
+    }
 }
