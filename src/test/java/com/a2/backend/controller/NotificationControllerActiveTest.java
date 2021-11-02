@@ -92,4 +92,24 @@ public class NotificationControllerActiveTest extends AbstractControllerTest {
         assertNotNull(notifications);
         assertEquals(5, notifications.length);
     }
+
+    @Test
+    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
+    void Test003_NotificationControllerShouldReturnLoggedUserAllNotificationsAndHttpOkTest()
+            throws Exception {
+
+        String contentAsString =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(baseUrl + "/first-five")
+                                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        val notifications = objectMapper.readValue(contentAsString, NotificationDTO[].class);
+
+        assertNotNull(notifications);
+        assertEquals(3, notifications.length);
+    }
 }

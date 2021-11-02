@@ -78,6 +78,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<NotificationDTO> getFirstFiveNotificationsOfLoggedUser() {
-        return getNotificationsOfLoggedUser().subList(0, 5);
+        if (getNotificationsOfLoggedUser().size() >= 5) {
+            return getNotificationsOfLoggedUser().subList(0, 5);
+        }
+        return getNotificationsOfLoggedUser();
     }
 }
