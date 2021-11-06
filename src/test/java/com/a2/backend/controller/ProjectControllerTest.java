@@ -876,8 +876,10 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] newProjects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(1, newProjects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     @Test
@@ -950,8 +952,10 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] newProjects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(1, newProjects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     @Test
@@ -1021,8 +1025,10 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] newProjects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(1, newProjects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     @Test
@@ -1095,8 +1101,10 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] newProjects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(1, newProjects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     @Test
@@ -1171,9 +1179,10 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] newprojects = objectMapper.readValue(contentAsString, Project[].class);
-
-        assertEquals(0, newprojects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(0, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     @Test
@@ -1531,10 +1540,11 @@ class ProjectControllerTest extends AbstractTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-
-        assertEquals(1, projects.length);
-        assertEquals("Not Start Project", projects[0].getTitle());
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
+        assertEquals("Not Start Project", searchResultDTO.getProjects().get(0).getTitle());
     }
 
     @Test

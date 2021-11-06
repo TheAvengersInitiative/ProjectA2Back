@@ -272,7 +272,9 @@ public class UserServiceImpl implements UserService {
                                                     .tags(user.getPreferredTags())
                                                     .languages(user.getPreferredLanguages())
                                                     .build();
-                                    return projectService.searchProjectsByFilter(projectSearchDTO);
+                                    return projectService
+                                            .searchProjectsByFilter(projectSearchDTO)
+                                            .getProjects();
                                 })
                         .orElseGet(projectService::getAllProjects);
 

@@ -658,9 +658,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertTrue(projects[0].getTitle().equals("Sakai"));
-        assertEquals(1, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertTrue(searchResultDTO.getProjects().get(0).getTitle().equals("Sakai"));
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -683,9 +685,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertTrue(projects[0].getTitle().equals("Kubernetes"));
-        assertEquals(1, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertTrue(searchResultDTO.getProjects().get(0).getTitle().equals("Kubernetes"));
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -707,15 +711,16 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        for (Project project : projects) {
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        for (ProjectDTO project : searchResultDTO.getProjects()) {
             assertTrue(
                     project.getTitle().equals("Sakai")
                             || project.getTitle().equals("ApacheCassandra")
                             || project.getTitle().equals("Renovate"));
         }
-        assertEquals(3, projects.length);
+        assertEquals(3, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -738,14 +743,16 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(3, projects.length);
-        for (Project project : projects) {
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        for (ProjectDTO project : searchResultDTO.getProjects()) {
             assertTrue(
                     project.getTitle().equals("Sakai")
                             || project.getTitle().equals("ApacheCassandra")
                             || project.getTitle().equals("Renovate"));
         }
+        assertEquals(3, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /** Search projects only by languages with value Jav should return empty project list */
@@ -765,9 +772,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-
-        assertEquals(0, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(searchResultDTO.getProjects().size(), 0);
+        assertEquals(searchResultDTO.getPageAmount(), 0);
     }
 
     /** Search projects only by languages with value Java and should return empty project list */
@@ -787,9 +795,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-
-        assertEquals(0, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(searchResultDTO.getProjects().size(), 0);
+        assertEquals(searchResultDTO.getPageAmount(), 0);
     }
 
     /**
@@ -812,9 +821,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertTrue(projects[0].getTitle().equals("Renovate"));
-        assertEquals(1, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertTrue(searchResultDTO.getProjects().get(0).getTitle().equals("Renovate"));
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -837,13 +848,15 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(2, projects.length);
-        for (Project project : projects) {
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        for (ProjectDTO project : searchResultDTO.getProjects()) {
             assertTrue(
                     project.getTitle().equals("RedHatAnsible")
                             || project.getTitle().equals("Flask"));
         }
+        assertEquals(2, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /** Search projects only by tags with value tOo should return empty project list */
@@ -863,9 +876,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-
-        assertEquals(0, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(searchResultDTO.getProjects().size(), 0);
+        assertEquals(searchResultDTO.getPageAmount(), 0);
     }
 
     /** Search projects only by tags with value tOol and automation should return project ansible */
@@ -885,12 +899,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertTrue(
-                projects[0]
-                        .getTitle()
-                        .equals(projectRepository.findByTitle("RedHatAnsible").get().getTitle()));
-        assertEquals(1, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertTrue(searchResultDTO.getProjects().get(0).getTitle().equals("RedHatAnsible"));
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -916,9 +929,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertTrue(projects[0].getTitle().equals("ApacheCassandra"));
-        assertEquals(1, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertTrue(searchResultDTO.getProjects().get(0).getTitle().equals("ApacheCassandra"));
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -944,9 +959,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertTrue(projects[0].getTitle().equals("ApacheCassandra"));
-        assertEquals(1, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertTrue(searchResultDTO.getProjects().get(0).getTitle().equals("ApacheCassandra"));
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -973,13 +990,15 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        for (Project project : projects) {
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        for (ProjectDTO project : searchResultDTO.getProjects()) {
             assertTrue(
                     project.getTitle().equals("ApacheCassandra")
                             || project.getTitle().equals("Renovate"));
         }
-        assertEquals(2, projects.length);
+        assertEquals(2, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -1006,8 +1025,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(0, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(searchResultDTO.getProjects().size(), 0);
+        assertEquals(searchResultDTO.getPageAmount(), 0);
     }
 
     /**
@@ -1034,9 +1055,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertTrue(projects[0].getTitle().equals("ApacheCassandra"));
-        assertEquals(1, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertTrue(searchResultDTO.getProjects().get(0).getTitle().equals("ApacheCassandra"));
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /**
@@ -1063,9 +1086,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(projects[0].getTitle(), "RedHatAnsible");
-        assertEquals(1, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertTrue(searchResultDTO.getProjects().get(0).getTitle().equals("RedHatAnsible"));
+        assertEquals(1, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /** Search all project with page value 1 should return 3 projects */
@@ -1084,9 +1109,11 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
 
-        assertEquals(3, projects.length);
+        assertEquals(3, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 1);
     }
 
     /** Search all project with page value 0 should return 8 projects */
@@ -1105,9 +1132,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .getResponse()
                         .getContentAsString();
 
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-
-        assertEquals(8, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(8, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 1);
     }
 
     /** Search all featured project with page value 1 should return 0 projects */
@@ -1126,8 +1154,10 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(0, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(0, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 
     /** Test pagination when searching for featured projects */
@@ -1146,26 +1176,9 @@ public class ProjectControllerActiveTest extends AbstractControllerTest {
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(4, projects.length);
-    }
-
-    /** search for featured projects should return four projects */
-    @Test
-    @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
-    void Test0043_ProjectSearch() throws Exception {
-        ProjectSearchDTO projectToSearch = ProjectSearchDTO.builder().featured(true).build();
-        String contentAsString =
-                mvc.perform(
-                                MockMvcRequestBuilders.post("/project/search")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(projectToSearch))
-                                        .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
-        Project[] projects = objectMapper.readValue(contentAsString, Project[].class);
-        assertEquals(4, projects.length);
+        SearchResultDTO searchResultDTO =
+                objectMapper.readValue(contentAsString, SearchResultDTO.class);
+        assertEquals(4, searchResultDTO.getProjects().size());
+        assertTrue(searchResultDTO.getPageAmount() == 0);
     }
 }

@@ -22,7 +22,7 @@ public interface ProjectService {
 
     List<String> getValidLanguageNames();
 
-    List<ProjectDTO> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO);
+    SearchResultDTO searchProjectsByFilter(ProjectSearchDTO projectSearchDTO);
 
     List<ProjectDTO> getFeaturedProject();
 

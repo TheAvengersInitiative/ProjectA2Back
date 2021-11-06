@@ -2,13 +2,12 @@ package com.a2.backend.controller;
 
 import com.a2.backend.constants.SecurityConstants;
 import com.a2.backend.service.NotificationService;
+import java.util.UUID;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/notification")

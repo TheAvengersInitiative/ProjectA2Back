@@ -2,11 +2,11 @@ package com.a2.backend.entity;
 
 import com.a2.backend.constants.NotificationType;
 import com.a2.backend.model.NotificationDTO;
-import lombok.*;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import lombok.*;
 
 @Entity
 @Getter

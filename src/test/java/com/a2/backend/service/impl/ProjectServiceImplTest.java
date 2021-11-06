@@ -433,7 +433,12 @@ class ProjectServiceImplTest extends AbstractTest {
         assertEquals(projectToCreateWithRepeatedTag.getTitle(), project.getTitle());
         assertEquals(projectToCreateWithRepeatedTag.getDescription(), project.getDescription());
         assertEquals(
-                projectService.searchProjectsByFilter(projectSeached).get(0).getTitle(), title2);
+                projectService
+                        .searchProjectsByFilter(projectSeached)
+                        .getProjects()
+                        .get(0)
+                        .getTitle(),
+                title2);
     }
 
     @Test
@@ -470,9 +475,13 @@ class ProjectServiceImplTest extends AbstractTest {
         projectService.createProject(projectToCreate2);
         ProjectSearchDTO projectSeached = ProjectSearchDTO.builder().title("ProjectTitle").build();
 
-        assertEquals(projectService.searchProjectsByFilter(projectSeached).size(), 1);
+        assertEquals(projectService.searchProjectsByFilter(projectSeached).getProjects().size(), 1);
         assertEquals(
-                projectService.searchProjectsByFilter(projectSeached).get(0).getTitle(),
+                projectService
+                        .searchProjectsByFilter(projectSeached)
+                        .getProjects()
+                        .get(0)
+                        .getTitle(),
                 "ProjectTitle");
     }
 
@@ -524,9 +533,14 @@ class ProjectServiceImplTest extends AbstractTest {
         projectService.createProject(projectToCreate2);
         ProjectSearchDTO projectSearched = ProjectSearchDTO.builder().title("PRojecttItl").build();
 
-        assertEquals(projectService.searchProjectsByFilter(projectSearched).size(), 1);
         assertEquals(
-                projectService.searchProjectsByFilter(projectSearched).get(0).getTitle(),
+                projectService.searchProjectsByFilter(projectSearched).getProjects().size(), 1);
+        assertEquals(
+                projectService
+                        .searchProjectsByFilter(projectSearched)
+                        .getProjects()
+                        .get(0)
+                        .getTitle(),
                 "ProjectTitle");
     }
 }

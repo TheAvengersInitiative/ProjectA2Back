@@ -30,7 +30,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         ProjectSearchDTO projectSearchDTO =
                 ProjectSearchDTO.builder().languages(Arrays.asList("Python")).build();
         List<ProjectDTO> preferredProjects =
-                projectService.searchProjectsByFilter(projectSearchDTO);
+                projectService.searchProjectsByFilter(projectSearchDTO).getProjects();
         assertNotNull(preferredProjects);
         List<ProjectDTO> projects = userService.getPreferredProjects();
         assertEquals(6, projects.size());
@@ -137,6 +137,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
                 projectService
                         .searchProjectsByFilter(
                                 ProjectSearchDTO.builder().title("RedHatAnsible").build())
+                        .getProjects()
                         .get(0);
 
         User user = userService.getUser(project.getCollaborators().get(0).getId());
@@ -156,6 +157,7 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         ProjectDTO project =
                 projectService
                         .searchProjectsByFilter(ProjectSearchDTO.builder().title("Django").build())
+                        .getProjects()
                         .get(0);
 
         User user = userService.getUser(project.getCollaborators().get(0).getId());
