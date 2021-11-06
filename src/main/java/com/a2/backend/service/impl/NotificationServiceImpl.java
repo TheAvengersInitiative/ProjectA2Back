@@ -9,15 +9,14 @@ import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.service.NotificationService;
 import com.a2.backend.service.UserService;
-import lombok.val;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.val;
+import org.springframework.stereotype.Service;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {

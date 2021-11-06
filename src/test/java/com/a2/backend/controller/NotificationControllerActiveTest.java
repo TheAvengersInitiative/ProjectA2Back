@@ -1,9 +1,13 @@
 package com.a2.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 public class NotificationControllerActiveTest extends AbstractControllerTest {

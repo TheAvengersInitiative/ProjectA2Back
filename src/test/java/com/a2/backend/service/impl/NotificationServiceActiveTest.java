@@ -1,5 +1,7 @@
 package com.a2.backend.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.a2.backend.constants.NotificationType;
 import com.a2.backend.exception.InvalidUserException;
 import com.a2.backend.exception.NotificationNotFoundException;
@@ -10,31 +12,23 @@ import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.repository.UserRepository;
 import com.a2.backend.service.NotificationService;
 import com.a2.backend.service.UserService;
+import java.util.UUID;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 public class NotificationServiceActiveTest extends AbstractServiceTest {
 
-    @Autowired
-    NotificationService notificationService;
+    @Autowired NotificationService notificationService;
 
-    @Autowired
-    UserService userService;
+    @Autowired UserService userService;
 
-    @Autowired
-    UserRepository userRepository;
+    @Autowired UserRepository userRepository;
 
-    @Autowired
-    ProjectRepository projectRepository;
+    @Autowired ProjectRepository projectRepository;
 
-    @Autowired
-    NotificationRepository notificationRepository;
+    @Autowired NotificationRepository notificationRepository;
 
     @Test
     @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
@@ -109,7 +103,7 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-    Test005_NotificationServiceWhenMarkingNonExistentNotificationAsSeenThenExceptionIsThrown() {
+            Test005_NotificationServiceWhenMarkingNonExistentNotificationAsSeenThenExceptionIsThrown() {
         assertThrows(
                 NotificationNotFoundException.class,
                 () -> notificationService.markNotificationAsSeen(UUID.randomUUID()));
@@ -118,7 +112,7 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
     @Test
     @WithMockUser(username = "agustin.ayerza@ing.austral.edu.ar")
     void
-    Test006_GivenALoggedUserThatIsNotTheUserToNotifyWhenMarkingNotificationAsSeenThenExceptionIsThrown() {
+            Test006_GivenALoggedUserThatIsNotTheUserToNotifyWhenMarkingNotificationAsSeenThenExceptionIsThrown() {
         val notifications =
                 notificationRepository.findAllByUserToNotify(
                         userRepository.findByNickname("Franz").get());

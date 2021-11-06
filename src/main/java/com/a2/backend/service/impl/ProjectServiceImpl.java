@@ -184,7 +184,7 @@ public class ProjectServiceImpl implements ProjectService {
         return languageService.getValidLanguages();
     }
 
-    public List<ProjectDTO> searchProjectsByFilter(ProjectSearchDTO projectSearchDTO) {
+    public SearchResultDTO searchProjectsByFilter(ProjectSearchDTO projectSearchDTO) {
         ArrayList<Project> result = new ArrayList<>();
         boolean featured = projectSearchDTO.isFeatured();
         boolean nullTitle = projectSearchDTO.getTitle() == null;
@@ -320,10 +320,15 @@ public class ProjectServiceImpl implements ProjectService {
                 }
             }
         }
+        int pageAmount =
+                result.size() % 8 == 0 && result.size() != 0
+                        ? (result.size() / 8) - 1
+                        : result.size() / 8;
+
         if (!nullPage) {
             int page = projectSearchDTO.getPage();
             if (result.size() <= 8 * page) {
-                return new ArrayList<ProjectDTO>();
+                return SearchResultDTO.builder().projects(new ArrayList<>()).pageAmount(0).build();
             }
             if (result.size() > 8 * (page)) {
                 result.removeAll(result.subList(0, 8 * page));
@@ -334,7 +339,9 @@ public class ProjectServiceImpl implements ProjectService {
             }
         }
 
-        return result.stream().map(Project::toDTO).collect(Collectors.toList());
+        List<ProjectDTO> projects =
+                result.stream().map(Project::toDTO).collect(Collectors.toList());
+        return SearchResultDTO.builder().projects(projects).pageAmount(pageAmount).build();
     }
 
     @Override
