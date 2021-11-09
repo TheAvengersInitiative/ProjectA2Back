@@ -1,6 +1,7 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.service.MailService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,11 @@ public class MockMailService implements MailService {
     public void sendForgotPasswordMail(User user) {
         // do not send mails during tests
         System.out.println("MockMailServices:sendForgotPasswordMail called");
+    }
+
+    @Override
+    public void sendNotificationMail(NotificationDTO notification) {
+        // do not send mails during tests
+        System.out.println("MockMailServices:sendNotificationMail called");
     }
 }

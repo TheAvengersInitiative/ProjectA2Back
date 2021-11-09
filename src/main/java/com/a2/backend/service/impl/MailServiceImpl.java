@@ -51,7 +51,14 @@ public class MailServiceImpl implements MailService {
 
     @Override
     public void sendNotificationMail(NotificationDTO notification) {
-
+        String body =
+                "You have a new "
+                        + notification.getType()
+                        + " notification!"
+                        + '\n'
+                        + '\n'
+                        + "The Project A2 team";
+        this.sendEmail(notification.getUserToNotify().getEmail(), "New Notification", body);
     }
 
     private void sendEmail(String mailTO, String subject, String content) {

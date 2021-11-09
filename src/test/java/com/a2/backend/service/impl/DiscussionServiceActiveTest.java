@@ -80,24 +80,26 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
                                 CommentCreateDTO.builder().comment("test comment").build()));
     }
 
-//    @Test
-//    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
-//    void
-//            Test004_DiscussionServiceWithValidCommentCreateDTOWhenAddingCommentThenCommentListShouldBeSortedByDate() {
-//        Discussion discussion =
-//                projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
-//
-//        List<Comment> comments = discussion.getComments();
-//        assertEquals(2, comments.size());
-//
-//        discussionService.createComment(
-//                discussion.getId(), CommentCreateDTO.builder().comment("test comment").build());
-//
-//        assertEquals(3, comments.size());
-//
-//        assertTrue(comments.get(0).getDate().isBefore(comments.get(1).getDate()));
-//        assertTrue(comments.get(1).getDate().isBefore(comments.get(2).getDate()));
-//    }
+    //    @Test
+    //    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    //    void
+    //
+    // Test004_DiscussionServiceWithValidCommentCreateDTOWhenAddingCommentThenCommentListShouldBeSortedByDate() {
+    //        Discussion discussion =
+    //                projectRepository.findByTitle("Kubernetes").get().getDiscussions().get(0);
+    //
+    //        List<Comment> comments = discussion.getComments();
+    //        assertEquals(2, comments.size());
+    //
+    //        discussionService.createComment(
+    //                discussion.getId(), CommentCreateDTO.builder().comment("test
+    // comment").build());
+    //
+    //        assertEquals(3, comments.size());
+    //
+    //        assertTrue(comments.get(0).getDate().isBefore(comments.get(1).getDate()));
+    //        assertTrue(comments.get(1).getDate().isBefore(comments.get(2).getDate()));
+    //    }
 
     @Test
     @WithMockUser("agustin.ayerza@ing.austral.edu.ar")
@@ -252,7 +254,7 @@ public class DiscussionServiceActiveTest extends AbstractServiceTest {
 
         assertNotNull(comments);
         assertEquals(2, comments.size());
-//        assertTrue(comments.get(0).getDate().isBefore(comments.get(1).getDate()));
+        //        assertTrue(comments.get(0).getDate().isBefore(comments.get(1).getDate()));
     }
 
     @Test
