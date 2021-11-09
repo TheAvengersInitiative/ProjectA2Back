@@ -95,6 +95,7 @@ public class DemoRunner implements CommandLineRunner {
                         .reputation(2.5)
                         .confirmationToken("token002")
                         .isActive(true)
+                        .allowsNotifications(true)
                         .build();
         User fabrizio =
                 User.builder()

@@ -1,6 +1,7 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -8,8 +9,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+@Profile("notTest")
 @Service
-@Profile("!test")
 public class MailServiceImpl implements MailService {
 
     @Autowired private JavaMailSender emailsender;
@@ -42,6 +43,18 @@ public class MailServiceImpl implements MailService {
                         + '\n'
                         + "The Project A2 team";
         this.sendEmail(user.getEmail(), "Password Recovery", body);
+    }
+
+    @Override
+    public void sendNotificationMail(NotificationDTO notificationDetails) {
+        String body =
+                "You have a new "
+                        + notificationDetails.getType()
+                        + " notification!"
+                        + '\n'
+                        + '\n'
+                        + "The Project A2 team";
+        this.sendEmail(notificationDetails.getUserToNotify().getEmail(), "New Notification", body);
     }
 
     private void sendEmail(String mailTO, String subject, String content) {

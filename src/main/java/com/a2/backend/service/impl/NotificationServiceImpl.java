@@ -7,6 +7,7 @@ import com.a2.backend.exception.NotificationNotFoundException;
 import com.a2.backend.model.NotificationCreateDTO;
 import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.repository.NotificationRepository;
+import com.a2.backend.service.MailService;
 import com.a2.backend.service.NotificationService;
 import com.a2.backend.service.UserService;
 import java.time.LocalDateTime;
@@ -23,11 +24,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final UserService userService;
+    private final MailService mailService;
 
     public NotificationServiceImpl(
-            NotificationRepository notificationRepository, UserService userService) {
+            NotificationRepository notificationRepository,
+            UserService userService,
+            MailService mailService) {
         this.notificationRepository = notificationRepository;
         this.userService = userService;
+        this.mailService = mailService;
     }
 
     @Override
@@ -42,7 +47,10 @@ public class NotificationServiceImpl implements NotificationService {
                         .user(notificationCreateDTO.getUser())
                         .date(LocalDateTime.now())
                         .build();
-        return notificationRepository.save(notification).toDTO();
+
+        NotificationDTO savedNotifiaction = notificationRepository.save(notification).toDTO();
+        sendNotificationMail(savedNotifiaction);
+        return savedNotifiaction;
     }
 
     @Override
@@ -81,5 +89,17 @@ public class NotificationServiceImpl implements NotificationService {
             return getNotificationsOfLoggedUser().subList(0, 5);
         }
         return getNotificationsOfLoggedUser();
+    }
+
+    @Override
+    public void sendNotificationMail(NotificationDTO notificationDTO) {
+        val notification = notificationRepository.findById(notificationDTO.getId());
+        if (notification.isEmpty()) {
+            throw new NotificationNotFoundException(
+                    String.format("Notification with id %s not found", notification.get().getId()));
+        }
+        if (notification.get().getUserToNotify().isAllowsNotifications()) {
+            mailService.sendNotificationMail(notificationDTO);
+        }
     }
 }
