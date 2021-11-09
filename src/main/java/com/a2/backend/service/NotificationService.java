@@ -13,4 +13,6 @@ public interface NotificationService {
     NotificationDTO markNotificationAsSeen(UUID id);
 
     List<NotificationDTO> getFirstFiveNotificationsOfLoggedUser();
+
+    void sendNotificationMail(NotificationDTO notification);
 }
