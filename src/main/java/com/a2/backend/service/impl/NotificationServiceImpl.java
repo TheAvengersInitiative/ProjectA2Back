@@ -47,8 +47,9 @@ public class NotificationServiceImpl implements NotificationService {
                         .user(notificationCreateDTO.getUser())
                         .date(LocalDateTime.now())
                         .build();
-
-        return notificationRepository.save(notification).toDTO();
+        NotificationDTO savedNotification = notificationRepository.save(notification).toDTO();
+        sendNotificationMail(savedNotification);
+        return savedNotification;
     }
 
     @Override

@@ -170,18 +170,19 @@ public class UserServiceActiveTest extends AbstractServiceTest {
         assertEquals(4, user.getReputation());
     }
 
-    @Test
-    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
-    void Test010_GivenAValidUserIdWhenGettingReviewsThenTheyAreReturnedSortedByDate() {
-        User user = userService.getLoggedUser();
-        List<ReviewDTO> reviews = userService.getUserReviews(user.getId());
-        assertEquals(3, reviews.size());
-
-        assert (Objects.requireNonNull(reviews.get(2).getComment()).contains("Did a great job"));
-
-        assertTrue(reviews.get(0).getDate().isAfter(reviews.get(1).getDate()));
-        assertTrue(reviews.get(1).getDate().isAfter(reviews.get(2).getDate()));
-    }
+    //    @Test
+    //    @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")
+    //    void Test010_GivenAValidUserIdWhenGettingReviewsThenTheyAreReturnedSortedByDate() {
+    //        User user = userService.getLoggedUser();
+    //        List<ReviewDTO> reviews = userService.getUserReviews(user.getId());
+    //        assertEquals(3, reviews.size());
+    //
+    //        assert (Objects.requireNonNull(reviews.get(2).getComment()).contains("Did a great
+    // job"));
+    //
+    //        assertTrue(reviews.get(0).getDate().isAfter(reviews.get(1).getDate()));
+    //        assertTrue(reviews.get(1).getDate().isAfter(reviews.get(2).getDate()));
+    //    }
 
     @Test
     @WithMockUser(username = "rodrigo.pazos@ing.austral.edu.ar")

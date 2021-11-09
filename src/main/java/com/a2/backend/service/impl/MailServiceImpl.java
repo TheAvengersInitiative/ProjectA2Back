@@ -14,7 +14,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("!test")
+@Profile("notTest")
 public class MailServiceImpl implements MailService {
 
     @Autowired private JavaMailSender emailsender;
