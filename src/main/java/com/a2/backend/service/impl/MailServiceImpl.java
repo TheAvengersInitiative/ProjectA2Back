@@ -1,6 +1,7 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.service.MailService;
 import java.io.File;
 import javax.mail.MessagingException;
@@ -46,6 +47,11 @@ public class MailServiceImpl implements MailService {
                         + "<br>"
                         + "<br>";
         this.sendEmail(user.getEmail(), "Password Recovery", body);
+    }
+
+    @Override
+    public void sendNotificationMail(NotificationDTO notification) {
+
     }
 
     private void sendEmail(String mailTO, String subject, String content) {
