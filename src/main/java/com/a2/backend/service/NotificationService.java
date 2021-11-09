@@ -14,5 +14,5 @@ public interface NotificationService {
 
     List<NotificationDTO> getFirstFiveNotificationsOfLoggedUser();
 
-    //    void sendNotificationMail(NotificationDTO notification);
+    void sendNotificationMail(NotificationDTO notification);
 }
