@@ -48,7 +48,7 @@ public class NotificationServiceImpl implements NotificationService {
                         .date(LocalDateTime.now())
                         .build();
         NotificationDTO savedNotification = notificationRepository.save(notification).toDTO();
-        sendNotificationMail(savedNotification);
+        //        mailService.sendNotificationMail(savedNotification);
         return savedNotification;
     }
 
@@ -90,15 +90,16 @@ public class NotificationServiceImpl implements NotificationService {
         return getNotificationsOfLoggedUser();
     }
 
-    @Override
-    public void sendNotificationMail(NotificationDTO notificationDTO) {
-        val notification = notificationRepository.findById(notificationDTO.getId());
-        if (notification.isEmpty()) {
-            throw new NotificationNotFoundException(
-                    String.format("Notification with id %s not found", notification.get().getId()));
-        }
-        if (notification.get().getUserToNotify().isAllowsNotifications()) {
-            mailService.sendNotificationMail(notificationDTO);
-        }
-    }
+    //    @Override
+    //    public void sendNotificationMail(NotificationDTO notificationDTO) {
+    //        val notification = notificationRepository.findById(notificationDTO.getId());
+    //        if (notification.isEmpty()) {
+    //            throw new NotificationNotFoundException(
+    //                    String.format("Notification with id %s not found",
+    // notification.get().getId()));
+    //        }
+    //        if (notification.get().getUserToNotify().isAllowsNotifications()) {
+    //            mailService.sendNotificationMail(notificationDTO);
+    //        }
+    //    }
 }
