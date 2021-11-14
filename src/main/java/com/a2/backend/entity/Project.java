@@ -46,21 +46,39 @@ public class Project implements Serializable {
     @JsonManagedReference
     private List<Discussion> discussions;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.DETACH,
+                CascadeType.MERGE,
+                CascadeType.REFRESH
+            })
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotNull
     @NotEmpty
     @Size(min = 1, max = 5)
     private List<Tag> tags;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.DETACH,
+                CascadeType.MERGE,
+                CascadeType.REFRESH
+            })
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotNull
     @NotEmpty
     @Size(min = 1, max = 5)
     private List<ForumTag> forumTags;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(
+            cascade = {
+                CascadeType.PERSIST,
+                CascadeType.DETACH,
+                CascadeType.MERGE,
+                CascadeType.REFRESH
+            })
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Language> languages;
 
