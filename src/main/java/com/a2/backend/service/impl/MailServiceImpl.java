@@ -1,11 +1,11 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.User;
+import com.a2.backend.model.NotificationDTO;
 import com.a2.backend.service.MailService;
 import java.io.File;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,7 +16,11 @@ import org.springframework.stereotype.Service;
 @Profile("!test")
 public class MailServiceImpl implements MailService {
 
-    @Autowired private JavaMailSender emailsender;
+    private JavaMailSender emailsender;
+
+    public MailServiceImpl(JavaMailSender emailsender) {
+        this.emailsender = emailsender;
+    }
 
     @Override
     public void sendConfirmationMail(User user) {
@@ -46,6 +50,13 @@ public class MailServiceImpl implements MailService {
                         + "<br>"
                         + "<br>";
         this.sendEmail(user.getEmail(), "Password Recovery", body);
+    }
+
+    @Override
+    public void sendNotificationMail(NotificationDTO notification) {
+        String body =
+                "You have a new " + notification.getType() + " notification!" + "<br>" + "<br>";
+        this.sendEmail(notification.getUserToNotify().getEmail(), "New Notification", body);
     }
 
     private void sendEmail(String mailTO, String subject, String content) {
