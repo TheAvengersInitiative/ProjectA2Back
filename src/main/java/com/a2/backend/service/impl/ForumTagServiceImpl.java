@@ -1,8 +1,8 @@
 package com.a2.backend.service.impl;
 
 import com.a2.backend.entity.ForumTag;
-import com.a2.backend.repository.DiscussionRepository;
 import com.a2.backend.repository.ForumTagRepository;
+import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.ForumTagService;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,20 +15,26 @@ public class ForumTagServiceImpl implements ForumTagService {
 
     private final ForumTagRepository forumTagRepository;
 
-    private final DiscussionRepository discussionRepository;
+    private final ProjectRepository projectRepository;
 
     public ForumTagServiceImpl(
-            ForumTagRepository forumTagRepository, DiscussionRepository discussionRepository) {
+            ForumTagRepository forumTagRepository, ProjectRepository projectRepository) {
         this.forumTagRepository = forumTagRepository;
-        this.discussionRepository = discussionRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Override
-    public List<ForumTag> createTag(List<String> forumTagsToAdd) {
+    public List<ForumTag> findOrCreateTag(List<String> forumTagsToAdd) {
         List<ForumTag> tagList = new ArrayList<>();
 
         for (String tagName : forumTagsToAdd) {
-            tagList.add(createTag(tagName));
+            Optional<ForumTag> optionalTag = findTagByName(tagName);
+
+            if (optionalTag.isEmpty()) {
+                tagList.add(createTag(tagName));
+            } else {
+                tagList.add(optionalTag.get());
+            }
         }
         return tagList;
     }
@@ -69,8 +75,8 @@ public class ForumTagServiceImpl implements ForumTagService {
     @Override
     public void deleteUnusedTags(List<ForumTag> removedTags) {
         for (ForumTag ForumTag : removedTags) {
-            if (discussionRepository
-                    .findDiscussionsByTagName(ForumTag.getName().toUpperCase(Locale.ROOT))
+            if (projectRepository
+                    .findProjectsByTagName(ForumTag.getName().toUpperCase(Locale.ROOT))
                     .isEmpty()) {
                 forumTagRepository.deleteById(ForumTag.getId());
             }

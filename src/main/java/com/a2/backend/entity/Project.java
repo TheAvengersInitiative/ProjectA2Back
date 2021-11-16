@@ -41,13 +41,7 @@ public class Project implements Serializable {
     @Size(min = 1, max = 5)
     private List<String> links;
 
-    @OneToMany(
-            cascade = {
-                CascadeType.PERSIST,
-                CascadeType.DETACH,
-                CascadeType.MERGE,
-                CascadeType.REFRESH
-            })
+    @OneToMany(cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JsonManagedReference
     private List<Discussion> discussions;
@@ -110,10 +104,7 @@ public class Project implements Serializable {
         return ProjectDTO.builder()
                 .id(id)
                 .discussions(
-                        discussions.stream()
-                                .filter(Discussion::isActive)
-                                .map(Discussion::toDTO)
-                                .collect(Collectors.toList()))
+                        discussions.stream().map(Discussion::toDTO).collect(Collectors.toList()))
                 .title(title)
                 .featured(featured)
                 .languages(languages)

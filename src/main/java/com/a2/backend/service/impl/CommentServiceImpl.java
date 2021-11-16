@@ -33,7 +33,6 @@ public class CommentServiceImpl implements CommentService {
                 .comment(commentCreateDTO.getComment())
                 .date(LocalDateTime.now())
                 .hidden(false)
-                .isActive(true)
                 .highlighted(false)
                 .build();
     }
@@ -87,8 +86,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = optionalComment.get();
         if (!comment.getUser().equals(loggedUser))
             throw new InvalidUserException("Only comment owners can delete comments");
-        comment.setActive(false);
-        commentRepository.save(comment);
+        commentRepository.deleteById(id);
         return comment;
     }
 

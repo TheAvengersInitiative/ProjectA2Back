@@ -34,7 +34,7 @@ public class ForumTagServiceImplTest {
     void Test002_ForumTagServiceWhenReceivesValidTagNamesShouldCreateTagListWithGivenNames() {
         List<String> tagNames = Arrays.asList("tag1", "tag2");
 
-        List<ForumTag> tagList = forumTagService.createTag(tagNames);
+        List<ForumTag> tagList = forumTagService.findOrCreateTag(tagNames);
 
         assertEquals(2, tagList.size());
 
@@ -47,7 +47,7 @@ public class ForumTagServiceImplTest {
 
         ForumTag tag1 = forumTagRepository.save(forumTagService.createTag("tag1"));
 
-        List<ForumTag> tagList = forumTagService.createTag(Arrays.asList("tag1", "tag2"));
+        List<ForumTag> tagList = forumTagService.findOrCreateTag(Arrays.asList("tag1", "tag2"));
 
         assertEquals(2, tagList.size());
 

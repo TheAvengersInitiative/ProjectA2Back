@@ -2,7 +2,6 @@ package com.a2.backend.entity;
 
 import com.a2.backend.model.DiscussionDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -59,8 +58,6 @@ public class Discussion {
     @ManyToOne(cascade = {CascadeType.MERGE})
     private User owner;
 
-    @JsonIgnore private boolean isActive = true;
-
     public DiscussionDTO toDTO() {
         return DiscussionDTO.builder()
                 .project(project)
@@ -69,11 +66,7 @@ public class Discussion {
                 .id(id)
                 .title(title)
                 .forumTags(forumTags)
-                .comments(
-                        comments.stream()
-                                .filter(Comment::isActive)
-                                .map(Comment::toDTO)
-                                .collect(Collectors.toList()))
+                .comments(comments.stream().map(Comment::toDTO).collect(Collectors.toList()))
                 .build();
     }
 }

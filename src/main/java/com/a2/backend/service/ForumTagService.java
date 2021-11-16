@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface ForumTagService {
 
-    List<ForumTag> createTag(List<String> forumTagsToAdd);
+    List<ForumTag> findOrCreateTag(List<String> forumTagsToAdd);
 
     ForumTag createTag(String tagName);
 
