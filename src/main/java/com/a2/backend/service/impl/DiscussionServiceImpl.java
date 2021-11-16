@@ -65,7 +65,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         }
 
         val existingDiscussionWithTitleInProject =
-                discussionRepository.findByProjectIdAndTitle(
+                discussionRepository.findByProject_IdAndTitleAndIsActiveIsTrue(
                         projectId, discussionCreateDTO.getTitle());
         if (existingDiscussionWithTitleInProject == null) {
             List<ForumTag> tags = forumTagService.createTag(discussionCreateDTO.getForumTags());
@@ -176,7 +176,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         }
 
         val existingDiscussionWithTitleInProject =
-                discussionRepository.findByProjectIdAndTitle(
+                discussionRepository.findByProject_IdAndTitleAndIsActiveIsTrue(
                         discussionToModifyOptional.get().getProject().getId(),
                         discussionUpdateDTO.getTitle());
 
