@@ -32,6 +32,8 @@ public class Comment {
 
     private boolean highlighted;
 
+    private boolean isActive;
+
     public CommentDTO toDTO() {
         return CommentDTO.builder()
                 .id(id)

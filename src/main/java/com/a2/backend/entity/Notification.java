@@ -25,16 +25,20 @@ public class Notification {
     @NotNull private NotificationType type;
 
     // These are the users to be notified
-    @ManyToOne @NotNull private User userToNotify;
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @NotNull
+    private User userToNotify;
 
-    @ManyToOne private Project project;
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    private Project project;
 
     @ManyToOne private Discussion discussion;
 
     @ManyToOne private Comment comment;
 
     // This is a user related to the notification (e.g., "${user} wrote a discussion on ${project}")
-    @ManyToOne private User user;
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    private User user;
 
     @NotNull @Builder.Default private boolean seen = false;
 

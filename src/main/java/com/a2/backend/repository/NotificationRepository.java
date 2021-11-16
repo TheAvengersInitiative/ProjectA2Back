@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface NotificationRepository extends JpaRepository<Notification, UUID> {
 
     List<Notification> findAllByUserToNotify(User userToNotify);
+
+    void deleteNotificationByDiscussion_Id(UUID discussion_id);
 }

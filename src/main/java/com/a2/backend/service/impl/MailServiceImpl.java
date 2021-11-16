@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("!test")
+@Profile("local")
 public class MailServiceImpl implements MailService {
 
     private JavaMailSender emailsender;
