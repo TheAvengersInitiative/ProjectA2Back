@@ -7,23 +7,25 @@ import com.a2.backend.entity.ForumTag;
 import com.a2.backend.entity.User;
 import com.a2.backend.exception.*;
 import com.a2.backend.model.*;
+import com.a2.backend.repository.CommentRepository;
 import com.a2.backend.repository.DiscussionRepository;
+import com.a2.backend.repository.NotificationRepository;
 import com.a2.backend.repository.ProjectRepository;
 import com.a2.backend.service.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.val;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class DiscussionServiceImpl implements DiscussionService {
 
     private final ProjectRepository projectRepository;
     private final DiscussionRepository discussionRepository;
+    private final CommentRepository commentRepository;
+    private final NotificationRepository notificationRepository;
     private final ForumTagService forumTagService;
     private final UserService userService;
     private final CommentService commentService;
@@ -32,10 +34,14 @@ public class DiscussionServiceImpl implements DiscussionService {
     public DiscussionServiceImpl(
             ProjectRepository projectRepository,
             DiscussionRepository discussionRepository,
+            CommentRepository commentRepository,
+            NotificationRepository notificationRepository,
             ForumTagService forumTagService,
             UserService userService,
             CommentService commentService,
             NotificationService notificationService) {
+        this.commentRepository = commentRepository;
+        this.notificationRepository = notificationRepository;
         this.forumTagService = forumTagService;
         this.projectRepository = projectRepository;
         this.userService = userService;
@@ -62,8 +68,7 @@ public class DiscussionServiceImpl implements DiscussionService {
                 discussionRepository.findByProjectIdAndTitle(
                         projectId, discussionCreateDTO.getTitle());
         if (existingDiscussionWithTitleInProject == null) {
-            List<ForumTag> tags =
-                    forumTagService.findOrCreateTag(discussionCreateDTO.getForumTags());
+            List<ForumTag> tags = forumTagService.createTag(discussionCreateDTO.getForumTags());
             Discussion discussion =
                     Discussion.builder()
                             .title(discussionCreateDTO.getTitle())
@@ -72,6 +77,7 @@ public class DiscussionServiceImpl implements DiscussionService {
                             .comments(List.of())
                             .body(discussionCreateDTO.getBody())
                             .owner(loggedUser)
+                            .isActive(true)
                             .build();
             val discussions = project.get().getDiscussions();
             discussions.add(discussion);
@@ -191,8 +197,7 @@ public class DiscussionServiceImpl implements DiscussionService {
         val discussion = discussionToModifyOptional.get();
         discussion.setTitle(discussionUpdateDTO.getTitle());
         discussion.setBody(discussionUpdateDTO.getBody());
-        discussion.setForumTags(
-                forumTagService.findOrCreateTag(discussionUpdateDTO.getForumTags()));
+        discussion.setForumTags(forumTagService.createTag(discussionUpdateDTO.getForumTags()));
         Discussion updatedDiscussion = discussionRepository.save(discussion);
         forumTagService.deleteUnusedTags(removedForumTags);
         return updatedDiscussion.toDTO();
@@ -226,8 +231,8 @@ public class DiscussionServiceImpl implements DiscussionService {
         if (project.isEmpty()) {
             throw new ProjectNotFoundException("Project does not exist!");
         }
-        project.get().getDiscussions().remove(discussionToDelete.get());
-        discussionRepository.deleteById(discussionID);
+        discussionToDelete.get().setActive(false);
+        discussionRepository.save(discussionToDelete.get());
     }
 
     @Override
@@ -299,6 +304,7 @@ public class DiscussionServiceImpl implements DiscussionService {
 
         List<CommentDTO> comments =
                 discussionOptional.get().getComments().stream()
+                        .filter(Comment::isActive)
                         .map(Comment::toDTO)
                         .collect(Collectors.toList());
 
@@ -338,9 +344,6 @@ public class DiscussionServiceImpl implements DiscussionService {
         val comments = discussion.getComments();
 
         Comment comment = commentService.deleteComment(id);
-        comments.remove(comment);
-        discussion.setComments(comments);
-
         discussionRepository.save(discussion);
     }
 

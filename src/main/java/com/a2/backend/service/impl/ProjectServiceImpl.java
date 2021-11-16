@@ -71,8 +71,7 @@ public class ProjectServiceImpl implements ProjectService {
         User loggedUser = userService.getLoggedUser();
         if (existingProjectWithTitle.isEmpty()) {
             List<Tag> tags = tagService.findOrCreateTag(projectCreateDTO.getTags());
-            List<ForumTag> forumTags =
-                    forumTagService.findOrCreateTag(projectCreateDTO.getForumTags());
+            List<ForumTag> forumTags = forumTagService.createTag(projectCreateDTO.getForumTags());
             List<Language> languages =
                     languageService.findOrCreateLanguage(projectCreateDTO.getLanguages());
 
@@ -142,7 +141,7 @@ public class ProjectServiceImpl implements ProjectService {
         project.setTitle(projectUpdateDTO.getTitle());
         project.setLinks(projectUpdateDTO.getLinks());
         project.setTags(tagService.findOrCreateTag(projectUpdateDTO.getTags()));
-        project.setForumTags(forumTagService.findOrCreateTag(projectUpdateDTO.getForumTags()));
+        project.setForumTags(forumTagService.createTag(projectUpdateDTO.getForumTags()));
         project.setLanguages(languageService.findOrCreateLanguage(projectUpdateDTO.getLanguages()));
         project.setDescription(projectUpdateDTO.getDescription());
 
