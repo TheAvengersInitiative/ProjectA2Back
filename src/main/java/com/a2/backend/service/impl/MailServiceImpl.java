@@ -14,10 +14,14 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("nottest")
+@Profile("!test")
 public class MailServiceImpl implements MailService {
 
-    @Autowired private JavaMailSender emailsender;
+    private JavaMailSender emailsender;
+
+    public MailServiceImpl(JavaMailSender emailsender) {
+        this.emailsender = emailsender;
+    }
 
     @Override
     public void sendConfirmationMail(User user) {
