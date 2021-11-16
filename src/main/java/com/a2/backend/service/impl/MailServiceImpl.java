@@ -6,7 +6,6 @@ import com.a2.backend.service.MailService;
 import java.io.File;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -56,12 +55,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendNotificationMail(NotificationDTO notification) {
         String body =
-                "You have a new "
-                        + notification.getType()
-                        + " notification!"
-                        + '\n'
-                        + '\n'
-                        + "The Project A2 team";
+                "You have a new " + notification.getType() + " notification!" + "<br>" + "<br>";
         this.sendEmail(notification.getUserToNotify().getEmail(), "New Notification", body);
     }
 

@@ -152,7 +152,7 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
 
         NotificationDTO notification =
                 notificationService.createNotification(notificationCreateDTO);
-        //This does not have an assert since I'm checking if it sends the mail or not
-        
+        // This does not have an assert since I'm checking if it sends the mail or not
+
     }
 }
