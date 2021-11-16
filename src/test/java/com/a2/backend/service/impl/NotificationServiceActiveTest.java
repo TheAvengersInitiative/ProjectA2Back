@@ -139,5 +139,4 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
     //        assertTrue(notifications.get(0).getDate().isAfter(notifications.get(1).getDate()));
     //        assertTrue(notifications.get(1).getDate().isAfter(notifications.get(2).getDate()));
     //    }
-
 }

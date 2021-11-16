@@ -5,9 +5,9 @@ import com.a2.backend.model.NotificationDTO;
 
 public interface MailService {
 
-    public void sendConfirmationMail(User user);
+    void sendConfirmationMail(User user);
 
-    public void sendForgotPasswordMail(User user);
+    void sendForgotPasswordMail(User user);
 
-    public void sendNotificationMail(NotificationDTO notification);
+    void sendNotificationMail(NotificationDTO notification);
 }
