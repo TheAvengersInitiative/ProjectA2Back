@@ -139,4 +139,19 @@ public class NotificationServiceActiveTest extends AbstractServiceTest {
     //        assertTrue(notifications.get(0).getDate().isAfter(notifications.get(1).getDate()));
     //        assertTrue(notifications.get(1).getDate().isAfter(notifications.get(2).getDate()));
     //    }
+    @Test
+    @WithMockUser("rodrigo.pazos@ing.austral.edu.ar")
+    void Test009_NotificationServiceWhenCreatingNotificationWithMailsNotAllowedItDoesNotSendMail() {
+        userService.getLoggedUser().setAllowsNotifications(false);
+
+        NotificationCreateDTO notificationCreateDTO =
+                NotificationCreateDTO.builder()
+                        .userToNotify(userService.getLoggedUser())
+                        .type(NotificationType.REVIEW)
+                        .build();
+
+        NotificationDTO notification =
+                notificationService.createNotification(notificationCreateDTO);
+        //This does not have an assert since I'm checking if it sends the mail or not
+    }
 }
